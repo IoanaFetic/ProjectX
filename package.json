@@ -1,0 +1,20 @@
+{
+  "name": "Kamis",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.20.0",
+    "dropzone": "^5.2.0",
+    "fs": "0.0.1-security",
+    "jszip": "^3.1.5",
+    "meteor-node-stubs": "~0.2.4",
+    "node-xlsx": "^0.11.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-dropzone-component": "^3.0.0",
+    "react-mounter": "^1.2.0",
+    "xlsx": "^0.11.14"
+  }
+}

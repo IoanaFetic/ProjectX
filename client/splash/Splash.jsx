@@ -19,6 +19,7 @@ export default class Splash extends React.Component {
     reader.addEventListener("loadend", function(event) {
           var data = event.target.result
           // pre-process data
+          
           var binary = "";
           var bytes = new Uint8Array(data);
           var length = bytes.byteLength;

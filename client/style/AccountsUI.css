@@ -1,0 +1,27 @@
+.login-button {
+    margin-top: 10px !important;
+    font-family: "Roboto", sans-serif !important;
+    background-color: forestgreen !important;
+    border: DarkGreen 1px solid !important;
+}
+.child100 > DIV {
+   width: 100%;
+}
+
+.accounts-dialog {
+  color: DarkGreen;
+    background: linear-gradient(#e8f3e8 1px, #d2e7d2 1px);
+    padding-top: 5px !important;
+    border: DarkGreen 1px solid !important;
+    margin-top: 0px !important;
+    margin-left: -205px !important;
+}
+.login-form-sign-in>#login-dropdown-list, .login-form-create-account>#login-dropdown-list {
+    margin-left: -200px !important;
+}
+.login-close-text {
+    float: right !important;
+}
+.accounts-dialog LABEL {
+    font-family: "Roboto", sans-serif !important;
+}

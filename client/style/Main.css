@@ -1,0 +1,18 @@
+html, body, #react-root {
+  margin:0;
+  padding:0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+INPUT {
+  border-color: DarkGreen !important;
+
+}
+textarea:focus, input:focus{
+    outline: none !important;
+}
+a {
+  color: White;
+  text-decoration: none;
+}

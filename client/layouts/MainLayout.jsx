@@ -17,8 +17,8 @@ export default class MainLayout extends React.Component {
           backgroundColor: 'forestgreen',
           color: 'white',
           height: '2em',
-          alignItems: 'center'
-
+          alignItems: 'center',
+          flexShrink: 0
 
           }}>
           <div style={{
@@ -27,7 +27,7 @@ export default class MainLayout extends React.Component {
             }}>
           <NavIcon name='Home' link='/'/>
           <NavIcon name='Upload' link='upload'/>
-          <NavIcon name='Prices' link='prices'/>
+          <NavIcon name='Price' link='price'/>
           <NavIcon name='Shelf' link='shelf'/>
 
           </div>
@@ -47,8 +47,8 @@ export default class MainLayout extends React.Component {
             flexGrow: 1,
             backgroundColor: 'white',
             justifyContent: 'center',
-            alignItems: 'center'
-
+            alignItems: 'center',
+            flexDirection: 'column'
           }}>
           {this.props.content}
         </div>
@@ -58,7 +58,8 @@ export default class MainLayout extends React.Component {
             backgroundColor: 'forestgreen',
             color: 'white',
             height: '2em',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexShrink: 0
           }}>
 
         </footer>

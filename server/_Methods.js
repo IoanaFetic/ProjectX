@@ -1,8 +1,8 @@
 Meteor.methods ({
 
-  batchInsert(documents){
+  batchInsert(documents,dbName){
     _.each(documents, function(doc) {
-    DB.Prices.insert(doc);
+    DB[dbName].insert(doc);
     });
     /*
     for(i=0; i<documents.length; i++){
@@ -10,6 +10,11 @@ Meteor.methods ({
       DB.Prices.insert(doc)
     }
     */
+  },
+
+
+  removeEntry(report_type, datetime){
+    DB[report_type].remove({datetime: datetime}, {}, {multi:true})
   }
 
 })

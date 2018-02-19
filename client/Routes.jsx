@@ -4,6 +4,7 @@ import {Wrapper} from './layouts/Wrapper.jsx'
 
 import Splash from './splash/Splash.jsx'
 import Upload from './upload/Upload.jsx'
+import Price from './price/Price.jsx'
 
 FlowRouter.route('/',{
   action(){
@@ -23,11 +24,11 @@ FlowRouter.route('/upload',{
   }
 })
 
-FlowRouter.route('/prices',{
+FlowRouter.route('/price',{
   action(){
     mount (Wrapper,{
-      page: 'prices',
-      content: <div>Prices Page</div>
+      page: 'price',
+      content: <Price/>
     })
   }
 })

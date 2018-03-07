@@ -6,6 +6,13 @@ import moment from 'moment'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
+function uniqueID () {
+   var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+   return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+        return (Math.random() * 16 | 0).toString(16);
+   }).toLowerCase()
+}
+
 export default class Upload extends TrackerReact(React.Component) {
   constructor() {
     super()
@@ -69,6 +76,10 @@ export default class Upload extends TrackerReact(React.Component) {
 
     var datetime = moment().format().toString()
 
+    var upload_id = uniqueID()
+
+    console.log('processing data')
+
 
     var parameters = {
       Price:{
@@ -90,75 +101,85 @@ export default class Upload extends TrackerReact(React.Component) {
 
         var reportType = sheet.B1.v.split(' ')[0]
         var report_month = moment(sheet.B2.w, 'M/D/YY').month()
-        console.log(report_month)
+        var report_year = moment(sheet.B2.w, 'M/D/YY').year()
 
-        var RE = new RegExp(/[A-Z]+[0-9]+:([A-Z]+)([0-9]+)/)
 
-        var match = RE.exec(sheet['!ref'])
-
-        var RowMax = parseInt(match[2])
-
-        var keys = Object.keys(sheet)
-        var columns = []
-        for (key of keys) { //for(i=0; i<keys.length; i++){var key = keys[i]
-          var colLetter = key.split(/[0-9]/)[0]
-          // if letter not in columns, add it
-          if (!colLetter.match("!") && columns.indexOf(colLetter) == -1) {
-            columns.push(colLetter)
+        var okToUpload = true
+        var matchingDocument = DB[reportType].findOne({
+          report_month,
+          report_year
+        })
+        if (matchingDocument){
+          if(confirm("Entries for this month already exist. Do you want to replace them?")){
+              Meteor.call('removeEntry', reportType, matchingDocument.upload_id)
           }
+          else {
+            alert("Upload aborted")
+            okToUpload = false
+          }
+
         }
 
-        // columns = array of unique columns
-        var documents = []
+        if(okToUpload){
+          var RE = new RegExp(/[A-Z]+[0-9]+:([A-Z]+)([0-9]+)/)
+          var match = RE.exec(sheet['!ref'])
+          var RowMax = parseInt(match[2])
 
-        var read = false
-        var keyRowIndex = 0
-
-
-        for (i = 1; i <= RowMax; i++) { //
-
-          if (read){
-            var document = {
-              datetime,
-              report_type: reportType,
-              report_month,
-              user: Meteor.user().username
+          var keys = Object.keys(sheet)
+          var columns = []
+          for (key of keys) { //for(i=0; i<keys.length; i++){var key = keys[i]
+            var colLetter = key.split(/[0-9]/)[0]
+            // if letter not in columns, add it
+            if (!colLetter.match("!") && columns.indexOf(colLetter) == -1) {
+              columns.push(colLetter)
             }
-            for (colLetter of columns) {
-              // Before making object, check if key and value exists
-              if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) { // if column header & cell value exist
-                document[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v
+          }
+
+          // columns = array of unique columns
+          var documents = []
+          var read = false
+          var keyRowIndex = 0
+
+          for (i = 1; i <= RowMax; i++) { //
+            if (read){
+              var document = {
+                upload_id,
+                datetime,
+                report_type: reportType,
+                report_month,
+                report_year,
+                user: Meteor.user().username
+              }
+              for (colLetter of columns) {
+                // Before making object, check if key and value exists
+                if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) { // if column header & cell value exist
+                  document[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v
+                }
+              }
+              if (Object.keys(document).length > 1) {
+                documents.push(document)
               }
             }
-
-            if (Object.keys(document).length > 1) {
-              documents.push(document)
+            if (sheet['A'+i] && sheet['A'+i].v == parameters[reportType].firstKey){
+              read = true
+              keyRowIndex = i
+              i++
             }
-
           }
-          if (sheet['A'+i] && sheet['A'+i].v == parameters[reportType].firstKey){
-            read = true
-            keyRowIndex = i
-            i++
-          }
-
-
+          Meteor.call('batchInsert', documents, parameters[reportType].dbName)
+          this.setState({
+            datetime,
+            lastUploadType: parameters[reportType].dbName
+          })
         }
-        console.log(documents)
-        Meteor.call('batchInsert', documents, parameters[reportType].dbName)
 
-        this.setState({
-          datetime,
-          lastUploadType: parameters[reportType].dbName
-        })
       }
     }
-
   }
 
-  removeEntry(report_type, datetime){
+  removeEntry(report_type, upload_id){
     if(confirm('Are you sure you want to delete this entry?')){
-      Meteor.call('removeEntry', report_type, datetime)
+      Meteor.call('removeEntry', report_type, upload_id)
     }
   }
 
@@ -174,8 +195,8 @@ export default class Upload extends TrackerReact(React.Component) {
       var tableData = []
 
       for(doc of data){
-        if(submissions.indexOf(doc.datetime) == -1){
-          submissions.push(doc.datetime)
+        if(submissions.indexOf(doc.upload_id) == -1){
+          submissions.push(doc.upload_id)
           tableData.push(doc)
         }
       }
@@ -206,7 +227,7 @@ export default class Upload extends TrackerReact(React.Component) {
        Header: 'Remove',
        Cell: (function({row}){
          return (
-           <div onClick={this.removeEntry.bind(this, row._original.report_type, row._original.datetime)} style={{
+           <div onClick={this.removeEntry.bind(this, row._original.report_type, row._original.upload_id)} style={{
              cursor: 'pointer'
            }}>x</div>
          )

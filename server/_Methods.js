@@ -13,8 +13,8 @@ Meteor.methods ({
   },
 
 
-  removeEntry(report_type, datetime){
-    DB[report_type].remove({datetime: datetime}, {}, {multi:true})
+  removeEntry(report_type, upload_id){
+    DB[report_type].remove({upload_id: upload_id}, {}, {multi:true})
   }
 
 })

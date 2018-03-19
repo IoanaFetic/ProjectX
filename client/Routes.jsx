@@ -1,32 +1,40 @@
 import React from 'react'
 import {mount} from 'react-mounter'
-import {Wrapper} from './layouts/Wrapper.jsx'
 
+// import each page's top level component
 import Splash from './splash/Splash.jsx'
 import Upload from './upload/Upload.jsx'
 import Price from './price/Price.jsx'
+import MainLayout from './layouts/MainLayout.jsx'
+import Shelf from './shelf/Shelf.jsx'
+
+const ReturnMainLayout = ({page, content}) => (
+    // return MainLayout component with arguments for specific page
+    <MainLayout page={page} content={content}/>
+)
 
 FlowRouter.route('/',{
   action(){
-    mount (Wrapper,{
+    mount (ReturnMainLayout,{
       page: 'splash',
       content: <Splash/>
     })
   }
 })
 
+// set route for URL extension /upload
 FlowRouter.route('/upload',{
-  action(){
-    mount (Wrapper, {
-      page: 'upload',
-      content: <Upload/>
+  action(){ // run this when /upload is requested
+    mount (ReturnMainLayout, { // mount result of ReturnMainLayout function to DOM
+      page: 'upload', // argument to identify page
+      content: <Upload/> // component to set as content of MainLayout component
     })
   }
 })
 
 FlowRouter.route('/price',{
   action(){
-    mount (Wrapper,{
+    mount (ReturnMainLayout,{
       page: 'price',
       content: <Price/>
     })
@@ -35,9 +43,9 @@ FlowRouter.route('/price',{
 
 FlowRouter.route('/shelf',{
   action(){
-    mount (Wrapper,{
+    mount (ReturnMainLayout,{
       page: 'shelf',
-      content: <div>Shelf Page</div>
+      content: <Shelf/>
     })
   }
 })

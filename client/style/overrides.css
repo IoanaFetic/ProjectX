@@ -1,0 +1,3 @@
+.rt-tbody::-webkit-scrollbar {
+  display: none !important;
+}

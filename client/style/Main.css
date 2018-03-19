@@ -3,7 +3,9 @@ html, body, #react-root {
   padding:0;
   height: 100%;
   width: 100%;
-  font-family: 'Roboto', sans-serif;
+  font-family: "foco","myriad-pro","Myriad Pro",sans-serif!important;
+  font-size: 14px;
+  color: #3c3c3c;
 }
 INPUT {
   border-color: DarkGreen !important;
@@ -13,6 +15,9 @@ textarea:focus, input:focus{
     outline: none !important;
 }
 a {
-  color: White;
+  color: #3c3c3c;
   text-decoration: none;
+}
+a:hover, a div:hover {
+  color: #00a850;
 }

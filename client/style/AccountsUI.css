@@ -1,7 +1,7 @@
 .login-button {
     margin-top: 10px !important;
     font-family: "Roboto", sans-serif !important;
-    background-color: forestgreen !important;
+    background-color: #00a850 !important;
     border: DarkGreen 1px solid !important;
 }
 .child100 > DIV {
@@ -10,7 +10,7 @@
 
 .accounts-dialog {
   color: DarkGreen;
-    background: linear-gradient(#e8f3e8 1px, #d2e7d2 1px);
+    background: linear-gradient(#e8f3e8 1px, #E0FDE0 1px);
     padding-top: 5px !important;
     border: DarkGreen 1px solid !important;
     margin-top: 0px !important;
@@ -24,4 +24,10 @@
 }
 .accounts-dialog LABEL {
     font-family: "Roboto", sans-serif !important;
+}
+.login-link-text {
+  text-decoration: none !important;
+}
+#login-buttons {
+  margin-right: 1em;
 }

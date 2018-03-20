@@ -90,6 +90,7 @@ export default class Upload extends TrackerReact(React.Component) {
       var sheet = excel.Sheets[sheetKey]
       if (sheet.A1 && sheet.A1.v == 'Report type') { // check if sheet contains validated data
         var reportType = sheet.B1.v.split(' ')[0] // determine Price/Shelf
+
         var report_month = moment(sheet.B2.w, 'M/D/YY').month() // get meta data
         var report_year = moment(sheet.B2.w, 'M/D/YY').year()
         // check if report for this month and year is already uploaded
@@ -137,6 +138,9 @@ export default class Upload extends TrackerReact(React.Component) {
               report_year,
               user: Meteor.user().username
             } // initiate document with meta data
+            if(reportType == 'Price'){
+              document.client_name = sheet.B3.v
+            }
             for (colLetter of columns) { // loop through cells of row
               // Before making object, check if key and value exists for cell
               if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) { // if column header & cell value exist

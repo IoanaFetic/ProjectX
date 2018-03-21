@@ -81,10 +81,10 @@ export default class MainLayout extends React.Component {
                 }}>
               </div>
 
-              <NavIcon name='Home' link='/'/>
-              <NavIcon name='Upload' link='upload'/>
-              <NavIcon name='Price' link='price'/>
-              <NavIcon name='Shelf' link='shelf'/>
+              <NavIcon name='Home' link='/' highlight={this.props.page=='splash'}/>
+              <NavIcon name='Upload' link='upload' highlight={this.props.page=='upload'}/>
+              <NavIcon name='Price' link='price' highlight={this.props.page=='price'}/>
+              <NavIcon name='Shelf' link='shelf' highlight={this.props.page=='shelf'}/>
             </div>
             <div style={{
                 margin: '1em',
@@ -129,11 +129,13 @@ class NavIcon extends React.Component{
         <div style={{
             margin: '1em',
             fontSize: '1.2em',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            color: this.props.highlight? color.green : ''
           }}>
           {this.props.name}
         </div>
       </a>
+
     )
   }
 }

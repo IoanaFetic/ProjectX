@@ -1,7 +1,7 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import Chart from '../components/Chart.jsx'
-import ChartPanel from '../components/ChartPanel.jsx'
+import ChartPanel from '../components/ChartPanel2.jsx'
 
 export default class Price extends TrackerReact(React.Component){
 	constructor(props) {
@@ -17,7 +17,6 @@ export default class Price extends TrackerReact(React.Component){
 
  render() {
 	 if (Session.get('priceSubscribed')){
-			
 
 		var style = {
 			cell: {
@@ -62,41 +61,21 @@ export default class Price extends TrackerReact(React.Component){
 						<div style={style.lowerContainer}>
 							<div style={style.column}>
 								<div style={style.cell}>
-									<ChartPanel content={
-											<div>
-												'Line Chart of Pepper evolution on Premium brands historically. Potentially choose between type of pepper (whole, grinded, white etc) and pepper average'
-											</div>
-										}/>
+
 								</div>
 								<div style={style.cell}>
-									<ChartPanel content={
-											<div>
-												'Line Chart of Herbs evolution on Premium brands historically. Potentially choose between type of herbs and herbs average'
-											</div>
-										}/>
+
 								</div>
 								<div style={style.cell}>
-									<ChartPanel content={
-											<div>
-												'Line Chart of grinder evolution on Premium brands historically. Potentially choose between type of grinder and grinder average'
-											</div>
-										}/>
+
 								</div>
 							</div>
 							<div style={style.column}>
 								<div style={style.cell}>
-									<ChartPanel content={
-											<div>
-												'Line Chart of Herbs evolution on Mainstream brands historically. Potentially choose between type of Herbs and Herbs average'
-											</div>
-										}/>
+
 								</div>
 								<div style={style.cell}>
-									<ChartPanel content={
-											<div>
-												'Line Chart of Grinder evolution on Mainstream brands historically. Potentially choose between type of Grinder (whole, grinded, white etc) and Grinder average'
-											</div>
-										}/>
+
 								</div>
 							</div>
 						</div>
@@ -109,3 +88,31 @@ export default class Price extends TrackerReact(React.Component){
  }
 }
 //<Chart data={data}/>
+
+/*
+<ChartPanel content={
+		<div>
+			'Line Chart of Pepper evolution on Premium brands historically. Potentially choose between type of pepper (whole, grinded, white etc) and pepper average'
+		</div>
+	}/>
+<ChartPanel content={
+		<div>
+			'Line Chart of Herbs evolution on Premium brands historically. Potentially choose between type of herbs and herbs average'
+		</div>
+	}/>
+<ChartPanel content={
+		<div>
+			'Line Chart of grinder evolution on Premium brands historically. Potentially choose between type of grinder and grinder average'
+		</div>
+	}/>
+<ChartPanel content={
+		<div>
+			'Line Chart of Herbs evolution on Mainstream brands historically. Potentially choose between type of Herbs and Herbs average'
+		</div>
+	}/>
+<ChartPanel content={
+		<div>
+			'Line Chart of Grinder evolution on Mainstream brands historically. Potentially choose between type of Grinder (whole, grinded, white etc) and Grinder average'
+		</div>
+	}/>
+	*/

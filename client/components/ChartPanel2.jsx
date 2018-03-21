@@ -1,6 +1,7 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import Chart from './Chart2.jsx'
+
 export default class ChartPanel extends TrackerReact(React.Component){
 
 
@@ -17,13 +18,7 @@ export default class ChartPanel extends TrackerReact(React.Component){
   processData(data, sortKey, valueKey){
 
     var dataObj = {}
-
-    var rows = [
-      ['Month']
-    ]
-    for(i=1; i < 13; i++){
-      rows[i] = [ref.months[i-1]]
-    };
+    var datasets = []
 
     for (doc of data){
       var sortField = doc[sortKey]
@@ -40,23 +35,33 @@ export default class ChartPanel extends TrackerReact(React.Component){
         dataObj[sortField].t[docMonth] += doc[valueKey]
       }
     }
-
-    var sortFields = Object.keys(dataObj)
-    for (entry of sortFields){
-      var idx = parseInt(rows[0].length)
-      rows[0][idx] = entry
+    var lines = Object.keys(dataObj)
+    var p = 0
+    for (line of lines){
+      var lineData = []
       var lastKnownAvg = 0
-      for(m=1; m<13; m++){
-        if(dataObj[entry].n[m] > 0){
-          lastKnownAvg = dataObj[entry].t[m] / dataObj[entry].n[m]
+      for(m=0; m<13; m++){
+        if(dataObj[line].n[m] > 0){
+          lastKnownAvg = dataObj[line].t[m] / dataObj[line].n[m]
         }
-        rows[m][idx] = lastKnownAvg
+        lineData[m] = lastKnownAvg
       }
+      p++
+      datasets.push({
+            data: lineData,
+            label: line,
+            fill: false,
+            borderColor: "#"+palette[p],
+            steppedLine: true
+      })
     }
+    var data = {
+      labels: ref.months,
+      datasets
+    }
+    console.log(data)
 
-    console.log(dataObj)
-    console.log(rows)
-    return rows
+    return data
   }
   render(){
     var data = this.processData(DB.Price.find({product: 'Pepper'}).fetch(), 'client_name', 'shelf_price')
@@ -72,6 +77,7 @@ export default class ChartPanel extends TrackerReact(React.Component){
           background: 'white',
           borderRadius: '0.3em',
           boxShadow: '0.2em 0.2em 0.2em rgba(0, 0, 0, 0.4)',
+          padding: "1em"
 
         }}>
           <Chart data={data} />

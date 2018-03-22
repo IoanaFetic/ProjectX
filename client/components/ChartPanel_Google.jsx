@@ -1,7 +1,6 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import Chart from './Chart2.jsx'
-
+import Chart from './Chart_Google.jsx'
 export default class ChartPanel extends TrackerReact(React.Component){
 
 
@@ -18,7 +17,13 @@ export default class ChartPanel extends TrackerReact(React.Component){
   processData(data, sortKey, valueKey){
 
     var dataObj = {}
-    var datasets = []
+
+    var rows = [
+      ['Month']
+    ]
+    for(i=1; i < 13; i++){
+      rows[i] = [ref.months[i-1]]
+    };
 
     for (doc of data){
       var sortField = doc[sortKey]
@@ -35,33 +40,23 @@ export default class ChartPanel extends TrackerReact(React.Component){
         dataObj[sortField].t[docMonth] += doc[valueKey]
       }
     }
-    var lines = Object.keys(dataObj)
-    var p = 0
-    for (line of lines){
-      var lineData = []
-      var lastKnownAvg = 0
-      for(m=0; m<13; m++){
-        if(dataObj[line].n[m] > 0){
-          lastKnownAvg = dataObj[line].t[m] / dataObj[line].n[m]
-        }
-        lineData[m] = lastKnownAvg
-      }
-      p++
-      datasets.push({
-            data: lineData,
-            label: line,
-            fill: false,
-            borderColor: "#"+palette[p],
-            steppedLine: true
-      })
-    }
-    var data = {
-      labels: ref.months,
-      datasets
-    }
-    console.log(data)
 
-    return data
+    var sortFields = Object.keys(dataObj)
+    for (entry of sortFields){
+      var idx = parseInt(rows[0].length)
+      rows[0][idx] = entry
+      var lastKnownAvg = 0
+      for(m=1; m<13; m++){
+        if(dataObj[entry].n[m] > 0){
+          lastKnownAvg = dataObj[entry].t[m] / dataObj[entry].n[m]
+        }
+        rows[m][idx] = lastKnownAvg
+      }
+    }
+
+    console.log(dataObj)
+    console.log(rows)
+    return rows
   }
   render(){
     var data = this.processData(DB.Price.find({product: 'Pepper'}).fetch(), 'client_name', 'shelf_price')
@@ -77,7 +72,6 @@ export default class ChartPanel extends TrackerReact(React.Component){
           background: 'white',
           borderRadius: '0.3em',
           boxShadow: '0.2em 0.2em 0.2em rgba(0, 0, 0, 0.4)',
-          padding: "1em"
 
         }}>
           <Chart data={data} />

@@ -1,7 +1,7 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import Chart from '../components/Chart.jsx'
-import ChartPanel from '../components/ChartPanel2.jsx'
+import ChartPanel from '../components/ChartPanel.jsx'
+import { PropagateLoader } from 'react-spinners';
 
 export default class Price extends TrackerReact(React.Component){
 	constructor(props) {
@@ -52,30 +52,91 @@ export default class Price extends TrackerReact(React.Component){
 						height: '100%',
 					}}>
 						<div style={style.upperContainer}>
-							<ChartPanel content={
-									<div>
-										'Line chart of the prices, over 12 months, each line showing Kamis and its competitors, should be fully customisable (e.g. which product to show, or average of category of products, which store etc). Potentially have a toggle button between Premium brands and Mainstream brands, and then a full set of settings.'
-									</div>
-								}/>
+							<ChartPanel
+								title='Main Price Chart'
+								sort='brand'
+								filter={{product: 'Pepper'}}
+								value='shelf_price'
+								showTotal={true}
+							/>
 						</div>
 						<div style={style.lowerContainer}>
 							<div style={style.column}>
 								<div style={style.cell}>
-
+									<ChartPanel
+										title='Premium Brands - Pepper Prices'
+										sort='brand'
+										filter={{
+											product: {$in: [
+												'Pepper',
+												'White Pepper'
+											]},
+											brand: {$in: [
+												'Kamis',
+												'Fuchs',
+												'Kotanyi'
+											]}
+										}}
+										value='shelf_price'/>
 								</div>
 								<div style={style.cell}>
-
+									<ChartPanel
+										title='Premium Brands - Grinders Prices'
+										sort='brand'
+										filter={{
+											package_type: 'Grinders',
+											brand: {$in: [
+												'Kamis',
+												'Fuchs',
+												'Kotanyi'
+											]}
+										}}
+										value='shelf_price'/>
 								</div>
 								<div style={style.cell}>
-
+									<ChartPanel
+										title='Premium Brands - Herbs Prices'
+										sort='brand'
+										filter={{
+											product: 'General',
+											brand: {$in: [
+												'Kamis',
+												'Fuchs',
+												'Kotanyi'
+											]}
+										}}
+										value='shelf_price'/>
 								</div>
 							</div>
 							<div style={style.column}>
 								<div style={style.cell}>
-
+									<ChartPanel
+										title='Mainstream Brands - Pepper Prices'
+										sort='brand'
+										filter={{
+											product: {$in: [
+												'Pepper',
+												'White Pepper'
+											]},
+											brand: {$in: [
+												'Galeo',
+												'Cosmin'
+											]}
+										}}
+										value='shelf_price'/>
 								</div>
 								<div style={style.cell}>
-
+									<ChartPanel
+										title='Mainstream Brands - Herbs Prices'
+										sort='brand'
+										filter={{
+											product: 'General',
+											brand: {$in: [
+												'Galeo',
+												'Cosmin'
+											]}
+										}}
+										value='shelf_price'/>
 								</div>
 							</div>
 						</div>
@@ -83,13 +144,19 @@ export default class Price extends TrackerReact(React.Component){
 			)
 	 }
 	 else{
-		 return(<div>loading wait</div>)
+		 return <PropagateLoader color="white"/>
 	 }
  }
 }
 //<Chart data={data}/>
 
 /*
+content={
+		<div>
+			'Line chart of the prices, over 12 months, each line showing Kamis and its competitors, should be fully customisable (e.g. which product to show, or average of category of products, which store etc). Potentially have a toggle button between Premium brands and Mainstream brands, and then a full set of settings.'
+		</div>
+	}
+
 <ChartPanel content={
 		<div>
 			'Line Chart of Pepper evolution on Premium brands historically. Potentially choose between type of pepper (whole, grinded, white etc) and pepper average'

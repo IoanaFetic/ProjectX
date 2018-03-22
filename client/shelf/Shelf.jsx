@@ -84,9 +84,19 @@ render() {
           <div style={style.lowerContainer}>
             <div style={style.lowerColumn}>
               <div style={style.cell}>
-                <ChartPanel content={
-                    'Lower Column 1 cell 1'
-                  }/>
+                <ChartPanel
+                  title='Premium Brands - Main Shelf Chart'
+                  sort='brand'
+                  filter={{
+                    product: 'General',
+                    brand: {$in: [
+                      'Kamis',
+                      'Fuchs',
+                      'Kotanyi'
+                    ]}
+                  }}
+                value='shelf_price'
+                showTotal={true}/>
               </div>
               <div style={style.cell}>
                 <ChartPanel content={

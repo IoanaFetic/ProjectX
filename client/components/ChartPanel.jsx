@@ -1,81 +1,95 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import Chart from './Chart2.jsx'
-export default class ChartPanel extends TrackerReact(React.Component){
+import Chart from './Chart.jsx'
 
-
-  getAvg(){
-    for(i=0; i < 12; i++){
-      months[i] = {
-        sum: 0,
-        n: 0
-      }
-      rows[i+1] = [i+1]
-    };
+export default class ChartPanel extends TrackerReact(React.Component) {
+  constructor(props){
+    super(props)
+    this.state = {
+      showTotal: props.showTotal || false,
+    }
   }
 
-  processData(data, sortKey, valueKey){
-
-    var dataObj = {}
-
-    var rows = [
-      ['Month']
-    ]
-    for(i=1; i < 13; i++){
-      rows[i] = [ref.months[i-1]]
-    };
-
-    for (doc of data){
-      var sortField = doc[sortKey]
-      var valueField = doc[valueKey]
-      if (sortField && !isNaN(parseFloat(valueField))){
-        if(!dataObj[sortField]){
-          dataObj[sortField] = {
-            n: new Array(12).fill(0),
-            t: new Array(12).fill(0)
+  processData(data, sortKey, valueKey) {
+    var dataObj = {} // temporary object to collate documents from DB
+    var datasets = [] // to be entered into Chart.js object
+    for (doc of data) { // loop through filtered documents in DB
+      var sortEntry = doc[sortKey] // the value this document will be sorted by. ie Kamis
+      var valueEntry = doc[valueKey] // ie. shelf price
+      if (sortEntry && !isNaN(parseFloat(valueEntry))) { // check value is numerical
+        if (!dataObj[sortEntry]) { // if no document with the sort value has been found so far (ie Kamis)
+          dataObj[sortEntry] = { // initiate field in dataObj with group as the key
+            n: new Array(12).fill(0), // array of 0s (number of documents found)
+            t: new Array(12).fill(0) // array of 0s (total of values)
           }
         }
-        var docMonth = doc.report_month-1
-        dataObj[sortField].n[docMonth] ++
-        dataObj[sortField].t[docMonth] += doc[valueKey]
+        // execute code below for all valid documents
+        var docMonth = doc.report_month // month of document
+        dataObj[sortEntry].n[docMonth]++ // add to count for this sorted group (ie. Kamis)
+        dataObj[sortEntry].t[docMonth] += doc[valueKey] // add to value sum for this group
       }
     }
-
-    var sortFields = Object.keys(dataObj)
-    for (entry of sortFields){
-      var idx = parseInt(rows[0].length)
-      rows[0][idx] = entry
-      var lastKnownAvg = 0
-      for(m=1; m<13; m++){
-        if(dataObj[entry].n[m] > 0){
-          lastKnownAvg = dataObj[entry].t[m] / dataObj[entry].n[m]
+    // convert dataObj into Chart.js friendly object
+    var lines = Object.keys(dataObj) // sorted group names (ie Kamis, etc.)
+    var p = 0 // to increment colours
+    for (line of lines) { // loop through groups, to create line for each
+      var lineData = [] // data array for this line
+      var lastKnownValue = 0 // to carry over last known value (if months are missing)
+      for (m = 0; m < 12; m++) { // loop through month indexes
+        if (dataObj[line].n[m] > 0) { // if any documents were found for this month
+          lastKnownValue = this.state.showTotal
+            ? dataObj[line].t[m]
+            : dataObj[line].t[m] / dataObj[line].n[m] // calculate average value
         }
-        rows[m][idx] = lastKnownAvg
+        lineData[m] = lastKnownValue // assign data point the last known avg value
       }
+      p++ // increment to next colour
+      datasets.push({ // add this line to the datasets array
+        data: lineData,
+        label: line,
+        fill: false,
+        borderColor: "#" + palette[p], // line colour
+        //  steppedLine: true  step between values
+      })
     }
-
-    console.log(dataObj)
-    console.log(rows)
-    return rows
+    console.log(datasets)
+    return { // return Chart.js friendly object
+      labels: ref.months,
+      datasets
+    }
   }
-  render(){
-    var data = this.processData(DB.Price.find({product: 'Pepper'}).fetch(), 'client_name', 'shelf_price')
+
+  toggleTotal(){
+    this.setState({
+      showTotal: !this.state.showTotal
+    })
+  }
+  render() {
+    // retrieve and sort data
+    var data = this.processData(DB.Price.find(this.props.filter).fetch(), this.props.sort, this.props.value)
 
     var margin = '0.5em'
-    return (
-      <div style={{
-          position: 'absolute',
-          left: margin,
-          right: margin,
-          top: margin,
-          bottom: margin,
-          background: 'white',
-          borderRadius: '0.3em',
-          boxShadow: '0.2em 0.2em 0.2em rgba(0, 0, 0, 0.4)',
+    return (<div style={{
+        position: 'absolute',
+        left: margin,
+        right: margin,
+        top: margin,
+        bottom: margin,
+        background: 'white',
+        borderRadius: '0.3em',
+        boxShadow: '0.2em 0.2em 0.2em rgba(0, 0, 0, 0.4)',
+        padding: "0em 1em"
 
-        }}>
-          <Chart data={data} />
+      }}>
+      <Chart data={data} title={this.props.title}/>
+      <div style={{
+          position: "absolute",
+          top: "1em",
+          right: "2em",
+          cursor: "pointer"
+        }} onClick={this.toggleTotal.bind(this)}>
+        {this.state.showTotal? "Show Averages": "Show Totals"}
       </div>
-    )
+    </div>)
   }
 }

@@ -47,6 +47,7 @@ logging@1.1.19
 meteor@1.8.2
 meteor-base@1.2.0
 meteortoys:toykit@4.0.1
+mikowals:batch-insert@1.1.14
 minifier-css@1.2.16
 minifier-js@2.2.2
 minimongo@1.4.3

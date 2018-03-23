@@ -59,7 +59,7 @@ export default class MainLayout extends React.Component {
             display: 'flex',
             flexDirection: 'row',
             backgroundColor: 'white',
-            height: '4em',
+            height: '3em',
             alignItems: 'center',
             flexShrink: 0,
             borderBottom: color.border + ' 1px solid'

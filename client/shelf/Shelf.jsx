@@ -2,6 +2,7 @@ import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import Chart from '../components/Chart.jsx'
 import ChartPanel from '../components/ChartPanel.jsx'
+import { PropagateLoader } from 'react-spinners';
 
 export default class Shelf extends TrackerReact(React.Component){
   constructor(props){
@@ -139,7 +140,7 @@ render() {
 
   }
   else{
-    return(<div>loading wait</div>)
+    return <PropagateLoader color="white"/>
   }
 }
 }

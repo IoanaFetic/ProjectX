@@ -7,6 +7,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
     super(props)
     this.state = {
       showTotal: props.showTotal || false,
+      showOptions: false
     }
   }
 
@@ -64,6 +65,11 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       showTotal: !this.state.showTotal
     })
   }
+  toggleOptions(){
+    this.setState({
+      showOptions: !this.state.showOptions
+    })
+  }
   render() {
     // retrieve and sort data
     var data = this.processData(DB.Price.find(this.props.filter).fetch(), this.props.sort, this.props.value)
@@ -90,6 +96,34 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         }} onClick={this.toggleTotal.bind(this)}>
         {this.state.showTotal? "Show Averages": "Show Totals"}
       </div>
+
+      <div style={{
+          position: "absolute",
+          top: "1em",
+          left: "2em",
+          cursor: "pointer",
+          fontWeight: "bold",
+          zIndex: 3
+        }} onClick={this.toggleOptions.bind(this)}>
+      {this.state.showOptions? "Save": "Options"}
+      </div>
+      {this.state.showOptions &&
+        <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: 0.9,
+            backgroundColor: "white",
+            zIndex: 2,
+            padding: "5em",
+            borderRadius: '0.3em'
+          }}>
+        Filter: <br/><br/>
+        Sort:
+        </div>
+      }
     </div>)
   }
 }

@@ -9,9 +9,9 @@ export default class Splash extends React.Component {
           //border: '1px red solid',
           display: 'flex',
         }}>
-        <IconColumn image='upload' link='upload' title='Upload' subtitle='Upload reports for current or past months'/>
-        <IconColumn image='price' link='price'  title='Price' subtitle='View metrics dashboard from the Price reports'/>
-        <IconColumn image='shelf' link='shelf' title='Shelf' subtitle='View metrics dashboard from the Shelf reports' />
+        <IconColumn image='upload' link='upload' title='Upload Reports' subtitle='Upload reports for current or past months'/>
+        <IconColumn image='price' link='price'  title='Product Prices' subtitle='View metrics dashboard from the Price reports'/>
+        <IconColumn image='shelf' link='shelf' title='Shelf Statistics' subtitle='View metrics dashboard from the Shelf reports' />
       </div>
     )
   }

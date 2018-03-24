@@ -26,4 +26,6 @@ Meteor.methods ({
     DB[report_type].remove(query, {multi:true})
   }
 
+
+
 })

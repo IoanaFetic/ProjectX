@@ -11,12 +11,13 @@ export default class ChartPanel extends TrackerReact(React.Component) {
     }
   }
 
-  processData(data, sortKey, valueKey) {
+  processData(data, sortKey) {
+    console.log(data)
     var dataObj = {} // temporary object to collate documents from DB
     var datasets = [] // to be entered into Chart.js object
     for (doc of data) { // loop through filtered documents in DB
       var sortEntry = doc[sortKey] // the value this document will be sorted by. ie Kamis
-      var valueEntry = doc[valueKey] // ie. shelf price
+      var valueEntry = doc['value'] // ie. shelf price
       if (sortEntry && !isNaN(parseFloat(valueEntry))) { // check value is numerical
         if (!dataObj[sortEntry]) { // if no document with the sort value has been found so far (ie Kamis)
           dataObj[sortEntry] = { // initiate field in dataObj with group as the key
@@ -27,7 +28,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         // execute code below for all valid documents
         var docMonth = doc.report_month // month of document
         dataObj[sortEntry].n[docMonth]++ // add to count for this sorted group (ie. Kamis)
-        dataObj[sortEntry].t[docMonth] += doc[valueKey] // add to value sum for this group
+        dataObj[sortEntry].t[docMonth] += doc['value'] // add to value sum for this group
       }
     }
     // convert dataObj into Chart.js friendly object
@@ -72,7 +73,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
   }
   render() {
     // retrieve and sort data
-    var data = this.processData(DB.Price.find(this.props.filter).fetch(), this.props.sort, this.props.value)
+    var data = this.props.dbName? this.processData(DB[this.props.dbName].find(this.props.filter).fetch(), this.props.sort): {}
 
     var margin = '0.5em'
     return (<div style={{

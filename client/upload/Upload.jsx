@@ -29,7 +29,7 @@ export default class Upload extends TrackerReact(React.Component) {
       priceSubscription: Meteor.subscribe('price',function(){
         Session.set('priceSubscribed', true)
       }),
-      shelfSubscription: Meteor.subscribe('price',function(){
+      shelfSubscription: Meteor.subscribe('shelf',function(){
         Session.set('shelfSubscribed', true)
       }),
       droppedFiles: [],
@@ -83,7 +83,6 @@ export default class Upload extends TrackerReact(React.Component) {
     var datetime = moment().format().toString()
     var upload_id = uniqueID()
 
-    console.log('processing data')
     // key info to identify each Excel type
     var parameters = {
       Price: {
@@ -154,7 +153,7 @@ export default class Upload extends TrackerReact(React.Component) {
               user: Meteor.user().username
             } // initiate document with meta data
             if (reportType == 'Price') {
-              baseDocument.client_name = sheet.B3.v
+              baseDocument.client_name = sheet.B3.v // exception for price. Client name is in the top left cells
             }
             var valueColumns = []
             for (colLetter of columns) { // loop through cells of row
@@ -170,17 +169,24 @@ export default class Upload extends TrackerReact(React.Component) {
             }
 
             for (colLetter of valueColumns) { // loop through cells of row
-              var document = Object.assign({}, baseDocument)
-              document.value_type = parameters[reportType].valueType
-              document.value = sheet[colLetter + i].v
-              documents.push(document) // add object to array of documents
+              if(sheet[colLetter + i].v > 0){
+                var document = Object.assign({}, baseDocument)
+                var value_type = ""
+                if(reportType == "Shelf"){
+                  value_type = sheet[colLetter + keyRowIndex].v.split("_")[1]
+                  document.brand = sheet[colLetter + keyRowIndex].v.split("_")[2]
+                }
+                if(reportType == "Price") {
+                  value_type = parameters[reportType].valueType
+                }
+                document.value_type = value_type
+                document.value = sheet[colLetter + i].v
+                documents.push(document) // add object to array of documents
+              }
             }
 
-
-
-
           }
-          if (sheet['A' + i] && sheet['A' + i].v == parameters[reportType].firstKey) {
+          if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[reportType].firstKey) {
             // found where the data starts, begin reading on next iteration
             read = true
             keyRowIndex = i // the row where the DB key values are found

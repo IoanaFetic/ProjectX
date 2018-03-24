@@ -54,9 +54,9 @@ export default class Price extends TrackerReact(React.Component){
 						<div style={style.upperContainer}>
 							<ChartPanel
 								title='Main Price Chart'
+								dbName='Price'
 								sort='brand'
 								filter={{product: 'Pepper'}}
-								value='shelf_price'
 								showTotal={true}
 							/>
 						</div>
@@ -65,6 +65,7 @@ export default class Price extends TrackerReact(React.Component){
 								<div style={style.cell}>
 									<ChartPanel
 										title='Premium Brands - Pepper Prices'
+										dbName='Price'
 										sort='brand'
 										filter={{
 											product: {$in: [
@@ -76,12 +77,12 @@ export default class Price extends TrackerReact(React.Component){
 												'Fuchs',
 												'Kotanyi'
 											]}
-										}}
-										value='shelf_price'/>
+										}}/>
 								</div>
 								<div style={style.cell}>
 									<ChartPanel
 										title='Premium Brands - Grinders Prices'
+										dbName='Price'
 										sort='brand'
 										filter={{
 											package_type: 'Grinders',
@@ -90,12 +91,12 @@ export default class Price extends TrackerReact(React.Component){
 												'Fuchs',
 												'Kotanyi'
 											]}
-										}}
-										value='shelf_price'/>
+										}}/>
 								</div>
 								<div style={style.cell}>
 									<ChartPanel
 										title='Premium Brands - Herbs Prices'
+										dbName='Price'
 										sort='brand'
 										filter={{
 											product: 'General',
@@ -104,14 +105,14 @@ export default class Price extends TrackerReact(React.Component){
 												'Fuchs',
 												'Kotanyi'
 											]}
-										}}
-										value='shelf_price'/>
+										}}/>
 								</div>
 							</div>
 							<div style={style.column}>
 								<div style={style.cell}>
 									<ChartPanel
 										title='Mainstream Brands - Pepper Prices'
+										dbName='Price'
 										sort='brand'
 										filter={{
 											product: {$in: [
@@ -122,12 +123,12 @@ export default class Price extends TrackerReact(React.Component){
 												'Galeo',
 												'Cosmin'
 											]}
-										}}
-										value='shelf_price'/>
+										}}/>
 								</div>
 								<div style={style.cell}>
 									<ChartPanel
 										title='Mainstream Brands - Herbs Prices'
+										dbName='Price'
 										sort='brand'
 										filter={{
 											product: 'General',
@@ -135,8 +136,7 @@ export default class Price extends TrackerReact(React.Component){
 												'Galeo',
 												'Cosmin'
 											]}
-										}}
-										value='shelf_price'/>
+										}}/>
 								</div>
 							</div>
 						</div>

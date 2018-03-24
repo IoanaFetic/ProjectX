@@ -69,16 +69,15 @@ render() {
               }}>
               <ChartPanel
                 title='Premium Brands - Main Shelf Chart'
+                dbName='Shelf'
                 sort='brand'
                 filter={{
-                  product: 'General',
                   brand: {$in: [
                     'Kamis',
                     'Fuchs',
                     'Kotanyi'
                   ]}
                 }}
-              value='shelf_price'
               showTotal={true}/>
             </div>
             <div style={{ //upperColumn

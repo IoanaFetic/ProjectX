@@ -14,7 +14,9 @@ export default class Price extends TrackerReact(React.Component){
 		})
 	}
 }
-
+componentWillUnmount(){
+	this.state.priceSubscription.stop()
+}
  render() {
 	 if (Session.get('priceSubscribed')){
 

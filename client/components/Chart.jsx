@@ -18,25 +18,26 @@ export default class Chart extends React.Component{
 			 elements: {
         line: {
             tension: 0
-        }
-    },
+        		}
+    		},
 			 responsive: true,
     	 maintainAspectRatio: false,
 			 bezierCurve: false,
 			 title: {
 	      display: true,
+				fontSize: 14,
 	      text: this.props.title,
-
-	    }
-			,
-			legend: {
-				labels: {
-					boxWidth: 1,
-					padding: 20
-				//	usePointStyle: true
+	    	}
+				,
+				legend: {
+					labels: {
+						boxWidth: 1,
+						padding: 20
+					//	usePointStyle: true
+				},
+				position: 'right'
 				}
 			}
-		}
 	}/>
 	)
  }

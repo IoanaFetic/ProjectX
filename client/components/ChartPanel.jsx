@@ -90,21 +90,24 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       <Chart data={data} title={this.props.title}/>
       <div style={{
           position: "absolute",
-          top: "1em",
-          right: "2em",
+          color: color.green,
+          top: "0.5em",
+          right: "1em",
           cursor: "pointer"
         }} onClick={this.toggleTotal.bind(this)}>
         {this.state.showTotal? "Show Averages": "Show Totals"}
       </div>
 
       <div style={{
-          position: "absolute",
-          top: "1em",
-          left: "2em",
-          cursor: "pointer",
-          fontWeight: "bold",
-          zIndex: 3
-        }} onClick={this.toggleOptions.bind(this)}>
+            position: "absolute",
+            top: "0.5em",
+            left: "1em",
+            cursor: "pointer",
+            fontWeight: "bold",
+            color: color.green,
+            zIndex: 3
+            }}
+          onClick={this.toggleOptions.bind(this)}>
       {this.state.showOptions? "Save": "Options"}
       </div>
       {this.state.showOptions &&

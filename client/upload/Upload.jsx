@@ -2,9 +2,12 @@ import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import DropzoneComponent from 'react-dropzone-component'
 import XLSX from 'xlsx'
+import { ClipLoader, PropagateLoader } from 'react-spinners';
 import moment from 'moment'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
+
+import Table from './Table.jsx'
 
 function uniqueID () {
   // based on open source example on StackOverflow
@@ -28,18 +31,16 @@ export default class Upload extends TrackerReact(React.Component) {
       }),
       shelfSubscription: Meteor.subscribe('price',function(){
         Session.set('shelfSubscribed', true)
-      })
+      }),
+      droppedFiles: [],
+      uploading: false
     }
-
-    this.months = ref.months
   }
 
-  fileDrop(file) {
-    console.log("processing excel")
+  fileRead(file) {
 
     // initiate file reader object
     var reader = new FileReader();
-
     // add "loadend" event listener function, to process once loading finished
     reader.addEventListener("loadend", function(event) {
       // once file is finished uploading, begin conversion
@@ -60,14 +61,24 @@ export default class Upload extends TrackerReact(React.Component) {
         cellStyles: false
       });
       // run "processData" with this object as an argument
-      this.processData(excel)
+      this.processData(excel, file)
     }.bind(this));
 
     // read the raw file as an array buffer
     reader.readAsArrayBuffer(file);
   }
 
-  processData(excel) {
+  fileUpload(){
+    if(this.dz.files.length > 0){
+      this.setState({uploading: true})
+    }
+    for(f in this.dz.files){
+      file = this.dz.files[f]
+      this.fileRead(file)
+    }
+  }
+  processData(excel, file) {
+    // f = index of file in dropzone component
     // give this uploaded file a unique datetime and ID
     var datetime = moment().format().toString()
     var upload_id = uniqueID()
@@ -75,39 +86,44 @@ export default class Upload extends TrackerReact(React.Component) {
     console.log('processing data')
     // key info to identify each Excel type
     var parameters = {
-      Price:{
+      Price: {
         firstKey: 'brand',
-        dbName: 'Price'
+        dbName: 'Price',
+        valueType: 'price'
       },
-      Shelf:{
+      Shelf: {
         firstKey: 'code',
-        dbName: 'Shelf'
+        dbName: 'Shelf',
+        valueType: 'faces'
       }
     }
-    console.log(excel)
+
+    var documents = [] // initiate array of documents to insert to DB
+
+    var reportType = false
+    var dbChecked = false
     for (sheetKey of Object.keys(excel.Sheets)) {
       // iterate through sheets of excel
       var sheet = excel.Sheets[sheetKey]
-      if (sheet.A1 && sheet.A1.v == 'Report type') { // check if sheet contains validated data
+
+      if (sheet.A1 && sheet.A1.v == 'Report type' && dbChecked != 'abort') { // check if sheet contains validated data
         var reportType = sheet.B1.v.split(' ')[0] // determine Price/Shelf
 
         var report_month = moment(sheet.B2.w, 'M/D/YY').month() // get meta data
         var report_year = moment(sheet.B2.w, 'M/D/YY').year()
         // check if report for this month and year is already uploaded
-        var matchingDocument = DB[reportType].findOne({
-          report_month,
-          report_year
-        })
-        if (matchingDocument){
-          if(confirm("Entries for this month already exist. Do you want to replace them?")){
+        var matchingDocument = DB[reportType].findOne({report_month, report_year})
+        if (matchingDocument && !dbChecked) {
+          if (confirm("Entries for " + ref.months[report_month] + " " + report_year + " already exist. Do you want to replace them?")) {
             // remove existing entries for this month and year
-              Meteor.call('removeEntry', reportType, matchingDocument.upload_id)
-          }
-          else {
-            alert("Upload aborted")
+            Meteor.call('removeMulti', parameters[reportType].dbName, {report_month, report_year})
+
+            dbChecked = true
+          } else {
+            dbChecked = 'abort'
+            this.dz.removeFile(file)
             return false
           }
-
         }
 
         var RE = new RegExp(/[A-Z]+[0-9]+:([A-Z]+)([0-9]+)/) // regular expression to identify meta data
@@ -124,13 +140,12 @@ export default class Upload extends TrackerReact(React.Component) {
           }
         }
 
-        var documents = [] // initiate array of documents to insert to DB
         var read = false // don't start reading initially (skip title rows etc.)
         var keyRowIndex = 0
 
         for (i = 1; i <= RowMax; i++) { // loop down through rows with data
-          if (read){
-            var document = {
+          if (read) {
+            var baseDocument = {
               upload_id,
               datetime,
               report_type: reportType,
@@ -138,108 +153,60 @@ export default class Upload extends TrackerReact(React.Component) {
               report_year,
               user: Meteor.user().username
             } // initiate document with meta data
-            if(reportType == 'Price'){
-              document.client_name = sheet.B3.v
+            if (reportType == 'Price') {
+              baseDocument.client_name = sheet.B3.v
             }
+            var valueColumns = []
             for (colLetter of columns) { // loop through cells of row
-              // Before making object, check if key and value exists for cell
+              // Check if key and value exists for cell
               if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) { // if column header & cell value exist
-                document[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v // add to the document object
+                if(sheet[colLetter + keyRowIndex].v.match(parameters[reportType].valueType)){
+                  valueColumns.push(colLetter)
+                }
+                else {
+                  baseDocument[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v // add to the document object
+                }
               }
             }
-            if (Object.keys(document).length > 6) { // if data was found
+
+            for (colLetter of valueColumns) { // loop through cells of row
+              var document = Object.assign({}, baseDocument)
+              document.value_type = parameters[reportType].valueType
+              document.value = sheet[colLetter + i].v
               documents.push(document) // add object to array of documents
             }
+
+
+
+
           }
-          if (sheet['A'+i] && sheet['A'+i].v == parameters[reportType].firstKey){
+          if (sheet['A' + i] && sheet['A' + i].v == parameters[reportType].firstKey) {
             // found where the data starts, begin reading on next iteration
             read = true
             keyRowIndex = i // the row where the DB key values are found
             i++ // skip over visible headings in Excel
           }
         }
-        // insert all of the completed documents to the DB (server method)
-        Meteor.call('batchInsert', documents, parameters[reportType].dbName)
-        this.setState({
-          // change the component state, to display last uploaded file confirmation and date
-          datetime,
-          lastUploadType: parameters[reportType].dbName
-        })
-
-
       }
+
+    }
+    // insert all of the completed documents to the DB (server method)
+    if (reportType && parameters[reportType]) {
+      Meteor.call('batchInsert', documents, parameters[reportType].dbName, function(f) {
+        // callback after successful insert
+        this.dz.removeFile(f)
+      }.bind(this, file))
+      this.setState({
+        // change the component state, to display last uploaded file confirmation and date
+        datetime,
+        lastUploadType: parameters[reportType].dbName
+      })
     }
   }
 
-  removeEntry(report_type, upload_id){
-    if(confirm('Are you sure you want to delete this entry?')){
-      // remove all documents with the upload ID
-      Meteor.call('removeEntry', report_type, upload_id)
-    }
-  }
 
   render() {
     if(Session.get('priceSubscribed') && Session.get('shelfSubscribed')){
-      var data = []
-      data = data.concat(DB.Price.find().fetch()) // add price data
-      data = data.concat(DB.Shelf.find().fetch()) // add shelf data
-
-      var submissions = [] // to keep track of unique submissions
-      var tableData = []
-
-      // create an array of unique uploads from all documents
-      for(doc of data){
-        if(submissions.indexOf(doc.upload_id) == -1){
-          submissions.push(doc.upload_id)
-          // push the first document found for each upload to the table data
-          tableData.push(doc)
-        }
-      }
-
-
-      // define table column structure and data
-     const columns = [{
-       Header: 'Username',
-       accessor: 'user',
-       style: {textAlign: 'center'}
-     }, {
-       Header: 'Date Submitted',
-       Cell: (function({row}){
-         // convert time into readable format
-         return moment(row._original.datetime).format('DD/MM/YYYY HH:mm:ss')
-       }),
-       style: {textAlign: 'center'}
-     }, {
-       Header: 'Report Type',
-       accessor: 'report_type',
-       style: {textAlign: 'center'}
-     }, {
-       Header: 'Month of Report',
-       Cell: (function({row}){
-         // convert numerical month to word
-         return this.months[row._original.report_month]
-       }.bind(this)),
-       style: {textAlign: 'center'}
-     }, {
-       Header: 'Remove',
-       Cell: (function({row}){
-         // button to remove a submission. calls component method.
-         return (
-           <div onClick={this.removeEntry.bind(this, row._original.report_type, row._original.upload_id)} style={{
-             cursor: 'pointer'
-           }}>x</div>
-         )
-       }.bind(this)),
-       width: 100,
-       style: {textAlign: 'center'}
-     }]
-
-      var uploadMessage = ''
-      if (this.state.lastUploadType){
-        var recentData = DB[this.state.lastUploadType].find({datetime: this.state.datetime}).fetch()
-        uploadMessage += this.state.lastUploadType + ' report submitted. '
-        uploadMessage += recentData.length + ' rows successfully uploaded at ' + moment(this.state.datetime).format('HH:mm:ss')
-      }
 
       // return page content
       return (
@@ -267,41 +234,64 @@ export default class Upload extends TrackerReact(React.Component) {
               iconFiletypes: [
                 '.jpg', '.png', '.gif'
               ],
+
               showFiletypeIcon: true,
               postUrl: '/uploadHandler'
             }} eventHandlers={{
-              addedfile: (file) => this.fileDrop(file)
+              init: (dz) => this.dz = dz,
+              removedfile: (file) => {
+                if(file){
+                  var droppedFiles = this.state.droppedFiles.slice(0)
+                  droppedFiles.splice(droppedFiles.indexOf(file.upload.uuid), 1)
+                  this.setState({
+                    droppedFiles,
+                    uploading: droppedFiles.length < 1? false: this.state.uploading
+                  })
+                }
+              },
+              addedfile: (file) => {
+                  var droppedFiles = this.state.droppedFiles.slice(0)
+                  droppedFiles.push(file.upload.uuid)
+                  this.setState({droppedFiles})
+              },
             }} djsConfig={{
-              autoProcessQueue: false
+              autoProcessQueue: false,
+              addRemoveLinks: true,
+              dictDefaultMessage: "Drop valid Price or Shelf report files here",
             }}/>
         </div>
-
         <div style={{
-            color: 'DarkGreen',
+          backgroundColor: color.content,
+          borderRadius: '.3em',
+          padding: '.5em 1.5em',
+          fontWeight: 'bold',
+          marginTop: '1em',
+          cursor: this.state.droppedFiles.length < 1 || this.state.uploading? '': 'pointer',
+          opacity: this.state.droppedFiles.length < 1 || this.state.uploading? 0.5: 1,
+          boxShadow: '0.1em 0.1em 0.2em rgba(0, 0, 0, 0.4)',
+        }} onClick={this.fileUpload.bind(this)}>
+          Upload
+        </div>
+          <div style={{
+            height: '5em',
+            width: '20em',
             display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
-            marginTop: '3em'
+            paddingRight: '10px'
           }}>
-          {uploadMessage}
+          {this.state.uploading &&
+            <ClipLoader color="white"/>
+          }
         </div>
 
-        <ReactTable
-        pageSize={10}
-         data={tableData}
-         columns={columns}
-         style={{
-           margin: '2em 0',
-           width: '90%',
-           background: 'white'
-         }}
-       />
+        <Table />
 
       </div>
     )
     }
     else {
-      // loading DB entries
-      return <div></div>
+      return <PropagateLoader color="white"/>
     }
   }
 }

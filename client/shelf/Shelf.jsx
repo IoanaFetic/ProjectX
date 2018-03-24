@@ -64,12 +64,22 @@ render() {
             <div style={{ //upperColumn
                 display: 'flex',
                 flexDirection: 'column',
-                flexGrow: 1.5,
+                flexGrow: 2,
                 position: 'relative'
               }}>
-              <ChartPanel content={
-                  'Upper Column 1'
-                }/>
+              <ChartPanel
+                title='Premium Brands - Main Shelf Chart'
+                sort='brand'
+                filter={{
+                  product: 'General',
+                  brand: {$in: [
+                    'Kamis',
+                    'Fuchs',
+                    'Kotanyi'
+                  ]}
+                }}
+              value='shelf_price'
+              showTotal={true}/>
             </div>
             <div style={{ //upperColumn
                 display: 'flex',
@@ -85,19 +95,9 @@ render() {
           <div style={style.lowerContainer}>
             <div style={style.lowerColumn}>
               <div style={style.cell}>
-                <ChartPanel
-                  title='Premium Brands - Main Shelf Chart'
-                  sort='brand'
-                  filter={{
-                    product: 'General',
-                    brand: {$in: [
-                      'Kamis',
-                      'Fuchs',
-                      'Kotanyi'
-                    ]}
-                  }}
-                value='shelf_price'
-                showTotal={true}/>
+                <ChartPanel content={
+                    ''
+                  }/>
               </div>
               <div style={style.cell}>
                 <ChartPanel content={

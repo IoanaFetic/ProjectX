@@ -59,6 +59,7 @@ componentWillUnmount(){
                 dbName='Price'
                 id='price_main'
 								chart='line'
+								edit={true}
                 settings={{
                   filter: {
                     product: 'Pepper'

@@ -9,7 +9,8 @@ import AccountsUI from './AccountsUI.jsx'
 // subscribing to the server database determines which documents to send to the client
 DB = {
   Price: new Mongo.Collection ('price'),
-  Shelf: new Mongo.Collection ('shelf')
+  Shelf: new Mongo.Collection ('shelf'),
+  Shelf: new Mongo.Collection ('global')
 }
 
 // export default - to be assigned by default when imported

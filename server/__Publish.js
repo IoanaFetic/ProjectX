@@ -1,6 +1,7 @@
 DB = {
   Price: new Mongo.Collection ('price'),
-  Shelf: new Mongo.Collection ('shelf')
+  Shelf: new Mongo.Collection ('shelf'),
+  Global: new Mongo.Collection ('global')
 }
 
 Meteor.publish('price',function(){
@@ -22,4 +23,12 @@ Meteor.startup(function () {
       DB[db]._ensureIndex({ [i]: 1});
     }
   }
+
+  DB.Global.insert({
+    id: "priceKeys",
+    value: []
+  }, {upsert: true}, function(){
+    
+  })
+  // create index of unique IDs in DB
 });

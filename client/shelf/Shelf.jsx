@@ -92,7 +92,7 @@ render() {
                 flexGrow: 1,
                 position: 'relative'
               }}>
-              <ChartPanel edit={true} chart="bar" dbName='Shelf' id='test' settings={{
+              <ChartPanel title="Bar Demo" edit={true} chart="bar" dbName='Shelf' id='test' settings={{
                   filter: {},
                   sort: ''
               }}/>
@@ -101,9 +101,17 @@ render() {
           <div style={style.lowerContainer}>
             <div style={style.lowerColumn}>
               <div style={style.cell}>
-                <ChartPanel  content={
-                    ''
-                  }/>
+                <ChartPanel
+                  title="Pie Demo"
+                  chart="pie"
+                  edit={true}
+                  dbName='Shelf'
+                  id='bar'
+                  settings={{
+                    filter: {},
+                    sort: ''
+                  }}
+                />
               </div>
               <div style={style.cell}>
                 <ChartPanel content={

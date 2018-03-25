@@ -93,7 +93,6 @@ export default class ChartSettings extends React.Component {
               cursor: "pointer",
               fontWeight: "bold",
               color: color.green,
-              zIndex: 3,
               display: "flex"
               }}
             >
@@ -108,6 +107,16 @@ export default class ChartSettings extends React.Component {
                 Reset
               </div>
             }
+          </div>
+
+          <div style={{
+                position: "absolute",
+                top: "0.5em",
+                right: "1em",
+                color: color.green
+                }}
+              >
+              {this.props.dbName} Database
             </div>
 
         <div style={{

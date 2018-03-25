@@ -1,7 +1,8 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import Chart from './Chart.jsx'
+import ChartLine from './ChartLine.jsx'
 import ChartBar from './ChartBar.jsx'
+import ChartPie from './ChartPie.jsx'
 import ChartSettings from './ChartSettings.jsx'
 
 const style = {
@@ -77,13 +78,16 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       Meteor.user().profile.chartSettings &&
       Meteor.user().profile.chartSettings[this.props.id]
     )
+    var data = {}
+    if(this.props.dbName){
+      var data = this.gatherData(
+        DB[this.props.dbName].find(
+          this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
+      ).fetch(),
+        userSettings && userSettings.sort || this.props.settings && this.props.settings.sort || {}
+      )
+    }
 
-    var data = this.props.dbName? this.gatherData(
-      DB[this.props.dbName].find(
-        this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
-    ).fetch(),
-      userSettings && userSettings.sort || this.props.settings.sort || {}
-    ): {}
 
     var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
     var margin = '0.5em'
@@ -99,11 +103,15 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         padding: "0em 1em"
 
       }}>
+
       {
-        this.props.chart == "line" && <Chart data={data} title={this.props.title} sum={sum}/>
+        this.props.chart == "line" && <ChartLine data={data} title={this.props.title} sum={sum}/>
       }
       {
         this.props.chart == "bar" && <ChartBar data={data} title={this.props.title} sum={sum}/>
+      }
+      {
+        this.props.chart == "pie" && <ChartPie data={data} title={this.props.title} sum={sum}/>
       }
 
 
@@ -117,7 +125,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       }
 
       {this.state.showSettings &&
-        <ChartSettings ref="chartSettings" userSettings={userSettings} origSettings={
+        <ChartSettings ref="chartSettings" userSettings={userSettings} dbName={this.props.dbName} origSettings={
           JSON.stringify(this.props.settings)
         } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)}/>
       }

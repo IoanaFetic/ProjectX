@@ -29,7 +29,7 @@ formatData(dataObj){
 			data: lineData,
 			label: line,
 			fill: false,
-			borderColor: palette[p % (palette.length-1)], // line colour
+			borderColor: refColor[line]? refColor[line]:  palette[p % (palette.length-1)], // line colour
 			//  steppedLine: true  step between values
 		})
 		p++ // increment to next colour

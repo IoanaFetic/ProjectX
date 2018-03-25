@@ -1,14 +1,15 @@
 import React from 'react'
 import Chips, { Chip } from 'react-chips'
 import Ionicon from 'react-ionicons'
-
+import Toggle from 'react-toggle'
 export default class ChartSettings extends React.Component {
   constructor(props){
     super(props)
     this.state = {
       settings: props.userSettings || this.props.origSettings && JSON.parse(this.props.origSettings) || {
         filter: {},
-        sort: ''
+        sort: '',
+        sum: false
       }
     }
   }
@@ -44,7 +45,6 @@ export default class ChartSettings extends React.Component {
     this.setState({
       settings
     })
-    console.log(this.props.origSettings)
   }
   resetSettings(){
     var settings = this.props.origSettings
@@ -52,6 +52,13 @@ export default class ChartSettings extends React.Component {
       settings: JSON.parse(settings)
     })
     this.state.settings = settings
+  }
+  toggleSum(){
+    var settings = this.state.settings
+    settings.sum = !settings.sum
+    this.setState({
+      settings
+    })
   }
 
   setSort(val){
@@ -118,7 +125,8 @@ export default class ChartSettings extends React.Component {
               margin: "0 .5em 0 .5em"
             }}/>
             <div style={{
-                width: "10em"
+                width: "10em",
+                marginRight: "1em"
             }}>
               <Dropdown options={[
                 "brand",
@@ -126,6 +134,15 @@ export default class ChartSettings extends React.Component {
               "district"
               ]} onChange={this.setSort.bind(this)} value={this.state.settings.sort}/>
             </div>
+
+            <Toggle
+              defaultChecked={this.state.settings.sum}
+              onChange={this.toggleSum.bind(this)}
+              style={{width: "500px"}}
+              icons={{
+                checked: <div>Sum</div>,
+                unchecked: <div>Mean</div>,
+              }}/>
 
             <Ionicon icon="md-add" fontSize="16px" style={{
               margin: "0 .4em 0 2em"
@@ -139,6 +156,7 @@ export default class ChartSettings extends React.Component {
                 "district"
                 ]} onChange={this.setFilter.bind(this)} placeholder="Filter by key..." />
               </div>
+
 
           </div>
 

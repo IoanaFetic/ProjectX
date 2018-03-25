@@ -1,6 +1,7 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import Chart from './Chart.jsx'
+import ChartBar from './ChartBar.jsx'
 import ChartSettings from './ChartSettings.jsx'
 
 const style = {
@@ -18,15 +19,13 @@ export default class ChartPanel extends TrackerReact(React.Component) {
   constructor(props){
     super(props)
     this.state = {
-      showTotal: props.showTotal || false,
       showSettings: false
     }
   }
 
-  processData(data, sortKey) {
-
+  gatherData(data, sortKey) {
     var dataObj = {} // temporary object to collate documents from DB
-    var datasets = [] // to be entered into Chart.js object
+
     for (doc of data) { // loop through filtered documents in DB
       var sortEntry = doc[sortKey] // the value this document will be sorted by. ie Kamis
       var valueEntry = doc['value'] // ie. shelf price
@@ -43,40 +42,10 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         dataObj[sortEntry].t[docMonth] += doc['value'] // add to value sum for this group
       }
     }
-    // convert dataObj into Chart.js friendly object
-    var lines = Object.keys(dataObj) // sorted group names (ie Kamis, etc.)
-    var p = 0 // to increment colours
-    for (line of lines) { // loop through groups, to create line for each
-      var lineData = [] // data array for this line
-      var lastKnownValue = 0 // to carry over last known value (if months are missing)
-      for (m = 0; m < 12; m++) { // loop through month indexes
-        if (dataObj[line].n[m] > 0) { // if any documents were found for this month
-          lastKnownValue = this.state.showTotal
-            ? dataObj[line].t[m]
-            : dataObj[line].t[m] / dataObj[line].n[m] // calculate average value
-        }
-        lineData[m] = lastKnownValue // assign data point the last known avg value
-      }
-      p++ // increment to next colour
-      datasets.push({ // add this line to the datasets array
-        data: lineData,
-        label: line,
-        fill: false,
-        borderColor: "#" + palette[p], // line colour
-        //  steppedLine: true  step between values
-      })
-    }
-    return { // return Chart.js friendly object
-      labels: ref.months,
-      datasets
-    }
+    return dataObj
   }
 
-  toggleTotal(){
-    this.setState({
-      showTotal: !this.state.showTotal
-    })
-  }
+
   toggleSettings(){
     this.setState({
       showSettings: !this.state.showSettings
@@ -89,9 +58,11 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         if(Array.isArray(obj[key])){
           newObj[key] = {$in: obj[key]}
         }
+        else {
+          newObj[key] = obj[key]
+        }
 
       }
-    console.log(newObj)
     return newObj
   }
   resetSettings(){
@@ -107,12 +78,14 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       Meteor.user().profile.chartSettings[this.props.id]
     )
 
-    var data = this.props.dbName? this.processData(DB[this.props.dbName].find(
-      this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings.filter || {})
+    var data = this.props.dbName? this.gatherData(
+      DB[this.props.dbName].find(
+        this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
     ).fetch(),
       userSettings && userSettings.sort || this.props.settings.sort || {}
     ): {}
 
+    var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
     var margin = '0.5em'
     return (<div style={{
         position: 'absolute',
@@ -126,18 +99,16 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         padding: "0em 1em"
 
       }}>
-      <Chart data={data} title={this.props.title}/>
-      <div style={{
-          position: "absolute",
-          color: color.green,
-          top: "0.5em",
-          right: "1em",
-          cursor: "pointer"
-        }} onClick={this.toggleTotal.bind(this)}>
-        {this.state.showTotal? "Show Averages": "Show Totals"}
-      </div>
+      {
+        this.props.chart == "line" && <Chart data={data} title={this.props.title} sum={sum}/>
+      }
+      {
+        this.props.chart == "bar" && <ChartBar data={data} title={this.props.title} sum={sum}/>
+      }
 
-      {!this.state.showSettings &&
+
+
+      {!this.state.showSettings && this.props.edit &&
       <div style={style.optionLinks}>
           <div onClick={this.toggleSettings.bind(this, false)}>
             Settings

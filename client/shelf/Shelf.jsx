@@ -1,6 +1,5 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import Chart from '../components/Chart.jsx'
 import ChartPanel from '../components/ChartPanel.jsx'
 import { PropagateLoader } from 'react-spinners';
 
@@ -70,6 +69,8 @@ render() {
                 position: 'relative'
               }}>
               <ChartPanel
+                edit={true}
+                chart="line"
                 title='Premium Brands - Main Shelf Chart'
                 dbName='Shelf'
                 id='shelf_main'
@@ -91,7 +92,7 @@ render() {
                 flexGrow: 1,
                 position: 'relative'
               }}>
-              <ChartPanel dbName='Shelf' id='test' settings={{
+              <ChartPanel edit={true} chart="bar" dbName='Shelf' id='test' settings={{
                   filter: {},
                   sort: ''
               }}/>
@@ -100,7 +101,7 @@ render() {
           <div style={style.lowerContainer}>
             <div style={style.lowerColumn}>
               <div style={style.cell}>
-                <ChartPanel content={
+                <ChartPanel  content={
                     ''
                   }/>
               </div>

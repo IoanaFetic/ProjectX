@@ -38,26 +38,32 @@
 }
 
 .react-toggle-track {
-  width: 50px;
+  display: flex;
+  width: 80px;
   height: 24px;
   padding: 0;
   border-radius: 30px;
-  background-color: #4D4D4D;
+  position: relative;
+  background-color: #FFFFFF;
+  box-shadow:inset 0px 0px 0px 1px rgba(0,0,0,.2);
   -webkit-transition: all 0.2s ease;
   -moz-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
+.react-toggle-track-check DIV {
+
+}
 
 .react-toggle:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: #000000;
+  background-color: #EEEEEE;
 }
 
 .react-toggle--checked .react-toggle-track {
-  background-color: #19AB27;
+  background-color: #FFFFFF;
 }
 
 .react-toggle--checked:hover:not(.react-toggle--disabled) .react-toggle-track {
-  background-color: #128D15;
+  background-color: #EEEEEE;
 }
 
 .react-toggle-track-check {
@@ -86,7 +92,7 @@
 .react-toggle-track-x {
   position: absolute;
   width: 10px;
-  height: 10px;
+  height: 100%;
   top: 0px;
   bottom: 0px;
   margin-top: auto;
@@ -97,7 +103,19 @@
   -webkit-transition: opacity 0.25s ease;
   -moz-transition: opacity 0.25s ease;
   transition: opacity 0.25s ease;
+
 }
+.react-toggle-track-x div {
+  position: absolute;
+  right: 50%;
+  top: 50%;
+}
+.react-toggle-track-check div {
+  position: absolute;
+  left: 50%;
+    top: 50%;
+}
+
 
 .react-toggle--checked .react-toggle-track-x {
   opacity: 0;
@@ -106,13 +124,13 @@
 .react-toggle-thumb {
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   position: absolute;
-  top: 1px;
-  left: 1px;
-  width: 22px;
-  height: 22px;
-  border: 1px solid #4D4D4D;
+  top: 0px;
+  left: 0px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #00a850;
   border-radius: 50%;
-  background-color: #FAFAFA;
+  background-color: #00a850;
 
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -124,18 +142,5 @@
 }
 
 .react-toggle--checked .react-toggle-thumb {
-  left: 27px;
-  border-color: #19AB27;
-}
-
-.react-toggle--focus .react-toggle-thumb {
-  -webkit-box-shadow: 0px 0px 3px 2px #0099E0;
-  -moz-box-shadow: 0px 0px 3px 2px #0099E0;
-  box-shadow: 0px 0px 2px 3px #0099E0;
-}
-
-.react-toggle:active:not(.react-toggle--disabled) .react-toggle-thumb {
-  -webkit-box-shadow: 0px 0px 5px 5px #0099E0;
-  -moz-box-shadow: 0px 0px 5px 5px #0099E0;
-  box-shadow: 0px 0px 5px 5px #0099E0;
+  left: 57px;
 }

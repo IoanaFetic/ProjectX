@@ -10,7 +10,7 @@ import AccountsUI from './AccountsUI.jsx'
 DB = {
   Price: new Mongo.Collection ('price'),
   Shelf: new Mongo.Collection ('shelf'),
-  Shelf: new Mongo.Collection ('global')
+  Global: new Mongo.Collection ('global')
 }
 
 // export default - to be assigned by default when imported

@@ -62,7 +62,7 @@ componentWillUnmount(){
 								edit={true}
                 settings={{
                   filter: {
-                    product: 'Pepper'
+                    product: ['Pepper']
                   },
                   sort: 'brand'
                 }}
@@ -102,7 +102,7 @@ componentWillUnmount(){
 										chart='line'
 										settings={{
 											filter:{
-												product: 'General',
+												product: ['General'],
 												brand: [
 													'Kamis',
 													'Fuchs',
@@ -149,7 +149,7 @@ componentWillUnmount(){
 													'Fuchs',
 													'Kotanyi'
 												],
-												package_type: 'Grinders'
+												package_type: ['Grinders']
 											},
 											sort: 'brand'
 										}}

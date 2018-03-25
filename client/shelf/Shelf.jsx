@@ -8,9 +8,10 @@ export default class Shelf extends TrackerReact(React.Component){
     super()
     Session.set('priceSubscribed', false)
     this.state={
-      shelfSubscription:
-      Meteor.subscribe('shelf', function(){
-        console.log('subscription complete')
+      shelfSubscription: Meteor.subscribe('shelf', function(){
+        Session.set('priceSubscribed', true)
+      }),
+      globalSubscription: Meteor.subscribe('shelf', function(){
         Session.set('priceSubscribed', true)
       })
   }
@@ -114,9 +115,17 @@ render() {
                 />
               </div>
               <div style={style.cell}>
-                <ChartPanel content={
-                    'Lower Column 1 cell 2'
-                  }/>
+                <ChartPanel
+                  title="Pie Demo"
+                  chart="donut"
+                  edit={true}
+                  dbName='Shelf'
+                  id='bar'
+                  settings={{
+                    filter: {},
+                    sort: ''
+                  }}
+                />
               </div>
             </div>
             <div style={style.lowerColumn}>

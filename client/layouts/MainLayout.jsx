@@ -31,8 +31,13 @@ export default class MainLayout extends React.Component {
     // changing either triggers a new component lifecycle
 
     super() // allows reference to "this" component within the constructor
+    Session.set('globalSubscribed', false)
     this.state = { // initiate any number of state values
-      componentMounted: false
+      componentMounted: false,
+      globalSubscription: Meteor.subscribe('global', function(){
+        Session.set('globalSubscribed', true)
+      })
+
     }
   }
   componentWillMount(){

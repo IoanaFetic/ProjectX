@@ -71,6 +71,8 @@ export default class ChartSettings extends React.Component {
 
   render(){
     var original = JSON.stringify(this.state.settings) == this.props.origSettings
+    var keyValues = DB.Global.findOne({id: "keyValues"}).value
+    keyValues = keyValues[this.props.dbName]? keyValues[this.props.dbName]: {}
     return (
       <div style={{
           position: "absolute",
@@ -81,20 +83,20 @@ export default class ChartSettings extends React.Component {
           opacity: 0.9,
           backgroundColor: "white",
           zIndex: 2,
-          padding: "3em",
-          borderRadius: '0.3em'
+          padding: "3em 1em 1em 1em",
+          borderRadius: '0.3em',
+          overflow: "auto"
         }}>
 
 
         <div style={{
-              position: "absolute",
-              top: "0.5em",
-              left: "1em",
-              cursor: "pointer",
-              fontWeight: "bold",
-              color: color.green,
-              display: "flex"
-              }}
+                  position: "absolute",
+                  top: "0.5em",
+                  left: "1em",
+                  cursor: "pointer",
+                  color: color.green,
+                  display: "flex"
+          }}
             >
             <div onClick={this.props.toggleSettings}>
               Cancel
@@ -131,19 +133,18 @@ export default class ChartSettings extends React.Component {
 
 
             <Ionicon icon="md-funnel" fontSize="20px" style={{
-              margin: "0 .5em 0 .5em"
+              margin: "0 .5em"
             }}/>
             <div style={{
+              display: "flex",
+              flexShrink: 0,
                 width: "10em",
-                marginRight: "1em"
+                marginRight: "2em"
             }}>
-              <Dropdown options={[
-                "brand",
-                "city",
-              "district"
-              ]} onChange={this.setSort.bind(this)} value={this.state.settings.sort}/>
+            <div style={{width: "100%"}}>
+              <Dropdown options={Object.keys(keyValues)} onChange={this.setSort.bind(this)} value={this.state.settings.sort}/>
             </div>
-
+            </div>
             <Toggle
               defaultChecked={this.state.settings.sum}
               onChange={this.toggleSum.bind(this)}
@@ -154,16 +155,16 @@ export default class ChartSettings extends React.Component {
               }}/>
 
             <Ionicon icon="md-add" fontSize="16px" style={{
-              margin: "0 .4em 0 2em"
+              margin: "0 .5em 0 2em"
             }}/>
               <div style={{
+                display: "flex",
                   width: "10em",
+                  flexShrink: 0
               }}>
-                <Dropdown options={[
-                  "brand",
-                  "city",
-                "district"
-                ]} onChange={this.setFilter.bind(this)} placeholder="Filter by key..." />
+                <div style={{width: "100%"}}>
+                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder="Filter by key..." />
+              </div>
               </div>
 
 
@@ -171,6 +172,7 @@ export default class ChartSettings extends React.Component {
 
           {
             Object.keys(this.state.settings.filter).map((field, k) => {
+
               return (
                   <FilterField
                     key={'filterfield_'+k}
@@ -178,6 +180,7 @@ export default class ChartSettings extends React.Component {
                     chips={this.state.settings.filter[field]}
                     removeFilter={this.removeFilter.bind(this)}
                     changeChips={this.changeChips.bind(this, field)}
+                    suggestions={field == "report_month"? ref.months: keyValues[field]}
                   />
               )
             })
@@ -221,12 +224,9 @@ class FilterField extends React.Component {
         <Chips
           value={this.props.chips}
           onChange={this.props.changeChips}
-          suggestions={[
-            'Kamis',
-            'Fuchs',
-            'Kotanyi'
-          ]}
+          suggestions={this.props.suggestions}
           alwaysRenderSuggestions={true}
+          //createChipKeys={[13]}
         />
         <Ionicon icon="md-close-circle" fontSize="20px"
           onClick={this.props.removeFilter.bind(null, this.props.field)}

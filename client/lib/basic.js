@@ -28,5 +28,4 @@ palette = [
 
 refColor = {
   "Kamis": "#00a850",
-
 }

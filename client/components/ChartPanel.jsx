@@ -1,21 +1,13 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import ChartLine from './ChartLine.jsx'
-import ChartBar from './ChartBar.jsx'
-import ChartPie from './ChartPie.jsx'
+import ChartLine from './Charts/ChartLine.jsx'
+import ChartBar from './Charts/ChartBar.jsx'
+import ChartPie from './Charts/ChartPie.jsx'
 import ChartSettings from './ChartSettings.jsx'
+import Ionicon from 'react-ionicons'
 
-const style = {
-  optionLinks: {
-        position: "absolute",
-        top: "0.5em",
-        left: "1em",
-        cursor: "pointer",
-        fontWeight: "bold",
-        color: color.green,
-        display: "flex"
-    }
-}
+
+
 export default class ChartPanel extends TrackerReact(React.Component) {
   constructor(props){
     super(props)
@@ -56,13 +48,12 @@ export default class ChartPanel extends TrackerReact(React.Component) {
   convertToMongoDBSyntax(obj){
     var newObj = {}
       for(key of Object.keys(obj)){
-        if(Array.isArray(obj[key])){
-          newObj[key] = {$in: obj[key]}
+        if(key == "report_month"){
+          for(m in obj[key]){
+            obj[key][m] = ref.months.indexOf(obj[key][m])
+          }
         }
-        else {
-          newObj[key] = obj[key]
-        }
-
+        newObj[key] = {$in: obj[key]}
       }
     return newObj
   }
@@ -84,42 +75,63 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         DB[this.props.dbName].find(
           this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
       ).fetch(),
-        userSettings && userSettings.sort || this.props.settings && this.props.settings.sort || {}
+        userSettings && userSettings.sort || this.props.settings && this.props.settings.sort || ''
       )
     }
 
 
     var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
     var margin = '0.5em'
-    return (<div style={{
+
+    var style = {
+      wrapper:  {
         position: 'absolute',
         left: margin,
         right: margin,
         top: margin,
         bottom: margin,
+        padding: "0em 1em .5em 0em",
+      },
+
+    }
+
+    var noPanel = this.props.chart == "pie" || this.props.chart == "donut"
+    if(!noPanel){
+      style.wrapper = {...style.wrapper, ...{
         background: 'white',
         borderRadius: '0.3em',
         boxShadow: '0.2em 0.2em 0.2em rgba(0, 0, 0, 0.4)',
-        padding: "0em 1em"
+      }}
+    }
 
-      }}>
 
+    return (
+      <div style={style.wrapper}>
       {
-        this.props.chart == "line" && <ChartLine data={data} title={this.props.title} sum={sum}/>
+        this.props.chart == "line" && <ChartLine data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
       {
-        this.props.chart == "bar" && <ChartBar data={data} title={this.props.title} sum={sum}/>
+        this.props.chart == "bar" && <ChartBar data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
       {
-        this.props.chart == "pie" && <ChartPie data={data} title={this.props.title} sum={sum}/>
+        this.props.chart == "pie" && <ChartPie hollow={false} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
-
-
+      {
+        this.props.chart == "donut" && <ChartPie hollow={true} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+      }
 
       {!this.state.showSettings && this.props.edit &&
-      <div style={style.optionLinks}>
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: ".3em",
+        cursor: "pointer",
+        padding: ".3em"
+      }}>
           <div onClick={this.toggleSettings.bind(this, false)}>
-            Settings
+            <Ionicon icon="md-settings" fontSize="16px" color={noPanel? "white": color.green} style={{
+                marginRight: ".5em"
+              }}/>
           </div>
       </div>
       }
@@ -127,8 +139,9 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       {this.state.showSettings &&
         <ChartSettings ref="chartSettings" userSettings={userSettings} dbName={this.props.dbName} origSettings={
           JSON.stringify(this.props.settings)
-        } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)}/>
+        } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)} />
       }
-    </div>)
+    </div>
+  )
   }
 }

@@ -24,8 +24,24 @@ Meteor.methods ({
   removeMulti(report_type, query){
     console.log("removing from ", report_type, query)
     DB[report_type].remove(query, {multi:true})
+  },
+  updateProfile(path, value){
+    Meteor.users.update(Meteor.userId(),
+      {
+        $set: {
+          ["profile."+path]: value
+        }
+      },
+      function(err){
+        if(err){
+          console.log(err)
+        }
+        else {
+          console.log("profile updated")
+        }
+      }
+    )
   }
-
 
 
 })

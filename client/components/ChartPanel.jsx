@@ -1,18 +1,31 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import Chart from './Chart.jsx'
+import Chips, { Chip } from 'react-chips'
+import Ionicon from 'react-ionicons'
 
+const style = {
+  optionLinks: {
+        position: "absolute",
+        top: "0.5em",
+        left: "1em",
+        cursor: "pointer",
+        fontWeight: "bold",
+        color: color.green,
+        display: "flex"
+    }
+}
 export default class ChartPanel extends TrackerReact(React.Component) {
   constructor(props){
     super(props)
     this.state = {
       showTotal: props.showTotal || false,
-      showOptions: false
+      showSettings: false
     }
   }
 
   processData(data, sortKey) {
-    console.log(data)
+
     var dataObj = {} // temporary object to collate documents from DB
     var datasets = [] // to be entered into Chart.js object
     for (doc of data) { // loop through filtered documents in DB
@@ -54,7 +67,6 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         //  steppedLine: true  step between values
       })
     }
-    console.log(datasets)
     return { // return Chart.js friendly object
       labels: ref.months,
       datasets
@@ -66,14 +78,40 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       showTotal: !this.state.showTotal
     })
   }
-  toggleOptions(){
+  toggleSettings(){
     this.setState({
-      showOptions: !this.state.showOptions
+      showSettings: !this.state.showSettings
     })
   }
+
+  convertToMongoDBSyntax(obj){
+    var newObj = {}
+      for(key of Object.keys(obj)){
+        newObj[key] = {$in: obj[key]}
+      }
+
+
+    console.log(newObj)
+    return newObj
+  }
+  resetSettings(){
+    this.refs.chartSettings.resetSettings()
+  }
+
   render() {
     // retrieve and sort data
-    var data = this.props.dbName? this.processData(DB[this.props.dbName].find(this.props.filter).fetch(), this.props.sort): {}
+    var userSettings = (
+      Meteor.user() &&
+      Meteor.user().profile &&
+      Meteor.user().profile.chartSettings &&
+      Meteor.user().profile.chartSettings[this.props.id]
+    )
+
+    var data = this.props.dbName? this.processData(DB[this.props.dbName].find(
+      this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings.filter || {})
+    ).fetch(),
+      userSettings && userSettings.sort || this.props.settings.sort || {}
+    ): {}
 
     var margin = '0.5em'
     return (<div style={{
@@ -99,35 +137,236 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         {this.state.showTotal? "Show Averages": "Show Totals"}
       </div>
 
-      <div style={{
-            position: "absolute",
-            top: "0.5em",
-            left: "1em",
-            cursor: "pointer",
-            fontWeight: "bold",
-            color: color.green,
-            zIndex: 3
-            }}
-          onClick={this.toggleOptions.bind(this)}>
-      {this.state.showOptions? "Save": "Options"}
+      {!this.state.showSettings &&
+      <div style={style.optionLinks}>
+          <div onClick={this.toggleSettings.bind(this, false)}>
+            Settings
+          </div>
       </div>
-      {this.state.showOptions &&
-        <div style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            opacity: 0.9,
-            backgroundColor: "white",
-            zIndex: 2,
-            padding: "5em",
-            borderRadius: '0.3em'
-          }}>
-        Filter: <br/><br/>
-        Sort:
-        </div>
+      }
+
+      {this.state.showSettings &&
+        <ChartSettings ref="chartSettings" userSettings={userSettings} origSettings={
+          JSON.stringify(this.props.settings)
+        } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)}/>
       }
     </div>)
+  }
+}
+
+
+class ChartSettings extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      settings: props.userSettings || this.props.origSettings && JSON.parse(this.props.origSettings) || {
+        filter: {},
+        sort: ''
+      }
+    }
+  }
+  saveSettings(){
+    if(JSON.stringify(this.state.settings) == this.props.origSettings){
+      var newSettings = Meteor.user().profile.chartSettings
+      delete newSettings[this.props.id]
+      Meteor.call("updateProfile", "chartSettings", newSettings)
+    }
+    else {
+      Meteor.call("updateProfile", "chartSettings." + this.props.id, this.state.settings)
+    }
+    this.props.toggleSettings()
+
+  }
+  setFilter(key){
+    var settings = this.state.settings
+    settings.filter[key.value] = []
+    this.setState({
+      settings
+    })
+  }
+  removeFilter(key){
+    var settings = this.state.settings
+    delete settings.filter[key]
+    this.setState({
+      settings
+    })
+  }
+  changeChips(key, newArray){
+    var settings = this.state.settings
+    settings.filter[key] = newArray
+    this.setState({
+      settings
+    })
+    console.log(this.props.origSettings)
+  }
+  resetSettings(){
+    var settings = this.props.origSettings
+    this.setState({
+      settings: JSON.parse(settings)
+    })
+    this.state.settings = settings
+  }
+
+  setSort(val){
+    var settings = this.state.settings
+    settings.sort = val.value
+    this.setState({
+      settings
+    })
+  }
+
+  render(){
+    var original = JSON.stringify(this.state.settings) == this.props.origSettings
+    return (
+      <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 0.9,
+          backgroundColor: "white",
+          zIndex: 2,
+          padding: "3em",
+          borderRadius: '0.3em'
+        }}>
+
+
+        <div style={{
+              position: "absolute",
+              top: "0.5em",
+              left: "1em",
+              cursor: "pointer",
+              fontWeight: "bold",
+              color: color.green,
+              zIndex: 3,
+              display: "flex"
+              }}
+            >
+            <div onClick={this.props.toggleSettings}>
+              Cancel
+            </div>
+            <div onClick={this.saveSettings.bind(this)} style={{marginLeft: "1.5em"}}>
+                Save
+              </div>
+              {!original &&
+              <div onClick={this.resetSettings.bind(this)} style={{marginLeft: "1.5em"}}>
+                Reset
+              </div>
+            }
+            </div>
+
+        <div style={{
+          display: "flex",
+          flexDirection: "column"
+        }}>
+          <div style={{
+            marginBottom: "1em",
+            display: "flex",
+            alignItems: "center"
+          }}>
+
+
+            <Ionicon icon="md-funnel" fontSize="20px" style={{
+              margin: "0 .5em 0 .5em"
+            }}/>
+            <div style={{
+                width: "10em"
+            }}>
+              <Dropdown options={[
+                "brand",
+                "city",
+              "district"
+              ]} onChange={this.setSort.bind(this)} value={this.state.settings.sort}/>
+            </div>
+
+            <Ionicon icon="md-add" fontSize="16px" style={{
+              margin: "0 .4em 0 2em"
+            }}/>
+              <div style={{
+                  width: "10em",
+              }}>
+                <Dropdown options={[
+                  "brand",
+                  "city",
+                "district"
+                ]} onChange={this.setFilter.bind(this)} placeholder="Filter by key..." />
+              </div>
+
+          </div>
+
+          {
+            Object.keys(this.state.settings.filter).map((field, k) => {
+              return (
+                  <FilterField
+                    key={'filterfield_'+k}
+                    field={field}
+                    chips={this.state.settings.filter[field]}
+                    removeFilter={this.removeFilter.bind(this)}
+                    changeChips={this.changeChips.bind(this, field)}
+                  />
+              )
+            })
+          }
+
+        </div>
+
+      </div>
+    )
+  }
+}
+//
+
+import Dropdown from 'react-dropdown'
+
+class FilterField extends React.Component {
+
+  render(){
+    return (
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        marginBottom: ".6em"
+      }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginBottom: ".3em"
+      }}>
+        <div style={{width: "10em", display: "flex", alignItems: "center"}}>
+          <div style={{marginLeft: "1em", fontWeight: "bold"}}>
+            {this.props.field}
+          </div>
+
+        </div>
+
+
+      </div>
+      <div style={{position: "relative"}}>
+        <Chips
+          value={this.props.chips}
+          onChange={this.props.changeChips}
+          suggestions={[
+            'Kamis',
+            'Fuchs',
+            'Kotanyi'
+          ]}
+          alwaysRenderSuggestions={true}
+        />
+        <Ionicon icon="md-close-circle" fontSize="20px"
+          onClick={this.props.removeFilter.bind(null, this.props.field)}
+          style={{
+            cursor: "pointer", padding: ".1em", display: "inline-block",
+            position: "absolute",
+            right: -10,
+            top: -10
+          }}
+        />
+      </div>
+
+
+    </div>
+    )
   }
 }

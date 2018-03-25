@@ -72,13 +72,16 @@ render() {
               <ChartPanel
                 title='Premium Brands - Main Shelf Chart'
                 dbName='Shelf'
-                sort='brand'
-                filter={{
-                  brand: {$in: [
-                    'Kamis',
-                    'Fuchs',
-                    'Kotanyi'
-                  ]}
+                id='shelf_main'
+                settings={{
+                  filter: {
+                    brand: [
+                      'Kamis',
+                      'Fuchs',
+                      'Kotanyi'
+                    ]
+                  },
+                  sort: 'brand'
                 }}
               showTotal={true}/>
             </div>
@@ -88,9 +91,10 @@ render() {
                 flexGrow: 1,
                 position: 'relative'
               }}>
-              <ChartPanel content={
-                  'Upper Column 2'
-                }/>
+              <ChartPanel dbName='Shelf' id='test' settings={{
+                  filter: {},
+                  sort: ''
+              }}/>
             </div>
           </div>
           <div style={style.lowerContainer}>

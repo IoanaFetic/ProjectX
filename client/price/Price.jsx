@@ -56,89 +56,103 @@ componentWillUnmount(){
 						<div style={style.upperContainer}>
 							<ChartPanel
 								title='Main Price Chart'
-								dbName='Price'
-								sort='brand'
-								filter={{product: 'Pepper'}}
-								showTotal={true}
+                dbName='Price'
+                id='price_main'
+								chart='line'
+                settings={{
+                  filter: {
+                    product: 'Pepper'
+                  },
+                  sort: 'brand'
+                }}
+              showTotal={true}
 							/>
 						</div>
 						<div style={style.lowerContainer}>
 							<div style={style.column}>
 								<div style={style.cell}>
 									<ChartPanel
-										title='Premium Brands - Pepper Prices'
+										title='Average Pepper Prices'
 										dbName='Price'
-										sort='brand'
-										filter={{
-											product: {$in: [
-												'Pepper',
-												'White Pepper'
-											]},
-											brand: {$in: [
-												'Kamis',
-												'Fuchs',
-												'Kotanyi'
-											]}
+										id='avg_pepper_price'
+										chart='line'
+										settings={{
+											filter: {
+												product: [
+													'Pepper',
+													'White Pepper'
+												],
+												brand: [
+													'Kamis',
+													'Fuchs',
+													'Kotanyi',
+													'Galeo',
+													'Cosmin'
+												]
+											},
+											sort: 'brand'
 										}}/>
 								</div>
 								<div style={style.cell}>
 									<ChartPanel
-										title='Premium Brands - Grinders Prices'
+										title='Average Herbs Prices'
 										dbName='Price'
-										sort='brand'
-										filter={{
-											package_type: 'Grinders',
-											brand: {$in: [
-												'Kamis',
-												'Fuchs',
-												'Kotanyi'
-											]}
-										}}/>
-								</div>
-								<div style={style.cell}>
-									<ChartPanel
-										title='Premium Brands - Herbs Prices'
-										dbName='Price'
-										sort='brand'
-										filter={{
-											product: 'General',
-											brand: {$in: [
-												'Kamis',
-												'Fuchs',
-												'Kotanyi'
-											]}
+										id='avg_herbs_price'
+										chart='line'
+										settings={{
+											filter:{
+												product: 'General',
+												brand: [
+													'Kamis',
+													'Fuchs',
+													'Kotanyi',
+													'Galeo',
+													'Cosmin'
+												]
+											},
+											sort: 'brand'
 										}}/>
 								</div>
 							</div>
 							<div style={style.column}>
 								<div style={style.cell}>
 									<ChartPanel
-										title='Mainstream Brands - Pepper Prices'
+										title='Bar Chart'
 										dbName='Price'
-										sort='brand'
-										filter={{
-											product: {$in: [
-												'Pepper',
-												'White Pepper'
-											]},
-											brand: {$in: [
-												'Galeo',
-												'Cosmin'
-											]}
+										id='bar_chart'
+										chart='line'
+										settings={{
+											filter:{
+												product: [
+													'Pepper',
+													'White Pepper'
+												],
+												brand: [
+													'Galeo',
+													'Cosmin'
+												]
+											},
+											sort: 'brand'
 										}}/>
 								</div>
 								<div style={style.cell}>
 									<ChartPanel
-										title='Mainstream Brands - Herbs Prices'
+										title='Average Grinders Prices'
 										dbName='Price'
-										sort='brand'
-										filter={{
-											product: 'General',
-											brand: {$in: [
-												'Galeo',
-												'Cosmin'
-											]}
-										}}/>
+										id='avg_grinders_price'
+										chart='line'
+										settings={{
+											filter:{
+												brand: [
+													'Kamis',
+													'Fuchs',
+													'Kotanyi'
+												],
+												package_type: 'Grinders'
+											},
+											sort: 'brand'
+										}}
+										/>
 								</div>
 							</div>
 						</div>
@@ -184,4 +198,21 @@ content={
 			'Line Chart of Grinder evolution on Mainstream brands historically. Potentially choose between type of Grinder (whole, grinded, white etc) and Grinder average'
 		</div>
 	}/>
+
+
+<div style={style.cell}>
+		<ChartPanel
+			title='Mainstream Brands - Herbs Prices'
+			dbName='Price'
+			sort='brand'
+			filter={{
+				product: 'General',
+				brand: {$in: [
+					'Galeo',
+					'Cosmin'
+				]}
+			}}/>
+		</div>
+
+
 	*/

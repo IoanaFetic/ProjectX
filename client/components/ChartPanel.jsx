@@ -142,11 +142,11 @@ export default class ChartPanel extends TrackerReact(React.Component) {
           transform: "translate(-50%)",
           fontWeight: "bold",
           zIndex: 3,
-          color: noPanel? "white": ""
+          color: noPanel && !this.state.showSettings? "white": ""
         }}>{
           this.props.title
         }
-       {this.state.showSettings}</div>
+       </div>
       {
         this.props.chart == "line" &&
         <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>

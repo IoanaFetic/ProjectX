@@ -134,8 +134,8 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
 
     return (
-      <div style={style.wrapper} >
-    
+      <div style={style.wrapper} className="chartPanel">
+
       {
         this.props.chart == "line" &&
         <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>

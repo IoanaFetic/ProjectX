@@ -120,7 +120,8 @@ export default class MainLayout extends TrackerReact(React.Component) {
             alignItems: 'center',
             flexDirection: 'column',
             height: '100%',
-            padding: '.5em'
+            padding: '.5em',
+            overflowY: "auto"
           }}>
           {this.props.content}
         </div>

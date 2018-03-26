@@ -24,7 +24,8 @@ export default class Shelf extends TrackerReact(React.Component) {
         cell: {
           display: 'flex',
           flexGrow: 1,
-          position: 'relative'
+          position: 'relative',
+          flexShrink: 0
         },
         lowerColumn: {
           display: 'flex',
@@ -86,7 +87,7 @@ export default class Shelf extends TrackerReact(React.Component) {
           </div>
 
         </div>
-        <div style={style.lowerContainer}>
+        <div style={style.lowerContainer} className="forceColumn">
           <div style={style.lowerColumn}>
             <div style={style.cell}>
               <ChartPanel

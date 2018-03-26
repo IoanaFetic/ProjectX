@@ -70,7 +70,7 @@ componentWillUnmount(){
               showTotal={true}
 							/>
 						</div>
-						<div style={style.lowerContainer}>
+						<div style={style.lowerContainer} className="forceColumn">
 							<div style={style.column}>
 								<div style={style.cell}>
 									<ChartPanel

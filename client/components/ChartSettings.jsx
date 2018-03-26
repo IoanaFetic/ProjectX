@@ -17,7 +17,7 @@ export default class ChartSettings extends React.Component {
     if(JSON.stringify(this.state.settings) == this.props.origSettings){
       var newSettings = Meteor.user().chartSettings
       delete newSettings[this.props.id]
-      Meteor.call("updateUser", "chartSettings", newSettings)
+      Meteor.call("updateUser", "chartSettings.", newSettings)
     }
     else {
       Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings)

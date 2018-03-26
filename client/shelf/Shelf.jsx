@@ -78,7 +78,8 @@ export default class Shelf extends TrackerReact(React.Component) {
                   brand: [
                     'Kamis',
                     'Fuchs',
-                    'Kotanyi']
+                    'Kotanyi'
+                  ]
                 },
                 sort: 'brand',
                 sum: true
@@ -91,27 +92,43 @@ export default class Shelf extends TrackerReact(React.Component) {
           <div style={style.lowerColumn}>
             <div style={style.cell}>
               <ChartPanel
-                title="Pie Demo"
+                title="Monthly Total Shelf Faces"
+                tip='A fully customisable pie chart showing the total normal shelf faces accross brands for a specific month'
                 chart="pie"
                 edit={true}
                 dbName='Shelf'
-                id='pie_shelf_1'
+                id='pie_shelf'
                 settings={{
-                  filter: {},
+                  filter: {
+                    value_type: [
+                      'shelf'
+                    ],
+                    report_month: [
+                      'August'
+                    ]
+                  },
                   sort: 'brand',
                   sum: true
                 }}/>
             </div>
             <div style={style.cell}>
               <ChartPanel
-                title="Pie Demo"
-                chart="donut"
+                title="Monthly Total Extra Shelf Faces"
+                tip='A fully customisable pie chart showing the total extra shelf faces accross brands for a specific month'
+                chart="pie"
                 edit={true}
                 dbName='Shelf'
-                id='bar'
+                id='pie_extra'
                 settings={{
-                  filter: {},
-                  sort: '',
+                  filter: {
+                    value_type: [
+                      'extra'
+                    ],
+                    report_month: [
+                      'August'
+                    ]
+                  },
+                  sort: 'brand',
                   sum: true
                 }}/>
             </div>
@@ -119,32 +136,47 @@ export default class Shelf extends TrackerReact(React.Component) {
           <div style={style.lowerColumn}>
             <div style={style.cell}>
               <ChartPanel
-                title="Bar Demo"
+                title="Grouped Bar Chart"
+                tip="A fixed grouped bar chart showing the evolution of Kamis + Galeo total shelf faces compared to Kamis + Galeo total extra shelf faces"
                 edit={true}
                 chart="bar"
                 dbName='Shelf'
-                id='test'
+                id='grouped_bar'
                 settings={{
-                  filter: {},
-                  sort: '',
+                  filter: {
+                    brand: [
+                      'Kamis',
+                      'Galeo'
+                    ],
+                    report_month: [
+                      'August'
+                    ]
+                  },
+                  sort: 'brand',
                   sum: true
                 }}/>
             </div>
             <div style={style.cell}>
-              <ChartPanel content={'Lower Column 2 cell 2'
-}/>
+              <ChartPanel
+                title='Monthly Total Shelf Faces Across Merchandisers'
+                tip='A customisable donut chart showing the total shelf faces for each Merchandiser for a specific month'
+                edit={true}
+                chart='donut'
+                dbName='Shelf'
+                id='donut_chart'
+                settings={{
+                  filter: {
+                    report_month: [
+                      'August'
+                    ]
+                  },
+                  sort: 'merchandiser',
+                  sum: true
+                }}
+              />
             </div>
           </div>
-          <div style={style.lowerColumn}>
-            <div style={style.cell}>
-              <ChartPanel content={'Lower Column 3 cell 1'
-}/>
-            </div>
-            <div style={style.cell}>
-              <ChartPanel content={'Lower Column 3 cell 2'
-}/>
-            </div>
-          </div>
+
         </div>
 
       </div>)
@@ -154,3 +186,17 @@ export default class Shelf extends TrackerReact(React.Component) {
     }
   }
 }
+
+/*
+<div style={style.lowerColumn}>
+  <div style={style.cell}>
+    <ChartPanel content={'Lower Column 3 cell 1'
+    }/>
+  </div>
+  <div style={style.cell}>
+    <ChartPanel content={'Lower Column 3 cell 2'
+    }/>
+  </div>
+</div>
+
+*/

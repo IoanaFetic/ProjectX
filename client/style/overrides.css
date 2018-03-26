@@ -18,3 +18,8 @@
 .dz-image, .dz-filename {
   margin: 1em !important;
 }
+
+
+.locked_filter span {
+  visibility: hidden;
+}

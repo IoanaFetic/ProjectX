@@ -15,12 +15,12 @@ export default class ChartSettings extends React.Component {
   }
   saveSettings(){
     if(JSON.stringify(this.state.settings) == this.props.origSettings){
-      var newSettings = Meteor.user().profile.chartSettings
+      var newSettings = Meteor.user().chartSettings
       delete newSettings[this.props.id]
-      Meteor.call("updateProfile", "chartSettings", newSettings)
+      Meteor.call("updateUser", "chartSettings", newSettings)
     }
     else {
-      Meteor.call("updateProfile", "chartSettings." + this.props.id, this.state.settings)
+      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings)
     }
     this.props.toggleSettings()
 
@@ -73,6 +73,8 @@ export default class ChartSettings extends React.Component {
     var original = JSON.stringify(this.state.settings) == this.props.origSettings
     var keyValues = DB.Global.findOne({id: "keyValues"}).value
     keyValues = keyValues[this.props.dbName]? keyValues[this.props.dbName]: {}
+
+    console.log(Meteor.user())
     return (
       <div style={{
           position: "absolute",
@@ -170,6 +172,11 @@ export default class ChartSettings extends React.Component {
 
           </div>
 
+          {!Meteor.user().admin && <FilterField
+            field={"username"}
+            chips={[Meteor.user().username]}
+            disable={true}
+          />}
           {
             Object.keys(this.state.settings.filter).map((field, k) => {
 
@@ -203,8 +210,21 @@ class FilterField extends React.Component {
       <div style={{
         display: "flex",
         flexDirection: "column",
-        marginBottom: ".6em"
-      }}>
+        marginBottom: ".5em",
+        position: "relative",
+        opacity: this.props.disable? 0.5: 1
+      }} className={this.props.disable? 'locked_filter': ''}>
+      {this.props.disable &&
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 999,
+        }}></div>
+      }
+
       <div style={{
         display: "flex",
         justifyContent: "flex-start",
@@ -215,20 +235,19 @@ class FilterField extends React.Component {
           <div style={{marginLeft: "1em", fontWeight: "bold"}}>
             {this.props.field}
           </div>
-
         </div>
-
 
       </div>
       <div style={{position: "relative"}}>
         <Chips
           value={this.props.chips}
-          onChange={this.props.changeChips}
-          suggestions={this.props.suggestions}
+          onChange={this.props.changeChips || function(){}}
+          suggestions={this.props.suggestions || []}
           alwaysRenderSuggestions={true}
           //createChipKeys={[13]}
         />
-        <Ionicon icon="md-close-circle" fontSize="20px"
+        {!this.props.disable &&
+          <Ionicon icon="md-close-circle" fontSize="20px"
           onClick={this.props.removeFilter.bind(null, this.props.field)}
           style={{
             cursor: "pointer", padding: ".1em", display: "inline-block",
@@ -237,6 +256,7 @@ class FilterField extends React.Component {
             top: -10
           }}
         />
+        }
       </div>
 
 

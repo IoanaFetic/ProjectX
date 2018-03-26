@@ -51,27 +51,15 @@ export default class Chart extends React.Component {
           ref="chartObj"
           data={this.formatData(this.props.data)}
           options={{
-        ...{
-          elements: {
-            line: {
-              tension: 0
+          ...globalChartOptions,
+          ...{
+            legend: {
+              labels: {
+                boxWidth: 1,
+                padding: 20
+              },
+              position: 'right'
             }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          bezierCurve: false,
-          title: {
-            display: true,
-            fontSize: 14,
-            text: this.props.title
-          },
-          legend: {
-            labels: {
-              boxWidth: 1,
-              padding: 20
-            },
-            position: 'right'
-          }
         },
         ...this.props.options || {}
       }}/>

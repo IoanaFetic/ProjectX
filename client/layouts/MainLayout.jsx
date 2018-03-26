@@ -3,7 +3,7 @@
 // import basic packages
 import React from 'react'
 import AccountsUI from './AccountsUI.jsx'
-
+import TrackerReact from 'meteor/ultimatejs:tracker-react'
 
 
 // initiate client side copy of MongoDB (miniMongo)
@@ -19,7 +19,7 @@ DB = {
 // eg. import ComponentName from './file.jsx'
 // class ComponentName extends React.Component -
 // define ComponentName as a new React.js Component
-export default class MainLayout extends React.Component {
+export default class MainLayout extends TrackerReact(React.Component) {
   // a simple React.js component only needs render() method to be declared
   // other predefined methods are included here for explanation
 
@@ -38,6 +38,9 @@ export default class MainLayout extends React.Component {
       componentMounted: false,
       globalSubscription: Meteor.subscribe('global', function(){
         Session.set('globalSubscribed', true)
+      }),
+      userSubscription: Meteor.subscribe('user', function(){
+        Session.set('userSubscribed', true)
       })
 
     }
@@ -50,9 +53,16 @@ export default class MainLayout extends React.Component {
     this.setState({componentMounted: true}) // example of changing state
   }
 
+  componentWillUpdate(){
+    if(!Meteor.userId() && FlowRouter.getRouteName() !== '/'){
+      FlowRouter.go("/")
+    }
+  }
+
   // UPDATING METHODS
 
   render(){
+
     // render(){} always required for react component
     // excecutes code for every lifecycle of component
     // content of return() is converted to HTML then appended to DOM
@@ -90,14 +100,15 @@ export default class MainLayout extends React.Component {
               </div>
 
               <NavIcon name='Home' link='/' highlight={this.props.page=='splash'}/>
-              <NavIcon name='Upload' link='upload' highlight={this.props.page=='upload'}/>
-              <NavIcon name='Price' link='price' highlight={this.props.page=='price'}/>
-              <NavIcon name='Shelf' link='shelf' highlight={this.props.page=='shelf'}/>
+              {Meteor.userId() && <NavIcon name='Upload' link='upload' highlight={this.props.page=='upload'}/>}
+              {Meteor.userId() && <NavIcon name='Price' link='price' highlight={this.props.page=='price'}/>}
+              {Meteor.userId() && <NavIcon name='Shelf' link='shelf' highlight={this.props.page=='shelf'}/>}
             </div>
             <div style={{
                 margin: '1em',
             }} >
-            Logged in as <AccountsUI/>
+            {Meteor.userId() && <span>Logged in as </span> }
+            <AccountsUI/>
             </div>
           </nav>
           <header></header>
@@ -128,22 +139,26 @@ export default class MainLayout extends React.Component {
   }
 }
 
+
+
+
 // a React component to render the navigation icons
 // not exported directly from file. Instead called within MainLayout, which is then exported
 class NavIcon extends React.Component{
   render(){
-    return(
-      <a href={this.props.link}>
-        <div style={{
-            margin: '1em',
-            fontSize: '1.2em',
-            fontWeight: 'bold',
-            color: this.props.highlight? color.green : ''
-          }}>
-          {this.props.name}
-        </div>
-      </a>
+    // Meteor.user()
+      return(
+        <a href={this.props.link}>
+          <div style={{
+              margin: '1em',
+              fontSize: '1.2em',
+              fontWeight: 'bold',
+              color: this.props.highlight? color.green : ''
+            }}>
+            {this.props.name}
+          </div>
+        </a>
+      )
 
-    )
   }
 }

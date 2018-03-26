@@ -49,26 +49,19 @@ export default class Chart extends React.Component {
   render() {
     // create empty DIV for google chart to be appended to
 
-    return (<Bar data={this.formatData(this.props.data)} options={{
+    return (
+      <Bar
+        ref="chartObj"
+        data={this.formatData(this.props.data)}
+        options={{
+        ...globalChartOptions,
         ...{
-          elements: {
-            line: {
-              tension: 0
-            }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          bezierCurve: false,
-          title: {
-            display: true,
-            fontSize: 14,
-            text: this.props.title
-          },
           legend: {
             display: false
           }
         },
         ...this.props.options || {}
-      }}/>)
+      }}/>
+    )
   }
 }

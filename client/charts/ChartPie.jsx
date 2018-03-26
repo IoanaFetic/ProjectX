@@ -50,22 +50,13 @@ export default class Chart extends React.Component {
   }
 
   render() {
-    return (<this.PieNut data={this.formatData(this.props.data)} options={{
+    return (
+      <this.PieNut
+        ref="chartObj"
+        data={this.formatData(this.props.data)}
+        options={{
+        ...globalChartOptions,
         ...{
-          elements: {
-            line: {
-              tension: 0
-            }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          bezierCurve: false,
-          title: {
-            fontColor: "white",
-            display: true,
-            fontSize: 14,
-            text: this.props.title
-          },
           legend: {
             labels: {
               boxWidth: 1,
@@ -76,6 +67,7 @@ export default class Chart extends React.Component {
           }
         },
         ...(this.props.options || {})
-      }}/>)
+      }}/>
+    )
   }
 }

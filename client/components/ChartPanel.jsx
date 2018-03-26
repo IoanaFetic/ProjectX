@@ -63,7 +63,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
     }
   }
 
-  convertToMongoDBSyntax(obj){
+  convertToQuery(obj){
     obj = JSON.parse(obj)
     var newObj = {}
       for(key of Object.keys(obj)){
@@ -82,17 +82,22 @@ export default class ChartPanel extends TrackerReact(React.Component) {
     this.refs.chartSettings.resetSettings()
   }
 
+
   render() {
+
+    if(Meteor.user()){
     // retrieve and sort data
+    var forcedFilter = {
+
+    }
     var userSettings = (
-      Meteor.user() &&
       Meteor.user().profile &&
-      Meteor.user().profile.chartSettings &&
-      Meteor.user().profile.chartSettings[this.props.id]
+      Meteor.user().chartSettings &&
+      Meteor.user().chartSettings[this.props.id]
     )
     var data = {}
     if(this.props.dbName){
-      var query = this.convertToMongoDBSyntax(
+      var query = this.convertToQuery(
         JSON.stringify(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
       )
       var sortValue = (
@@ -130,6 +135,18 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
     return (
       <div style={style.wrapper} >
+        <div style={{
+          position: "absolute",
+          top: ".8em",
+          left: "50%",
+          transform: "translate(-50%)",
+          fontWeight: "bold",
+          zIndex: 3,
+          color: noPanel? "white": ""
+        }}>{
+          this.props.title
+        }
+       {this.state.showSettings}</div>
       {
         this.props.chart == "line" &&
         <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>
@@ -211,5 +228,9 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       }
     </div>
   )
+}
+else {
+  return false
+}
   }
 }

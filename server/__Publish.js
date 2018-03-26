@@ -7,12 +7,40 @@ Meteor.publish('global',function(){
   return DB.Global.find()
 })
 
+Meteor.publish('user', function(){
+  return Meteor.users.find({_id: this.userId})
+})
+
 Meteor.publish('price',function(){
-  return DB.Price.find()
+  if(Meteor.user()){
+    if(Meteor.user().admin){
+      return DB.Price.find()
+    }
+    else {
+      return DB.Price.find({
+        user: Meteor.user().username
+      })
+    }
+  }
+  else {
+    this.ready()
+  }
 })
 
 Meteor.publish('shelf',function(){
-  return DB.Shelf.find()
+  if(Meteor.user()){
+    if(Meteor.user().admin){
+      return DB.Shelf.find()
+    }
+    else {
+      return DB.Shelf.find({
+        user: Meteor.user().username
+      })
+    }
+  }
+  else {
+    this.ready()
+  }
 })
 
 

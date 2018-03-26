@@ -28,11 +28,11 @@ Meteor.methods ({
     console.log("removing from ", report_type, query)
     DB[report_type].remove(query, {multi:true})
   },
-  updateProfile(path, value){
+  updateUser(path, value){
     Meteor.users.update(Meteor.userId(),
       {
         $set: {
-          ["profile."+path]: value
+          [path]: value
         }
       },
       function(err){
@@ -40,13 +40,14 @@ Meteor.methods ({
           console.log(err)
         }
         else {
-          console.log("profile updated")
+          console.log("user updated")
         }
       }
     )
   },
 
   sendEmail(subject, message){
+    /*
     // https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
     var transporter = nodemailer.createTransport({
        service: 'gmail',
@@ -71,7 +72,7 @@ Meteor.methods ({
            console.log(err)
          else
            console.log(info);
-      });
+      });*/
   }
 
 

@@ -1,19 +1,41 @@
 import React from 'react'
+import TrackerReact from 'meteor/ultimatejs:tracker-react'
 
-export default class Splash extends React.Component {
+
+export default class Splash extends TrackerReact(React.Component) {
+  signInDropdown(){
+    Accounts._loginButtonsSession.set('dropdownVisible', !Accounts._loginButtonsSession.get('dropdownVisible'))
+  }
 
   render (){
+    if(Meteor.userId()){
+      return (
+        <div style={{
+            //border: '1px red solid',
+            display: 'flex',
+            marginTop: "-5em",
+          }}>
+          <IconColumn image='upload' link='upload' title='Upload Reports' subtitle='Upload reports for current or past months'/>
+          <IconColumn image='price' link='price'  title='Product Prices' subtitle='View metrics dashboard from the Price reports'/>
+          <IconColumn image='shelf' link='shelf' title='Shelf Statistics' subtitle='View metrics dashboard from the Shelf reports' />
+        </div>
+      )
+    } else {
+      return (
+        <div style={{
+          fontSize: "1.6em",
+          color: "white",
+          marginTop: "-10em",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
+        }} onClick={this.signInDropdown}>
+          <div style={{marginBottom: "1em"}}>Welcome to the Kamis dashboard</div>
+          <div>Click <span onClick={this.signIn} style={{fontWeight: "bold", cursor: "pointer"}}>here</span> to sign in</div>
+        </div>
+      )
+    }
 
-    return (
-      <div style={{
-          //border: '1px red solid',
-          display: 'flex',
-        }}>
-        <IconColumn image='upload' link='upload' title='Upload Reports' subtitle='Upload reports for current or past months'/>
-        <IconColumn image='price' link='price'  title='Product Prices' subtitle='View metrics dashboard from the Price reports'/>
-        <IconColumn image='shelf' link='shelf' title='Shelf Statistics' subtitle='View metrics dashboard from the Shelf reports' />
-      </div>
-    )
   }
 }
 

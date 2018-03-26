@@ -29,3 +29,26 @@ palette = [
 refColor = {
   "Kamis": "#00a850",
 }
+
+  globalChartOptions = {
+    layout: {
+        padding: {
+            left: 5,
+            right: 0,
+            top: 35,
+            bottom: 0
+        }
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    elements: {
+      line: {
+        tension: 0
+      }
+    },
+    bezierCurve: false,
+    title: {
+      display: false
+    }
+    
+  }

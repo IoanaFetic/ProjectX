@@ -27,6 +27,7 @@
 }
 .login-link-text {
   text-decoration: none !important;
+  font-weight: bold;
 }
 #login-buttons {
   margin-right: 1em;

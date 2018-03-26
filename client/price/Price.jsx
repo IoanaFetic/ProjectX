@@ -122,7 +122,7 @@ componentWillUnmount(){
 								<div style={style.cell} className="chartCell">
 									<ChartPanel
 										title='Monthly Product Price Comparison'
-										tip="A fully customisable bar chart showing any product price comparison for any month"
+										tip="A fully customisable bar chart showing any product price comparison for a specific month"
 										dbName='Price'
 										id='bar_chart'
 										chart='bar'

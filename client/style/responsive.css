@@ -1,10 +1,13 @@
-.forceColumn {
-  flex-direction: column !important;
-  border: red 1px solid;
-  flex-shrink: 0;
-}
-.forceColumn .chartPanel {
-  border: red 1px solid;
-  min-height: 20em;
-  flex-shrink: 0;
+
+@media only screen and (max-width: 1079px) {
+  .forceColumn {
+    flex-direction: column !important;
+  }
+  .chartCell {
+    min-height: 15em;
+  }
+  #footer {
+    display: none !important;
+  }
+
 }

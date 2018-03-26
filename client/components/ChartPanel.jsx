@@ -109,16 +109,15 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
 
     var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
-    var margin = '0.5em'
+    var margin = .5
 
     var style = {
       wrapper:  {
         position: 'absolute',
-        left: margin,
-        right: margin,
-        top: margin,
-        bottom: margin,
-        padding: "0em 1em .5em 0em",
+        left: margin + "em",
+        right: margin + "em",
+        top: 0,
+        bottom: margin*2 + "em",
       },
 
     }
@@ -134,7 +133,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
 
     return (
-      <div style={style.wrapper} className="chartPanel">
+      <div style={style.wrapper}>
 
       {
         this.props.chart == "line" &&

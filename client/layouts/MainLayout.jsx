@@ -120,12 +120,12 @@ export default class MainLayout extends TrackerReact(React.Component) {
             alignItems: 'center',
             flexDirection: 'column',
             height: '100%',
-            padding: '.5em',
-            overflowY: "auto"
+            padding: '1em .5em 0 .5em',
+            overflowY: "auto",
           }}>
           {this.props.content}
         </div>
-        <footer style={{
+        <footer id="footer" style={{
             display: 'flex',
             backgroundColor: 'white',
             color: 'white',

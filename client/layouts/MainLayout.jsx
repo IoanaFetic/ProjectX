@@ -4,6 +4,8 @@
 import React from 'react'
 import AccountsUI from './AccountsUI.jsx'
 
+
+
 // initiate client side copy of MongoDB (miniMongo)
 // Meteor handles synchronisation between this copy and the server master copy
 // subscribing to the server database determines which documents to send to the client
@@ -76,7 +78,7 @@ export default class MainLayout extends React.Component {
                 height: '100%',
                 alignItems: 'center'
             }}>
-              <div style={{
+              <div className="tip" style={{
                   backgroundImage: 'url("/images/logo.png")',
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
@@ -94,7 +96,7 @@ export default class MainLayout extends React.Component {
             </div>
             <div style={{
                 margin: '1em',
-            }}>
+            }} >
             Logged in as <AccountsUI/>
             </div>
           </nav>

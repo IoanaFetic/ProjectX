@@ -10,9 +10,6 @@ export default class Shelf extends TrackerReact(React.Component){
     this.state={
       shelfSubscription: Meteor.subscribe('shelf', function(){
         Session.set('priceSubscribed', true)
-      }),
-      globalSubscription: Meteor.subscribe('shelf', function(){
-        Session.set('priceSubscribed', true)
       })
   }
 }

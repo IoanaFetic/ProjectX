@@ -28,7 +28,8 @@ Meteor.startup(function() {
       'upload_id',
       'user',
       'report_year',
-      'package_type'
+      'package_type',
+      'product'
     ],
     Shelf: [
       'brand',

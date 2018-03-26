@@ -1,10 +1,10 @@
 import React from 'react'
 import {Line} from 'react-chartjs-2';
 
+
 export default class Chart extends React.Component {
   constructor(props) {
     super()
-    this.chart = false // later defined as the chart object
   }
 
   formatData(dataObj) {
@@ -42,10 +42,15 @@ export default class Chart extends React.Component {
     }
   }
 
+
   render() {
     // create empty DIV for google chart to be appended to
 
-    return (<Line data={this.formatData(this.props.data)} options={{
+    return (
+        <Line
+          ref="chartObj"
+          data={this.formatData(this.props.data)}
+          options={{
         ...{
           elements: {
             line: {
@@ -69,6 +74,7 @@ export default class Chart extends React.Component {
           }
         },
         ...this.props.options || {}
-      }}/>)
+      }}/>
+  )
   }
 }

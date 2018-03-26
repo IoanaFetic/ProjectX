@@ -1,10 +1,17 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import ChartLine from './Charts/ChartLine.jsx'
-import ChartBar from './Charts/ChartBar.jsx'
-import ChartPie from './Charts/ChartPie.jsx'
+import ChartLine from '../charts/ChartLine.jsx'
+import ChartBar from '../charts/ChartBar.jsx'
+import ChartPie from '../charts/ChartPie.jsx'
 import ChartSettings from './ChartSettings.jsx'
 import Ionicon from 'react-ionicons'
+import moment from 'moment'
+import { saveAs } from 'file-saver'
+
+import 'react-tippy/dist/tippy.css'
+import {
+  Tooltip,
+} from 'react-tippy';
 
 
 
@@ -45,7 +52,19 @@ export default class ChartPanel extends TrackerReact(React.Component) {
     })
   }
 
+  snapChart(){
+    try { // may not be supported in very old browsers
+      var i = this.refs.chart.refs.chartObj.chartInstance
+      i.canvas.toBlob(function(blob) {
+          saveAs(blob, "Chart_" + this.props.id + "_" + moment().format("YYYYMMDDHHmmss") +".png");
+      }.bind(this));
+    } catch(e){
+      if(e){ console.log(e) }
+    }
+  }
+
   convertToMongoDBSyntax(obj){
+    obj = JSON.parse(obj)
     var newObj = {}
       for(key of Object.keys(obj)){
         if(key == "report_month"){
@@ -54,6 +73,8 @@ export default class ChartPanel extends TrackerReact(React.Component) {
           }
         }
         newObj[key] = {$in: obj[key]}
+
+
       }
     return newObj
   }
@@ -71,12 +92,14 @@ export default class ChartPanel extends TrackerReact(React.Component) {
     )
     var data = {}
     if(this.props.dbName){
-      var data = this.gatherData(
-        DB[this.props.dbName].find(
-          this.convertToMongoDBSyntax(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
-      ).fetch(),
+      var query = this.convertToMongoDBSyntax(
+        JSON.stringify(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
+      )
+      var sortValue = (
         userSettings && userSettings.sort || this.props.settings && this.props.settings.sort || ''
       )
+      var data = this.gatherData(
+        DB[this.props.dbName].find(query).fetch(), sortValue)
     }
 
 
@@ -106,35 +129,80 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
 
     return (
-      <div style={style.wrapper}>
+      <div style={style.wrapper} >
       {
-        this.props.chart == "line" && <ChartLine data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        this.props.chart == "line" &&
+        <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
       {
-        this.props.chart == "bar" && <ChartBar data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        this.props.chart == "bar" &&
+        <ChartBar ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
       {
-        this.props.chart == "pie" && <ChartPie hollow={false} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        this.props.chart == "pie" &&
+        <ChartPie ref="chart" hollow={false} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
       {
-        this.props.chart == "donut" && <ChartPie hollow={true} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        this.props.chart == "donut" &&
+        <ChartPie ref="chart" hollow={true} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
 
       {!this.state.showSettings && this.props.edit &&
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0
+        }}>
+
+          <Ionicon
+            onClick={this.toggleSettings.bind(this, false)}
+            icon="md-settings"
+            fontSize="20px"
+            color={noPanel? "white": color.green}
+            style={{
+              cursor: "pointer",
+              margin: ".2em .4em"
+            }}/>
+        </div>
+      }
+
       <div style={{
         position: "absolute",
         top: 0,
-        left: ".3em",
-        cursor: "pointer",
-        padding: ".3em"
+        right: 0,
+        display: "flex"
       }}>
-          <div onClick={this.toggleSettings.bind(this, false)}>
-            <Ionicon icon="md-settings" fontSize="16px" color={noPanel? "white": color.green} style={{
-                marginRight: ".5em"
+            <Ionicon
+              onClick={this.snapChart.bind(this, false)}
+              icon="md-camera"
+              fontSize="20px"
+              color={noPanel? "white": color.green}
+              style={{
+                cursor: "pointer",
+                margin: ".2em .4em"
               }}/>
-          </div>
+
+              {this.props.tip && <Tooltip
+                html={<div style={{maxWidth: "200px"}}>
+                  {this.props.tip}
+                </div>}
+                position="bottom"
+                offset={-60}
+                animation="scale"
+                distance={5}
+                maxWidth="150px"
+                >
+                <Ionicon
+                  icon="md-information-circle"
+                  fontSize="20px"
+                  color={noPanel? "white": color.green}
+                  style={{
+                    margin: ".25em .4em 0 0"
+                  }}/>
+              </Tooltip>}
+
+
       </div>
-      }
 
       {this.state.showSettings &&
         <ChartSettings ref="chartSettings" userSettings={userSettings} dbName={this.props.dbName} origSettings={

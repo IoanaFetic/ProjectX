@@ -23,8 +23,6 @@ export default class Upload extends TrackerReact(React.Component) {
     Session.set('priceSubscribed', false)
     Session.set('shelfSubscribed', false)
     this.state = {
-      datetime: false,
-      lastUploadType: false,
       // subscribe to mongoDB collections
       priceSubscription: Meteor.subscribe('price',function(){
         Session.set('priceSubscribed', true)
@@ -33,12 +31,28 @@ export default class Upload extends TrackerReact(React.Component) {
         Session.set('shelfSubscribed', true)
       }),
       droppedFiles: [],
-      uploading: false
+      uploading: false,
+
+    }
+    this.filesToEmail = []
+  }
+  componentWillUnmount(){
+    this.state.shelfSubscription.stop()
+    this.state.priceSubscription.stop()
+  }
+
+  fileUpload(){
+    console.log(this.dz.files)
+    if(this.dz.files.length > 0){
+      this.setState({uploading: true})
+    }
+    for(f in this.dz.files){
+      file = this.dz.files[f]
+      this.fileRead(file)
     }
   }
 
   fileRead(file) {
-
     // initiate file reader object
     var reader = new FileReader();
     // add "loadend" event listener function, to process once loading finished
@@ -68,15 +82,7 @@ export default class Upload extends TrackerReact(React.Component) {
     reader.readAsArrayBuffer(file);
   }
 
-  fileUpload(){
-    if(this.dz.files.length > 0){
-      this.setState({uploading: true})
-    }
-    for(f in this.dz.files){
-      file = this.dz.files[f]
-      this.fileRead(file)
-    }
-  }
+
   processData(excel, file) {
     // f = index of file in dropzone component
     // give this uploaded file a unique datetime and ID
@@ -99,6 +105,8 @@ export default class Upload extends TrackerReact(React.Component) {
 
     var documents = [] // initiate array of documents to insert to DB
 
+    var report_month = false
+    var report_year = false
     var reportType = false
     var dbChecked = false
     for (sheetKey of Object.keys(excel.Sheets)) {
@@ -106,10 +114,9 @@ export default class Upload extends TrackerReact(React.Component) {
       var sheet = excel.Sheets[sheetKey]
 
       if (sheet.A1 && sheet.A1.v == 'Report type' && dbChecked != 'abort') { // check if sheet contains validated data
-        var reportType = sheet.B1.v.split(' ')[0] // determine Price/Shelf
-
-        var report_month = moment(sheet.B2.w, 'M/D/YY').month() // get meta data
-        var report_year = moment(sheet.B2.w, 'M/D/YY').year()
+        reportType = sheet.B1.v.split(' ')[0] // determine Price/Shelf
+        report_month = moment(sheet.B2.w, 'M/D/YY').month() // get meta data
+        report_year = moment(sheet.B2.w, 'M/D/YY').year()
         // check if report for this month and year is already uploaded
         var matchingDocument = DB[reportType].findOne({report_month, report_year})
         if (matchingDocument && !dbChecked) {
@@ -198,16 +205,20 @@ export default class Upload extends TrackerReact(React.Component) {
     }
     // insert all of the completed documents to the DB (server method)
     if (reportType && parameters[reportType]) {
-      Meteor.call('batchInsert', documents, parameters[reportType].dbName, function(f) {
+      Meteor.call('batchInsert', documents, parameters[reportType].dbName, function(f, desc) {
         // callback after successful insert
+        this.filesToEmail.push(desc)
         this.dz.removeFile(f)
-      }.bind(this, file))
-      this.setState({
-        // change the component state, to display last uploaded file confirmation and date
-        datetime,
-        lastUploadType: parameters[reportType].dbName
-      })
+      }.bind(this, file, (reportType + " report for " + ref.months[report_month] + " " + report_year) ))
     }
+  }
+
+  sendEmail(){
+    Meteor.call("sendEmail", "Kamis Report Upload", (
+      "The following reports have just been uploaded by <b>" + Meteor.user().username + "</b>:<br/><br/>" +
+      this.filesToEmail.join("<br/>")
+    ))
+    this.filesToEmail = []
   }
 
 
@@ -249,6 +260,9 @@ export default class Upload extends TrackerReact(React.Component) {
                 if(file){
                   var droppedFiles = this.state.droppedFiles.slice(0)
                   droppedFiles.splice(droppedFiles.indexOf(file.upload.uuid), 1)
+                  if(this.state.uploading && droppedFiles.length < 1){
+                    this.sendEmail()
+                  }
                   this.setState({
                     droppedFiles,
                     uploading: droppedFiles.length < 1? false: this.state.uploading

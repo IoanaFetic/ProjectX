@@ -56,6 +56,7 @@ componentWillUnmount(){
 						<div style={style.upperContainer}>
 							<ChartPanel
 								title='Main Price Chart'
+								tip='A fully customisable chart based on historic monthly price data'
                 dbName='Price'
                 id='price_main'
 								chart='line'
@@ -74,6 +75,7 @@ componentWillUnmount(){
 								<div style={style.cell}>
 									<ChartPanel
 										title='Average Pepper Prices'
+										tip="A fully customisable chart based on historic monthly price data"
 										dbName='Price'
 										id='avg_pepper_price'
 										chart='line'

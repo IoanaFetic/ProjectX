@@ -64,7 +64,13 @@ export default class Chart extends React.Component {
               fontColor: "white"
             },
             position: 'right'
-          }
+          },
+          title: {
+            display: true,
+            fontSize: 14,
+            text: this.props.title,
+            fontColor: "white"
+          },
         },
         ...(this.props.options || {})
       }}/>

@@ -58,7 +58,12 @@ export default class Chart extends React.Component {
         ...{
           legend: {
             display: false
-          }
+          },
+          title: {
+            display: true,
+            fontSize: 14,
+            text: this.props.title
+          },
         },
         ...this.props.options || {}
       }}/>

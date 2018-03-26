@@ -59,7 +59,12 @@ export default class Chart extends React.Component {
                 padding: 20
               },
               position: 'right'
-            }
+            },
+            title: {
+              display: true,
+              fontSize: 14,
+              text: this.props.title
+            },
         },
         ...this.props.options || {}
       }}/>

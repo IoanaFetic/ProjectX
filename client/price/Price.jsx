@@ -55,8 +55,8 @@ componentWillUnmount(){
 					}}>
 						<div style={style.upperContainer}>
 							<ChartPanel
-								title='Main Price Chart'
-								tip='A fully customisable chart based on historic monthly price data'
+								title='Monthly product price evolution'
+								tip='A fully customisable line chart based on historic monthly price data'
                 dbName='Price'
                 id='price_main'
 								chart='line'
@@ -75,7 +75,7 @@ componentWillUnmount(){
 								<div style={style.cell}>
 									<ChartPanel
 										title='Average Pepper Prices'
-										tip="A fully customisable chart based on historic monthly price data"
+										tip='A fixed line chart showing the monthly evolution of pepper average price across brands'
 										dbName='Price'
 										id='avg_pepper_price'
 										chart='line'
@@ -99,6 +99,7 @@ componentWillUnmount(){
 								<div style={style.cell}>
 									<ChartPanel
 										title='Average Herbs Prices'
+										tip='A fixed line chart showing the monthly evolution of herbs average price across brand'
 										dbName='Price'
 										id='avg_herbs_price'
 										chart='line'
@@ -120,19 +121,21 @@ componentWillUnmount(){
 							<div style={style.column}>
 								<div style={style.cell}>
 									<ChartPanel
-										title='Bar Chart'
+										title='Monthly Product Price Comparison'
+										tip="A fully customisable bar chart showing any product price comparison for any month"
 										dbName='Price'
 										id='bar_chart'
-										chart='line'
+										chart='bar'
+										edit={true}
 										settings={{
 											filter:{
 												product: [
 													'Pepper',
 													'White Pepper'
 												],
-												brand: [
-													'Galeo',
-													'Cosmin'
+												report_month:
+												[
+													'March'
 												]
 											},
 											sort: 'brand'
@@ -141,6 +144,7 @@ componentWillUnmount(){
 								<div style={style.cell}>
 									<ChartPanel
 										title='Average Grinders Prices'
+										tip='A fixed line chart showing the monthly evolution of the average price for grinders across brands'
 										dbName='Price'
 										id='avg_grinders_price'
 										chart='line'

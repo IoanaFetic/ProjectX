@@ -53,7 +53,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       }
     }
-    //console.log("gathered data, assigned to: ", dataObj)
+    console.log("gathered data, assigned to: ", dataObj)
     return dataObj
   }
 

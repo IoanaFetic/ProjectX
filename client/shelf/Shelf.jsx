@@ -1,15 +1,15 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import ChartPanel from '../components/ChartPanel.jsx'
-import {PropagateLoader} from 'react-spinners';
+import { PropagateLoader } from 'react-spinners';
 
 export default class Shelf extends TrackerReact(React.Component) {
   constructor(props) {
     super()
-    Session.set('priceSubscribed', false)
+    Session.set('shelfSubscribed', false)
     this.state = {
       shelfSubscription: Meteor.subscribe('shelf', function() {
-        Session.set('priceSubscribed', true)
+        Session.set('shelfSubscribed', true)
       })
     }
   }
@@ -17,55 +17,18 @@ export default class Shelf extends TrackerReact(React.Component) {
     this.state.shelfSubscription.stop()
   }
   render() {
-    if (Session.get('priceSubscribed')) {
-      var data = DB.Price.find().fetch()
+    if (Session.get('shelfSubscribed')) {
 
-      var style = {
-        cell: {
-          display: 'flex',
-          flexGrow: 1,
-          position: 'relative',
-          flexShrink: 0
-        },
-        lowerColumn: {
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          flexGrow: 1
-        },
-        upperContainer: {
-          display: 'flex',
-          flexGrow: 1,
-          flexBasis: 1,
-          position: 'relative'
-        },
-        lowerContainer: {
-          display: 'flex',
-          flexGrow: 1.5,
-          flexBasis: 1,
-          position: 'relative'
-        }
-      }
+      var style = Style.dashStyle
 
-      return (<div style={{
+      return (
+        <div style={{
           display: 'flex',
           flexDirection: 'column',
           flexGrow: 1,
-          width: '100%',
-          height: '100%'
+          width: '100%'
         }}>
-        <div style={{ //upperContainer
-            display: 'flex',
-            flexGrow: 1,
-            flexBasis: 1,
-            position: 'relative'
-          }}>
-          <div style={{ //upperColumn
-              display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1,
-              position: 'relative'
-            }}>
+        <div style={style.upperContainer}>
             <ChartPanel
               edit={true}
               chart="line"
@@ -85,12 +48,11 @@ export default class Shelf extends TrackerReact(React.Component) {
                 sum: true
               }}
               showTotal={true}/>
-          </div>
 
         </div>
         <div style={style.lowerContainer} className="forceColumn">
-          <div style={style.lowerColumn}>
-            <div style={style.cell}>
+          <div style={style.column}>
+            <div style={style.cell} className="chartCell">
               <ChartPanel
                 title="Monthly Total Shelf Faces"
                 tip='A fully customisable pie chart showing the total normal shelf faces accross brands for a specific month'
@@ -111,7 +73,7 @@ export default class Shelf extends TrackerReact(React.Component) {
                   sum: true
                 }}/>
             </div>
-            <div style={style.cell}>
+            <div style={style.cell} className="chartCell">
               <ChartPanel
                 title="Monthly Total Extra Shelf Faces"
                 tip='A fully customisable pie chart showing the total extra shelf faces accross brands for a specific month'
@@ -133,8 +95,8 @@ export default class Shelf extends TrackerReact(React.Component) {
                 }}/>
             </div>
           </div>
-          <div style={style.lowerColumn}>
-            <div style={style.cell}>
+          <div style={style.column}>
+            <div style={style.cell} className="chartCell">
               <ChartPanel
                 title="Grouped Bar Chart"
                 tip="A fixed grouped bar chart showing the evolution of Kamis + Galeo total shelf faces compared to Kamis + Galeo total extra shelf faces"
@@ -156,7 +118,7 @@ export default class Shelf extends TrackerReact(React.Component) {
                   sum: true
                 }}/>
             </div>
-            <div style={style.cell}>
+            <div style={style.cell} className="chartCell">
               <ChartPanel
                 title='Monthly Total Shelf Faces Across Merchandisers'
                 tip='A customisable donut chart showing the total shelf faces for each Merchandiser for a specific month'
@@ -188,7 +150,7 @@ export default class Shelf extends TrackerReact(React.Component) {
 }
 
 /*
-<div style={style.lowerColumn}>
+<div style={style.column}>
   <div style={style.cell}>
     <ChartPanel content={'Lower Column 3 cell 1'
     }/>

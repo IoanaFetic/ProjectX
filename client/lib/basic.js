@@ -47,8 +47,36 @@ refColor = {
       }
     },
     bezierCurve: false,
-    title: {
-      display: false
-    }
 
+
+  }
+
+  Style = {
+    dashStyle: {
+      cell: {
+        display: 'flex',
+        flexGrow: 1,
+        position: 'relative',
+        flexShrink: 0
+      },
+      column: {
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        flexGrow: 1,
+        flexShrink: 0
+      },
+      upperContainer: {
+        display: 'flex',
+        flexGrow: 1,
+        flexBasis: 1,
+        position: 'relative'
+      },
+      lowerContainer: {
+        display: 'flex',
+        flexGrow: 1.5,
+        flexBasis: 1,
+        position: 'relative'
+      }
+    }
   }

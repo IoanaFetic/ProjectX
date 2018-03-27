@@ -59,17 +59,16 @@ export default class Chart extends React.Component {
         ...{
           legend: {
             labels: {
-              boxWidth: 1,
-              padding: 15,
-              fontColor: "white"
+              boxWidth: 5,
+              padding: 20
             },
             position: 'right'
           },
           title: {
             display: true,
             fontSize: 14,
-            text: this.props.title,
-            fontColor: "white"
+            text: this.props.title + (this.props.sum? " (sum)": " (mean)")
+            //fontColor: "white"
           },
         },
         ...(this.props.options || {})

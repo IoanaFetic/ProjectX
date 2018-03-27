@@ -9,6 +9,7 @@
 }
 
 .accounts-dialog {
+  font-size: 1rem !important;
   color: DarkGreen;
     background: linear-gradient(#e8f3e8 1px, #E0FDE0 1px);
     padding-top: 5px !important;

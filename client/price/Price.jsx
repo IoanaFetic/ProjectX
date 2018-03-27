@@ -9,7 +9,6 @@ export default class Price extends TrackerReact(React.Component){
 		Session.set('priceSubscribed', false)
 		this.state={
 			priceSubscription: Meteor.subscribe('price',function(){
-				console.log('subsciption complete')
 				Session.set('priceSubscribed', true)
 		})
 	}
@@ -20,38 +19,14 @@ componentWillUnmount(){
  render() {
 	 if (Session.get('priceSubscribed')){
 
-		var style = {
-			cell: {
-				display: 'flex',
-				flexGrow: 1,
-				position: 'relative'
-			},
-			column: {
-				display: 'flex',
-				flexDirection: 'column',
-				flexGrow: 1,
-				flexShrink: 0
-			},
-			upperContainer: {
-				display: 'flex',
-				flexGrow: 1,
-				flexBasis: 1,
-				position: 'relative'
-			},
-			lowerContainer: {
-				display: 'flex',
-				flexGrow: 1.5,
-				flexBasis: 1,
-				position: 'relative'
-			}
-		}
+		var style = Style.dashStyle
 
 			return (
 				<div style={{
 						display: 'flex',
 						flexDirection: 'column',
 						flexGrow: 1,
-						width: '100%',
+						width: '100%'
 					}}>
 						<div style={style.upperContainer}>
 							<ChartPanel
@@ -164,7 +139,7 @@ componentWillUnmount(){
 
 							</div>
 							</div>
-							
+
 				</div>
 			)
 	 }

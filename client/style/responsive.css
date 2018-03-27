@@ -1,10 +1,13 @@
 
 @media only screen and (max-width: 1079px) {
+  html, body, #react-root {
+    font-size: 24px !important;
+  }
   .forceColumn {
     flex-direction: column !important;
   }
   .chartCell {
-    min-height: 15em;
+    min-height: 30em;
   }
   #footer {
     display: none !important;

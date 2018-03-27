@@ -62,7 +62,7 @@ export default class Chart extends React.Component {
           title: {
             display: true,
             fontSize: 14,
-            text: this.props.title
+            text: this.props.title + (this.props.sum? " (sum)": " (mean)")
           },
         },
         ...this.props.options || {}

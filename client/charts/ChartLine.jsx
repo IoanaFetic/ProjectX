@@ -15,7 +15,7 @@ export default class Chart extends React.Component {
     for (line of lines) { // loop through groups, to create line for each
       var lineData = [] // data array for this line
       var lastKnownValue = 0 // to carry over last known value (if months are missing)
-      for (m = 0; m < 12; m++) { // loop through month indexes
+      for (m = dataObj[line].firstMonth; m <= dataObj[line].lastMonth; m++) { // loop through month indexes
         if (dataObj[line].n[m] > 0) { // if any documents were found for this month
           lastKnownValue = this.props.sum
             ? dataObj[line].t[m]
@@ -45,7 +45,13 @@ export default class Chart extends React.Component {
 
   render() {
     // create empty DIV for google chart to be appended to
-
+    var yLabel = ""
+    if(this.props.dbName == "Price"){
+      yLabel = "Product Price (RON)"
+    }
+    if(this.props.dbName == "Shelf"){
+      yLabel = "Number of Faces"
+    }
     return (
         <Line
           ref="chartObj"
@@ -55,15 +61,23 @@ export default class Chart extends React.Component {
           ...{
             legend: {
               labels: {
-                boxWidth: 1,
+                boxWidth: 2,
                 padding: 20
               },
               position: 'right'
             },
+            scales: {
+              yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: yLabel
+                }
+              }]
+            },
             title: {
               display: true,
               fontSize: 14,
-              text: this.props.title
+              text: this.props.title + (this.props.sum? " (sum)": " (mean)")
             },
         },
         ...this.props.options || {}

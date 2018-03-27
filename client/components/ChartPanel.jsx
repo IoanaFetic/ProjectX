@@ -25,7 +25,8 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
   gatherData(data, sortKey) {
     var dataObj = {} // temporary object to collate documents from DB
-
+    var firstMonth = 11
+    var lastMonth = 0
     for (doc of data) { // loop through filtered documents in DB
       var sortEntry = doc[sortKey] // the value this document will be sorted by. ie Kamis
       var valueEntry = doc['value'] // ie. shelf price
@@ -38,10 +39,18 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         }
         // execute code below for all valid documents
         var docMonth = doc.report_month // month of document
+
         dataObj[sortEntry].n[docMonth]++ // add to count for this sorted group (ie. Kamis)
         dataObj[sortEntry].t[docMonth] += doc['value'] // add to value sum for this group
+
+        firstMonth = Math.min(firstMonth, docMonth)
+        lastMonth = Math.max(lastMonth, docMonth)
+        dataObj[sortEntry].firstMonth = parseInt(firstMonth)
+        dataObj[sortEntry].lastMonth = parseInt(lastMonth)
+
       }
     }
+    console.log("gathered data, assigned to: ", dataObj)
     return dataObj
   }
 
@@ -107,7 +116,6 @@ export default class ChartPanel extends TrackerReact(React.Component) {
         DB[this.props.dbName].find(query).fetch(), sortValue)
     }
 
-
     var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
     var margin = .5
 
@@ -122,7 +130,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
     }
 
-    var noPanel = this.props.chart == "pie" || this.props.chart == "donut"
+    var noPanel = false; //this.props.chart == "pie" || this.props.chart == "donut"
     if(!noPanel){
       style.wrapper = {...style.wrapper, ...{
         background: 'white',
@@ -137,7 +145,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
       {
         this.props.chart == "line" &&
-        <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options} dbName={this.props.dbName}/>
       }
       {
         this.props.chart == "bar" &&

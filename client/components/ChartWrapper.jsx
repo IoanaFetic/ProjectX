@@ -53,7 +53,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       }
     }
-    console.log("gathered data, assigned to: ", dataObj)
+    //console.log("gathered data, assigned to: ", dataObj)
     return dataObj
   }
 
@@ -231,7 +231,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       {this.state.showSettings &&
         <ChartSettings ref="chartSettings" userSettings={userSettings} dbName={this.props.dbName} origSettings={
-          JSON.stringify(this.props.settings)
+          this.props.settings
         } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)} />
       }
     </div>

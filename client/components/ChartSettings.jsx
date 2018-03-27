@@ -5,8 +5,9 @@ import Toggle from 'react-toggle'
 export default class ChartSettings extends React.Component {
   constructor(props){
     super(props)
+    this.origSettings = JSON.stringify(props.origSettings)
     this.state = {
-      settings: props.userSettings || this.props.origSettings && JSON.parse(this.props.origSettings) || {
+      settings: props.userSettings || this.props.origSettings && this.props.origSettings || {
         filter: {},
         sort: '',
         sum: false
@@ -14,13 +15,15 @@ export default class ChartSettings extends React.Component {
     }
   }
   saveSettings(){
-    if(JSON.stringify(this.state.settings) == this.props.origSettings){
+    if(JSON.stringify(this.state.settings) == this.origSettings){
+      console.log("default settings set, so removing user specific settings")
       var newSettings = Meteor.user().chartSettings
       delete newSettings[this.props.id]
-      Meteor.call("updateUser", "chartSettings.", newSettings)
+      Meteor.call("updateUser", "chartSettings", newSettings)
     }
     else {
-      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings)
+      console.log("saving user specific settings")
+      Meteor.call("updateUser", "chartSettings" + this.props.id, this.state.settings)
     }
     this.props.toggleSettings()
 
@@ -47,11 +50,10 @@ export default class ChartSettings extends React.Component {
     })
   }
   resetSettings(){
-    var settings = this.props.origSettings
+    console.log("resetting to ", JSON.parse(this.origSettings))
     this.setState({
-      settings: JSON.parse(settings)
+      settings: JSON.parse(this.origSettings)
     })
-    this.state.settings = settings
   }
   toggleSum(){
     var settings = this.state.settings
@@ -74,7 +76,6 @@ export default class ChartSettings extends React.Component {
     var keyValues = DB.Global.findOne({id: "keyValues"}).value
     keyValues = keyValues[this.props.dbName]? keyValues[this.props.dbName]: {}
 
-    console.log(Meteor.user())
     return (
       <div style={{
           position: "absolute",

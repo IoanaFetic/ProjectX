@@ -40,7 +40,7 @@ Meteor.methods ({
           console.log(err)
         }
         else {
-          console.log("user updated")
+          console.log("user updated:",path,":",value)
         }
       }
     )

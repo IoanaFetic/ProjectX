@@ -29,6 +29,7 @@ palette = [
 
 refColor = {
   "Kamis": "#00a850",
+  'Kamis+Galeo': "#00a850" 
 }
 
   globalChartOptions = {

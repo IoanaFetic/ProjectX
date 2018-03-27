@@ -5,7 +5,8 @@ import React from 'react'
 import AccountsUI from './AccountsUI.jsx'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 
-
+device = screen.width < 850? 2: (screen.width < 1000? 1: 0)
+iconSize = device < 2? 20: 40
 // initiate client side copy of MongoDB (miniMongo)
 // Meteor handles synchronisation between this copy and the server master copy
 // subscribing to the server database determines which documents to send to the client

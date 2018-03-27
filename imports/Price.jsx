@@ -1,6 +1,6 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
-import ChartPanel from '../components/ChartPanel.jsx'
+import ChartWrapper from '../components/ChartWrapper.jsx'
 import { PropagateLoader } from 'react-spinners';
 
 export default class Price extends TrackerReact(React.Component){
@@ -54,7 +54,7 @@ componentWillUnmount(){
 						width: '100%',
 					}}>
 						<div style={style.upperContainer}>
-							<ChartPanel
+							<ChartWrapper
 								title='Monthly product price evolution'
 								tip='A fully customisable line chart based on historic monthly price data'
                 dbName='Price'
@@ -73,7 +73,7 @@ componentWillUnmount(){
 						<div style={style.lowerContainer} className="forceColumn">
 							<div style={style.column}>
 								<div style={style.cell} className="chartCell">
-									<ChartPanel
+									<ChartWrapper
 										title='Average Pepper Prices'
 										tip='A fixed line chart showing the monthly evolution of pepper average price across brands'
 										dbName='Price'
@@ -97,7 +97,7 @@ componentWillUnmount(){
 										}}/>
 								</div>
 								<div style={style.cell} className="chartCell">
-									<ChartPanel
+									<ChartWrapper
 										title='Average Herbs Prices'
 										tip='A fixed line chart showing the monthly evolution of herbs average price across brand'
 										dbName='Price'
@@ -120,7 +120,7 @@ componentWillUnmount(){
 							</div>
 							<div style={style.column}>
 								<div style={style.cell} className="chartCell">
-									<ChartPanel
+									<ChartWrapper
 										title='Monthly Product Price Comparison'
 										tip="A fully customisable bar chart showing any product price comparison for any month"
 										dbName='Price'
@@ -142,7 +142,7 @@ componentWillUnmount(){
 										}}/>
 								</div>
 								<div style={style.cell} className="chartCell">
-									<ChartPanel
+									<ChartWrapper
 										title='Average Grinders Prices'
 										tip='A fixed line chart showing the monthly evolution of the average price for grinders across brands'
 										dbName='Price'
@@ -182,27 +182,27 @@ content={
 		</div>
 	}
 
-<ChartPanel content={
+<ChartWrapper content={
 		<div>
 			'Line Chart of Pepper evolution on Premium brands historically. Potentially choose between type of pepper (whole, grinded, white etc) and pepper average'
 		</div>
 	}/>
-<ChartPanel content={
+<ChartWrapper content={
 		<div>
 			'Line Chart of Herbs evolution on Premium brands historically. Potentially choose between type of herbs and herbs average'
 		</div>
 	}/>
-<ChartPanel content={
+<ChartWrapper content={
 		<div>
 			'Line Chart of grinder evolution on Premium brands historically. Potentially choose between type of grinder and grinder average'
 		</div>
 	}/>
-<ChartPanel content={
+<ChartWrapper content={
 		<div>
 			'Line Chart of Herbs evolution on Mainstream brands historically. Potentially choose between type of Herbs and Herbs average'
 		</div>
 	}/>
-<ChartPanel content={
+<ChartWrapper content={
 		<div>
 			'Line Chart of Grinder evolution on Mainstream brands historically. Potentially choose between type of Grinder (whole, grinded, white etc) and Grinder average'
 		</div>
@@ -210,7 +210,7 @@ content={
 
 
 <div style={style.cell}>
-		<ChartPanel
+		<ChartWrapper
 			title='Mainstream Brands - Herbs Prices'
 			dbName='Price'
 			sort='brand'

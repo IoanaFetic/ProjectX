@@ -8,6 +8,9 @@ import Ionicon from 'react-ionicons'
 import moment from 'moment'
 import { saveAs } from 'file-saver'
 
+import {defaults} from 'react-chartjs-2';
+defaults.global.defaultFontSize = ref.size;
+
 import 'react-tippy/dist/tippy.css'
 import {
   Tooltip,
@@ -15,7 +18,7 @@ import {
 
 
 
-export default class ChartPanel extends TrackerReact(React.Component) {
+export default class ChartWrapper extends TrackerReact(React.Component) {
   constructor(props){
     super(props)
     this.state = {
@@ -94,6 +97,11 @@ export default class ChartPanel extends TrackerReact(React.Component) {
 
   render() {
 
+
+    if(device > 1){ // phone
+      defaults.global.defaultFontSize = ref.size*2;
+    }
+
     if(Meteor.user()){
     // retrieve and sort data
     var forcedFilter = {
@@ -149,7 +157,11 @@ export default class ChartPanel extends TrackerReact(React.Component) {
       }
       {
         this.props.chart == "bar" &&
-        <ChartBar ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        <ChartBar ref="chart" group={false} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+      }
+      {
+        this.props.chart == "groupbar" &&
+        <ChartBar ref="chart" group={true} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
       }
       {
         this.props.chart == "pie" &&
@@ -170,7 +182,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
           <Ionicon
             onClick={this.toggleSettings.bind(this, false)}
             icon="md-settings"
-            fontSize="20px"
+            fontSize={iconSize+"px"}
             color={noPanel? "white": color.green}
             style={{
               cursor: "pointer",
@@ -188,7 +200,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
             <Ionicon
               onClick={this.snapChart.bind(this, false)}
               icon="md-camera"
-              fontSize="20px"
+              fontSize={iconSize+"px"}
               color={noPanel? "white": color.green}
               style={{
                 cursor: "pointer",
@@ -207,7 +219,7 @@ export default class ChartPanel extends TrackerReact(React.Component) {
                 >
                 <Ionicon
                   icon="md-information-circle"
-                  fontSize="20px"
+                  fontSize={iconSize+"px"}
                   color={noPanel? "white": color.green}
                   style={{
                     margin: ".25em .4em 0 0"

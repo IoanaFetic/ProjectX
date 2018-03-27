@@ -23,3 +23,7 @@
 .locked_filter span {
   visibility: hidden;
 }
+
+.chips DIV {
+  font-size: 1em !important;
+}

@@ -39,8 +39,8 @@
 
 .react-toggle-track {
   display: flex;
-  width: 80px;
-  height: 24px;
+  width: 6em;
+  height: 1.8em;
   padding: 0;
   border-radius: 30px;
   position: relative;
@@ -126,8 +126,8 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 24px;
-  height: 24px;
+  width: 1.8em;
+  height: 1.8em;
   border: 1px solid #00a850;
   border-radius: 50%;
   background-color: #00a850;
@@ -142,5 +142,5 @@
 }
 
 .react-toggle--checked .react-toggle-thumb {
-  left: 57px;
+  left: 4.5em;
 }

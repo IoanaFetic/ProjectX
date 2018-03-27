@@ -134,7 +134,7 @@ export default class ChartSettings extends React.Component {
           }}>
 
 
-            <Ionicon icon="md-funnel" fontSize="20px" style={{
+            <Ionicon icon="md-funnel" fontSize={iconSize+"px"} style={{
               margin: "0 .5em"
             }}/>
             <div style={{
@@ -156,7 +156,7 @@ export default class ChartSettings extends React.Component {
                 unchecked: <div>Mean</div>,
               }}/>
 
-            <Ionicon icon="md-add" fontSize="16px" style={{
+            <Ionicon icon="md-add" fontSize={iconSize*0.7+"px"} style={{
               margin: "0 .5em 0 2em"
             }}/>
               <div style={{
@@ -238,7 +238,7 @@ class FilterField extends React.Component {
         </div>
 
       </div>
-      <div style={{position: "relative"}}>
+      <div style={{position: "relative"}} className="chips">
         <Chips
           value={this.props.chips}
           onChange={this.props.changeChips || function(){}}
@@ -247,7 +247,7 @@ class FilterField extends React.Component {
           //createChipKeys={[13]}
         />
         {!this.props.disable &&
-          <Ionicon icon="md-close-circle" fontSize="20px"
+          <Ionicon icon="md-close-circle" fontSize={iconSize+"px"}
           onClick={this.props.removeFilter.bind(null, this.props.field)}
           style={{
             cursor: "pointer", padding: ".1em", display: "inline-block",

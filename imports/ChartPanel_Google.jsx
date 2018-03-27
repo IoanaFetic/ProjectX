@@ -1,7 +1,7 @@
 import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import Chart from './Chart_Google.jsx'
-export default class ChartPanel extends TrackerReact(React.Component){
+export default class ChartWrapper extends TrackerReact(React.Component){
 
 
   getAvg(){

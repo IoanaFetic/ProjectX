@@ -19,7 +19,8 @@ ref = {
     'October',
     'November',
     'December'
-  ]
+  ],
+  size: 14
 }
 
 palette = [
@@ -34,21 +35,19 @@ refColor = {
     layout: {
         padding: {
             left: 5,
-            right: 0,
+            right: 5,
             top: 0,
-            bottom: 0
+            bottom: 5
         }
     },
     responsive: true,
-    maintainAspectRatio: false,
+   maintainAspectRatio: false,
     elements: {
       line: {
         tension: 0
       }
     },
     bezierCurve: false,
-
-
   }
 
   Style = {

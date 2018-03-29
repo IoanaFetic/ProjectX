@@ -12,19 +12,18 @@ export default class Chart extends React.Component {
 
   formatData(dataObj) {
     // convert dataObj into Chart.js friendly object
-    var datasets = [] // to be entered into Chart.js object
-    var bars = Object.keys(dataObj) // sorted group names (ie Kamis, etc.)
+    var keys = Object.keys(dataObj) // sorted group names (ie Kamis, etc.)
     var data = []
     var backgroundColor = []
     var p = 0
-    for (bar of bars) { // loop through groups, to create line for each
+    for (key of keys) { // loop through groups, to create line for each
       var n = 0
       var t = 0
       var lastKnownValue = 0 // to carry over last known value (if months are missing)
       for (m = 0; m < 12; m++) { // loop through month indexes
-        if (dataObj[bar].n[m] > 0) { // if any documents were found for this month
-          t += dataObj[bar].t[m]
-          n += dataObj[bar].n[m] // calculate average value
+        if (dataObj[key].n[m] > 0) { // if any documents were found for this month
+          t += dataObj[key].t[m]
+          n += dataObj[key].n[m] // calculate average value
         }
       }
       data.push(
@@ -32,14 +31,14 @@ export default class Chart extends React.Component {
         ? t
         : t / n)
       backgroundColor.push(
-        refColor[bar]
-        ? refColor[bar]
+        refColor[key]
+        ? refColor[key]
         : palette[p % (palette.length - 1)])
       p++
     }
 
     return { // return Chart.js friendly object
-      labels: bars,
+      labels: keys,
       datasets: [
         {
           backgroundColor,

@@ -5,9 +5,9 @@ import Toggle from 'react-toggle'
 export default class ChartSettings extends React.Component {
   constructor(props){
     super(props)
-    this.origSettings = JSON.stringify(props.origSettings)
+    this.origSettings = props.origSettings
     this.state = {
-      settings: props.userSettings || this.props.origSettings && this.props.origSettings || {
+      settings: props.userSettings || props.origSettings && JSON.parse(props.origSettings) || {
         filter: {},
         sort: '',
         sum: false
@@ -23,7 +23,7 @@ export default class ChartSettings extends React.Component {
     }
     else {
       console.log("saving user specific settings")
-      Meteor.call("updateUser", "chartSettings" + this.props.id, this.state.settings)
+      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings)
     }
     this.props.toggleSettings()
 
@@ -72,7 +72,7 @@ export default class ChartSettings extends React.Component {
   }
 
   render(){
-    var original = JSON.stringify(this.state.settings) == this.props.origSettings
+    var isOriginal = JSON.stringify(this.state.settings) == this.origSettings
     var keyValues = DB.Global.findOne({id: "keyValues"}).value
     keyValues = keyValues[this.props.dbName]? keyValues[this.props.dbName]: {}
 
@@ -107,7 +107,7 @@ export default class ChartSettings extends React.Component {
             <div onClick={this.saveSettings.bind(this)} style={{marginLeft: "1.5em"}}>
                 Save
               </div>
-              {!original &&
+              {!isOriginal &&
               <div onClick={this.resetSettings.bind(this)} style={{marginLeft: "1.5em"}}>
                 Reset
               </div>
@@ -245,7 +245,6 @@ class FilterField extends React.Component {
           onChange={this.props.changeChips || function(){}}
           suggestions={this.props.suggestions || []}
           alwaysRenderSuggestions={true}
-          //createChipKeys={[13]}
         />
         {!this.props.disable &&
           <Ionicon icon="md-close-circle" fontSize={iconSize+"px"}

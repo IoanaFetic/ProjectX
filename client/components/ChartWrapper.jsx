@@ -44,7 +44,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
         var docMonth = doc.report_month // month of document
 
         dataObj[sortEntry].n[docMonth]++ // add to count for this sorted group (ie. Kamis)
-        dataObj[sortEntry].t[docMonth] += doc['value'] // add to value sum for this group
+        dataObj[sortEntry].t[docMonth] += valueEntry // add to value sum for this group
 
         firstMonth = Math.min(firstMonth, docMonth)
         lastMonth = Math.max(lastMonth, docMonth)
@@ -53,7 +53,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       }
     }
-    console.log("gathered data, assigned to: ", dataObj)
+ console.log("gathered data, assigned to: ", dataObj)
     return dataObj
   }
 
@@ -84,9 +84,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
             obj[key][m] = ref.months.indexOf(obj[key][m])
           }
         }
-        newObj[key] = {$in: obj[key]}
-
-
+        newObj[key] = {$in: obj[key]} // convert [] to {$in: []}
       }
     return newObj
   }
@@ -104,11 +102,8 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
     if(Meteor.user()){
     // retrieve and sort data
-    var forcedFilter = {
 
-    }
     var userSettings = (
-      Meteor.user().profile &&
       Meteor.user().chartSettings &&
       Meteor.user().chartSettings[this.props.id]
     )
@@ -121,7 +116,9 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
         userSettings && userSettings.sort || this.props.settings && this.props.settings.sort || ''
       )
       var data = this.gatherData(
-        DB[this.props.dbName].find(query).fetch(), sortValue)
+        DB[this.props.dbName].find(query).fetch()
+        ,
+        sortValue)
     }
 
     var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
@@ -153,23 +150,23 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       {
         this.props.chart == "line" &&
-        <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} options={this.props.options} dbName={this.props.dbName}/>
+        <ChartLine ref="chart" data={data} title={this.props.title} sum={sum} dbName={this.props.dbName}/>
       }
       {
         this.props.chart == "bar" &&
-        <ChartBar ref="chart" group={false} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        <ChartBar ref="chart" group={false} data={data} title={this.props.title} sum={sum}/>
       }
       {
         this.props.chart == "groupbar" &&
-        <ChartBar ref="chart" group={true} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        <ChartBar ref="chart" group={true} data={data} title={this.props.title} sum={sum}/>
       }
       {
         this.props.chart == "pie" &&
-        <ChartPie ref="chart" hollow={false} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        <ChartPie ref="chart" hollow={false} data={data} title={this.props.title} sum={sum}/>
       }
       {
         this.props.chart == "donut" &&
-        <ChartPie ref="chart" hollow={true} data={data} title={this.props.title} sum={sum} options={this.props.options}/>
+        <ChartPie ref="chart" hollow={true} data={data} title={this.props.title} sum={sum}/>
       }
 
       {!this.state.showSettings && this.props.edit &&
@@ -231,7 +228,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       {this.state.showSettings &&
         <ChartSettings ref="chartSettings" userSettings={userSettings} dbName={this.props.dbName} origSettings={
-          this.props.settings
+          JSON.stringify(this.props.settings)
         } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)} />
       }
     </div>

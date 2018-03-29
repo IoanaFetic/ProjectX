@@ -12,8 +12,17 @@ const ReturnMainLayout = ({page, content}) => (
     // return MainLayout component with arguments for specific page
     <MainLayout page={page} content={content}/>
 )
+FlowRouter.route('/upload',{
+  action(){ // run this when /upload is requested
+    mount (ReturnMainLayout, { // mount result of ReturnMainLayout function to DOM
+      page: 'upload', // argument to identify page
+      content: <Upload/> // argument to set as content of MainLayout component
+    })
+  }
+})
 
-FlowRouter.route('/',{
+
+FlowRouter.route('/', {
   action(){
     mount (ReturnMainLayout,{
       page: 'splash',
@@ -22,15 +31,7 @@ FlowRouter.route('/',{
   }
 })
 
-// set route for URL extension /upload
-FlowRouter.route('/upload',{
-  action(){ // run this when /upload is requested
-    mount (ReturnMainLayout, { // mount result of ReturnMainLayout function to DOM
-      page: 'upload', // argument to identify page
-      content: <Upload/> // component to set as content of MainLayout component
-    })
-  }
-})
+
 
 FlowRouter.route('/price',{
   action(){

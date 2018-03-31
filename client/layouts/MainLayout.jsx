@@ -13,7 +13,8 @@ iconSize = device < 2? 20: 40
 DB = {
   Price: new Mongo.Collection ('price'),
   Shelf: new Mongo.Collection ('shelf'),
-  Global: new Mongo.Collection ('global')
+  Global: new Mongo.Collection ('global'),
+  Uploads: new Mongo.Collection ('uploads')
 }
 
 // export default - to be assigned by default when imported

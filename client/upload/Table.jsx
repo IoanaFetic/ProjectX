@@ -2,6 +2,7 @@ import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import { ClipLoader } from 'react-spinners';
 import moment from 'moment'
+import Ionicon from 'react-ionicons'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
@@ -13,20 +14,8 @@ export default class Table extends TrackerReact(React.Component) {
     }
   }
   render(){
+    var data = DB.Uploads.find().fetch() // add uploads data
 
-    var data = []
-    data = data.concat(DB.Price.find().fetch()) // add price data
-    data = data.concat(DB.Shelf.find().fetch()) // add shelf data
-    var submissions = [] // to keep track of unique submissions
-    var tableData = []
-    // create an array of unique uploads from all documents
-    for(doc of data){
-      if(submissions.indexOf(doc.upload_id) == -1){
-        submissions.push(doc.upload_id)
-        // push the first document found for each upload to the table data
-        tableData.push(doc)
-      }
-    }
     // define table column structure and data
    const columns = [{
      Header: 'Username',
@@ -60,8 +49,12 @@ export default class Table extends TrackerReact(React.Component) {
        // button to remove a submission. calls component method.
        return (
          <div onClick={this.removeEntry.bind(this, row._original.report_type, row._original.upload_id)} style={{
-           cursor: 'pointer'
-         }}>x</div>
+           cursor: 'pointer',
+           fontSize: 0
+
+         }}>
+         <Ionicon icon="md-close" fontSize={iconSize+"px"} />
+       </div>
        )
      }.bind(this)),
      width: 100,
@@ -72,7 +65,7 @@ export default class Table extends TrackerReact(React.Component) {
       pageSize={12}
       resizable={false}
       sortable={true}
-       data={tableData}
+       data={data}
        columns={columns}
        defaultSorted={[{
          id: 'report_month',

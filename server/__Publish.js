@@ -1,10 +1,16 @@
 DB = {
   Price: new Mongo.Collection ('price'),
   Shelf: new Mongo.Collection ('shelf'),
-  Global: new Mongo.Collection ('global')
+  Global: new Mongo.Collection ('global'),
+  Uploads: new Mongo.Collection ('uploads')
 }
+
 Meteor.publish('global',function(){
   return DB.Global.find()
+})
+
+Meteor.publish('uploads',function(){
+  return DB.Uploads.find()
 })
 
 Meteor.publish('user', function(){

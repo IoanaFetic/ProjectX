@@ -16,17 +16,23 @@ Meteor.methods ({
     */
 
     DB[dbName].batchInsert(documents) // mikowals/batch-insert for performance boost. 1 sheet at a time instead of 1 document.
-
   },
 
+  fileInsert(file){
+    DB.Uploads.insert(file)
+  },
 
   removeEntry(report_type, upload_id){
-    DB[report_type].remove({upload_id: upload_id}, {multi:true})
+    DB[report_type].remove({upload_id}, {multi:true})
+    DB.Uploads.remove({upload_id: upload_id}, {multi:true})
   },
 
-  removeMulti(report_type, query){
-    console.log("removing from ", report_type, query)
+  removeMonthYear(report_type, query){
     DB[report_type].remove(query, {multi:true})
+    DB.Uploads.remove({
+      ...query,
+      ...{report_type}
+    }, {multi: true})
   },
   updateUser(path, value){
     Meteor.users.update(Meteor.userId(),
@@ -47,7 +53,7 @@ Meteor.methods ({
   },
 
   sendEmail(subject, message){
-    /*
+
     // https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
     var transporter = nodemailer.createTransport({
        service: 'gmail',
@@ -72,7 +78,7 @@ Meteor.methods ({
            console.log(err)
          else
            console.log(info);
-      });*/
+      });
   }
 
 

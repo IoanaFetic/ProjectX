@@ -9,6 +9,7 @@ import 'react-table/react-table.css'
 
 import Table from './Table.jsx'
 
+//redundant due to uuid
 function uniqueID () {
   // based on open source example on StackOverflow
    var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
@@ -20,29 +21,24 @@ function uniqueID () {
 export default class Upload extends TrackerReact(React.Component) {
   constructor() {
     super()
-    Session.set('priceSubscribed', false)
-    Session.set('shelfSubscribed', false)
+    Session.set('uploadsSubscribed', false)
     this.state = {
       // subscribe to mongoDB collections
-      priceSubscription: Meteor.subscribe('price',function(){
-        Session.set('priceSubscribed', true)
-      }),
-      shelfSubscription: Meteor.subscribe('shelf',function(){
-        Session.set('shelfSubscribed', true)
+      uploadsSubscription: Meteor.subscribe('uploads',function(){
+        Session.set('uploadsSubscribed', true)
       }),
       droppedFiles: [],
       uploading: false,
 
     }
+    this.dz = false // becomes the dropzone object reference
     this.filesToEmail = []
   }
   componentWillUnmount(){
-    this.state.shelfSubscription.stop()
-    this.state.priceSubscription.stop()
+    this.state.uploadSubscription.stop()
   }
 
   fileUpload(){
-    console.log(this.dz.files)
     if(this.dz.files.length > 0){
       this.setState({uploading: true})
     }
@@ -87,7 +83,7 @@ export default class Upload extends TrackerReact(React.Component) {
     // f = index of file in dropzone component
     // give this uploaded file a unique datetime and ID
     var datetime = moment().format().toString()
-    var upload_id = uniqueID()
+    var upload_id = file.upload.uuid
 
     // key info to identify each Excel type
     var parameters = {
@@ -105,25 +101,35 @@ export default class Upload extends TrackerReact(React.Component) {
 
     var documents = [] // initiate array of documents to insert to DB
 
-    var report_month = false
-    var report_year = false
-    var reportType = false
     var dbChecked = false
+    var meta = false
+
     for (sheetKey of Object.keys(excel.Sheets)) {
       // iterate through sheets of excel
       var sheet = excel.Sheets[sheetKey]
-
       if (sheet.A1 && sheet.A1.v == 'Report type' && dbChecked != 'abort') { // check if sheet contains validated data
-        reportType = sheet.B1.v.split(' ')[0] // determine Price/Shelf
-        report_month = moment(sheet.B2.w, 'M/D/YY').month() // get meta data
-        report_year = moment(sheet.B2.w, 'M/D/YY').year()
+        if(!meta){ // only defined for first valid sheet
+          meta = {
+            upload_id,
+            datetime,
+            report_type: sheet.B1.v.split(' ')[0], // determine Price/Shelf
+            report_month: moment(sheet.B2.w, 'M/D/YY').month(), // get meta data
+            report_year: moment(sheet.B2.w, 'M/D/YY').year(),
+            user: Meteor.user().username
+          } // initiate document with meta data
+        }
         // check if report for this month and year is already uploaded
-        var matchingDocument = DB[reportType].findOne({report_month, report_year})
+        var matchingDocument = DB[meta.report_type].findOne({
+          report_month: meta.report_month,
+          report_year: meta.report_year
+        })
         if (matchingDocument && !dbChecked) {
-          if (confirm("Entries for " + ref.months[report_month] + " " + report_year + " already exist. Do you want to replace them?")) {
+          if (confirm("Entries for " + ref.months[meta.report_month] + " " + meta.report_year + " already exist. Do you want to replace them?")) {
             // remove existing entries for this month and year
-            Meteor.call('removeMulti', parameters[reportType].dbName, {report_month, report_year})
-
+            Meteor.call('removeMonthYear', parameters[meta.report_type].dbName, {
+              report_month: meta.report_month,
+              report_year: meta.report_year
+            })
             dbChecked = true
           } else {
             dbChecked = 'abort'
@@ -151,22 +157,15 @@ export default class Upload extends TrackerReact(React.Component) {
 
         for (i = 1; i <= RowMax; i++) { // loop down through rows with data
           if (read) {
-            var baseDocument = {
-              upload_id,
-              datetime,
-              report_type: reportType,
-              report_month,
-              report_year,
-              user: Meteor.user().username
-            } // initiate document with meta data
-            if (reportType == 'Price') {
+            var baseDocument = Object.assign({}, meta)
+            if (meta.report_type == 'Price') {
               baseDocument.client_name = sheet.B3.v // exception for price. Client name is in the top left cells
             }
             var valueColumns = []
             for (colLetter of columns) { // loop through cells of row
               // Check if key and value exists for cell
               if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) { // if column header & cell value exist
-                if(sheet[colLetter + keyRowIndex].v.match(parameters[reportType].valueType)){
+                if(sheet[colLetter + keyRowIndex].v.match(parameters[meta.report_type].valueType)){
                   valueColumns.push(colLetter)
                 }
                 else {
@@ -176,24 +175,22 @@ export default class Upload extends TrackerReact(React.Component) {
             }
 
             for (colLetter of valueColumns) { // loop through cells of row
-              if(sheet[colLetter + i].v > 0){
+              if(sheet[colLetter + i].v > 0){ // may need to be reviewed
                 var document = Object.assign({}, baseDocument)
-                var value_type = ""
-                if(reportType == "Shelf"){
-                  value_type = sheet[colLetter + keyRowIndex].v.split("_")[1]
+                if(meta.report_type == "Shelf"){
+                  document.value_type = sheet[colLetter + keyRowIndex].v.split("_")[1]
                   document.brand = sheet[colLetter + keyRowIndex].v.split("_")[2]
                 }
-                if(reportType == "Price") {
-                  value_type = parameters[reportType].valueType
+                if(meta.report_type == "Price") {
+                  document.value_type = parameters[meta.report_type].valueType
                 }
-                document.value_type = value_type
                 document.value = sheet[colLetter + i].v
                 documents.push(document) // add object to array of documents
               }
             }
 
           }
-          if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[reportType].firstKey) {
+          if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[meta.report_type].firstKey) {
             // found where the data starts, begin reading on next iteration
             read = true
             keyRowIndex = i // the row where the DB key values are found
@@ -204,26 +201,41 @@ export default class Upload extends TrackerReact(React.Component) {
 
     }
     // insert all of the completed documents to the DB (server method)
-    if (reportType && parameters[reportType]) {
-      Meteor.call('batchInsert', documents, parameters[reportType].dbName, function(f, desc) {
+    if (meta.report_type && parameters[meta.report_type]) {
+
+      var completeFile = JSON.parse(JSON.stringify({
+        ...file,
+        ...meta
+      }))
+
+      Meteor.call('batchInsert', documents, parameters[meta.report_type].dbName, function(f, f2, desc) {
         // callback after successful insert
+
+        Meteor.call('fileInsert', f2)
+
+        console.log("documents inserted")
+
         this.filesToEmail.push(desc)
         this.dz.removeFile(f)
-      }.bind(this, file, (reportType + " report for " + ref.months[report_month] + " " + report_year) ))
+      }.bind(this, file, completeFile, (
+        meta.report_type + " report for " + ref.months[meta.report_month] + " " + meta.report_year
+      ) ))
     }
   }
 
   sendEmail(){
-    Meteor.call("sendEmail", "Kamis Report Upload", (
-      "The following reports have just been uploaded by <b>" + Meteor.user().username + "</b>:<br/><br/>" +
-      this.filesToEmail.join("<br/>")
-    ))
-    this.filesToEmail = []
+    if(this.filesToEmail.length > 0){
+      Meteor.call("sendEmail", "Kamis Report Upload", (
+        "The following reports have just been uploaded by <b>" + Meteor.user().username + "</b>:<br/><br/>" +
+        this.filesToEmail.join("<br/>")
+      ))
+      this.filesToEmail = []
+    }
   }
 
 
   render() {
-    if(Session.get('priceSubscribed') && Session.get('shelfSubscribed')){
+    if(Session.get('uploadsSubscribed')){
 
       // return page content
       return (
@@ -251,12 +263,12 @@ export default class Upload extends TrackerReact(React.Component) {
               iconFiletypes: [
                 '.jpg', '.png', '.gif'
               ],
-
               showFiletypeIcon: true,
               postUrl: '/uploadHandler'
             }} eventHandlers={{
-              init: (dz) => this.dz = dz,
+              init: (dz) => {this.dz = dz},
               removedfile: (file) => {
+                console.log("removing ", file)
                 if(file){
                   var droppedFiles = this.state.droppedFiles.slice(0)
                   droppedFiles.splice(droppedFiles.indexOf(file.upload.uuid), 1)

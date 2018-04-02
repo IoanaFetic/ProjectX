@@ -119,10 +119,12 @@ export default class Upload extends TrackerReact(React.Component) {
           } // initiate document with meta data
         }
         // check if report for this month and year is already uploaded
-        var matchingDocument = DB[meta.report_type].findOne({
+        var matchingDocument = DB.Uploads.findOne({
+          report_type: meta.report_type,
           report_month: meta.report_month,
           report_year: meta.report_year
         })
+
         if (matchingDocument && !dbChecked) {
           if (confirm("Entries for " + ref.months[meta.report_month] + " " + meta.report_year + " already exist. Do you want to replace them?")) {
             // remove existing entries for this month and year

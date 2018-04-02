@@ -97,3 +97,60 @@ class NavIcon extends React.Component{
 
   }
 }
+
+
+
+{
+    "_id" : "Xcm39jS5AbfkEHRBr",
+    "services" : {
+        "password" : {
+            "bcrypt" : "$2a$10$rEl3RM0tiH/k8T72EOeILetCU7Q17ap7KpivQRuQ2jhsOmEV4edy."
+        },
+    },
+    "username" : "user01",
+    "admin" : true,
+    "chartSettings" : {}
+}
+
+
+
+
+"Price" : {
+    "brand" : [
+        "Kamis",
+        "Fuchs",
+        "Kotanyi",
+        "Cosmin",
+        "Galeo"
+      ]
+    "product" : [
+        "General",
+        "Pepper",
+        "White pepper",
+        "Nutmeg",
+        "Saffron",
+        "Vanilla",
+        "Cardamon",
+        "Sea Salt",
+        "Mustard"
+      ]
+  },
+  "Shelf" : {
+      "client_name" : [
+          "Mega Image",
+          "Profi",
+          "Artima",
+          "Penny",
+          "Auchan",
+          "Billa",
+          "Selgros",
+          "Carrefour",
+          "Cora",
+          "Kaufland",
+          "Real"
+      ],
+      "value_type" : [
+          "shelf",
+          "extra"
+      ],
+    }

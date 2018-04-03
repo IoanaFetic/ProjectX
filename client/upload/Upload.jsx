@@ -2,7 +2,7 @@ import React from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import DropzoneComponent from 'react-dropzone-component'
 import XLSX from 'xlsx'
-import { ClipLoader, PropagateLoader } from 'react-spinners';
+import {ClipLoader, PropagateLoader} from 'react-spinners';
 import moment from 'moment'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
@@ -10,12 +10,12 @@ import 'react-table/react-table.css'
 import Table from './Table.jsx'
 
 //redundant due to uuid
-function uniqueID () {
+function uniqueID() {
   // based on open source example on StackOverflow
-   var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-   return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
-        return (Math.random() * 16 | 0).toString(16);
-   }).toLowerCase()
+  var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+  return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+    return (Math.random() * 16 | 0).toString(16);
+  }).toLowerCase()
 }
 
 export default class Upload extends TrackerReact(React.Component) {
@@ -23,26 +23,24 @@ export default class Upload extends TrackerReact(React.Component) {
     super()
     Session.set('uploadsSubscribed', false)
     this.state = {
-      // subscribe to mongoDB collections
-      uploadsSubscription: Meteor.subscribe('uploads',function(){
+      uploadsSubscription: Meteor.subscribe('uploads', function() {
         Session.set('uploadsSubscribed', true)
       }),
       droppedFiles: [],
-      uploading: false,
-
+      uploading: false
     }
     this.dz = false // becomes the dropzone object reference
     this.filesToEmail = []
   }
-  componentWillUnmount(){
-    this.state.uploadSubscription.stop()
+  componentWillUnmount() {
+    this.state.uploadsSubscription.stop()
   }
 
-  fileUpload(){
-    if(this.dz.files.length > 0){
+  fileUpload() {
+    if (this.dz.files.length > 0) {
       this.setState({uploading: true})
     }
-    for(f in this.dz.files){
+    for (f in this.dz.files) {
       file = this.dz.files[f]
       this.fileRead(file)
     }
@@ -55,7 +53,6 @@ export default class Upload extends TrackerReact(React.Component) {
     reader.addEventListener("loadend", function(event) {
       // once file is finished uploading, begin conversion
       // the process required is discussed on the XLSX github page
-
       var data = event.target.result // raw result of read
       var binary = "";
       var bytes = new Uint8Array(data); // convert to uint8array
@@ -73,20 +70,17 @@ export default class Upload extends TrackerReact(React.Component) {
       // run "processData" with this object as an argument
       this.processData(excel, file)
     }.bind(this));
-
     // read the raw file as an array buffer
     reader.readAsArrayBuffer(file);
   }
 
-
   processData(excel, file) {
+    console.log(excel)
     // f = index of file in dropzone component
     // give this uploaded file a unique datetime and ID
     var datetime = moment().format().toString()
-    var upload_id = file.upload.uuid
-
-    // key info to identify each Excel type
-    var parameters = {
+    var upload_id = file.upload.uuid // assign unique ID from dropzone
+    var parameters = { // lookup values specific to each report type
       Price: {
         firstKey: 'brand',
         dbName: 'Price',
@@ -98,32 +92,24 @@ export default class Upload extends TrackerReact(React.Component) {
         valueType: 'faces'
       }
     }
-
     var documents = [] // initiate array of documents to insert to DB
-
-    var dbChecked = false
-    var meta = false
-
-    for (sheetKey of Object.keys(excel.Sheets)) {
-      // iterate through sheets of excel
+    var dbChecked = false //indicates whether DB has been checked for this month and year
+    var meta = false //stores global information for this file
+    for (sheetKey of Object.keys(excel.Sheets)) { // iterate through sheets of excel
       var sheet = excel.Sheets[sheetKey]
-      if (sheet.A1 && sheet.A1.v == 'Report type' && dbChecked != 'abort') { // check if sheet contains validated data
-        if(!meta){ // only defined for first valid sheet
-          meta = {
-            upload_id,
-            datetime,
-            report_type: sheet.B1.v.split(' ')[0], // determine Price/Shelf
+      // check if sheet contains validated data
+      if (sheet.A1 && sheet.A1.v == 'Report type' && dbChecked != 'abort') {
+        if (!meta) { // only defined for first valid sheet
+          meta = { upload_id, datetime,
+            report_type: sheet.B1.v.split(' ')[0], // determine Price/Shelf from cell
             report_month: moment(sheet.B2.w, 'M/D/YY').month(), // get meta data
             report_year: moment(sheet.B2.w, 'M/D/YY').year(),
             user: Meteor.user().username
           } // initiate document with meta data
         }
+
         // check if report for this month and year is already uploaded
-        var matchingDocument = DB.Uploads.findOne({
-          report_type: meta.report_type,
-          report_month: meta.report_month,
-          report_year: meta.report_year
-        })
+        var matchingDocument = DB.Uploads.findOne({report_type: meta.report_type, report_month: meta.report_month, report_year: meta.report_year})
 
         if (matchingDocument && !dbChecked) {
           if (confirm("Entries for " + ref.months[meta.report_month] + " " + meta.report_year + " already exist. Do you want to replace them?")) {
@@ -141,7 +127,7 @@ export default class Upload extends TrackerReact(React.Component) {
         }
 
         var RE = new RegExp(/[A-Z]+[0-9]+:([A-Z]+)([0-9]+)/) // regular expression to identify meta data
-        var match = RE.exec(sheet['!ref']) // meta data field read from Excel
+        var match = RE.exec(sheet['!ref']) // meta data field read from excel
         var RowMax = parseInt(match[2]) // find last row containing data
 
         var keys = Object.keys(sheet) // get sheet titles
@@ -155,52 +141,47 @@ export default class Upload extends TrackerReact(React.Component) {
         }
 
         var read = false // don't start reading initially (skip title rows etc.)
-        var keyRowIndex = 0
-
+        var keyRowIndex = 0 // to be reset to the key row index
         for (i = 1; i <= RowMax; i++) { // loop down through rows with data
-          if (read) {
-            var baseDocument = Object.assign({}, meta)
-            if (meta.report_type == 'Price') {
-              baseDocument.client_name = sheet.B3.v // exception for price. Client name is in the top left cells
+          if (read) { // if we've reached the start of the data
+            var baseDocument = Object.assign({}, meta) // assign meta data to base doc for this row
+            if (meta.report_type == 'Price') { // exception for Price. Client name is in B3
+              baseDocument.client_name = sheet.B3.v
             }
-            var valueColumns = []
-            for (colLetter of columns) { // loop through cells of row
-              // Check if key and value exists for cell
-              if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) { // if column header & cell value exist
-                if(sheet[colLetter + keyRowIndex].v.match(parameters[meta.report_type].valueType)){
-                  valueColumns.push(colLetter)
-                }
-                else {
-                  baseDocument[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v // add to the document object
-                }
+            var valueColumns = [] // to fill with column letters containing price/shelf values
+            for (colLetter of columns) { // loop through unique column array. ie. A, B, D...
+              // check if there is a key above the column & there is a cell value
+              if (sheet[colLetter + keyRowIndex] && sheet[colLetter + i]) {
+                // check if key contains indication that this column contains a value
+                // "parameters" object contains settings for reading each report type
+                if (sheet[colLetter + keyRowIndex].v.match(parameters[meta.report_type].valueType)) {
+                  valueColumns.push(colLetter) // create a unique document for this column later
+                } else { // treat as common information, add to the base document
+                  baseDocument[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v }
               }
             }
-
-            for (colLetter of valueColumns) { // loop through cells of row
-              if(sheet[colLetter + i].v > 0){ // may need to be reviewed
-                var document = Object.assign({}, baseDocument)
-                if(meta.report_type == "Shelf"){
-                  document.value_type = sheet[colLetter + keyRowIndex].v.split("_")[1]
+            for (colLetter of valueColumns) { // loop through cells which require seperate documents
+              if (sheet[colLetter + i].v > 0) { // check if the value is useful
+                var document = Object.assign({}, baseDocument) // assign all info from the base doc
+                if (meta.report_type == "Shelf") { // add brand for data point from key value row
+                  document.value_type = sheet[colLetter + keyRowIndex].v.split("_")[1] // (shelf)
                   document.brand = sheet[colLetter + keyRowIndex].v.split("_")[2]
                 }
-                if(meta.report_type == "Price") {
-                  document.value_type = parameters[meta.report_type].valueType
+                if (meta.report_type == "Price") { // describe value being stored in "value" key
+                  document.value_type = parameters[meta.report_type].valueType // (price)
                 }
-                document.value = sheet[colLetter + i].v
-                documents.push(document) // add object to array of documents
+                document.value = sheet[colLetter + i].v // add the numerical value to document
+                documents.push(document) // add document object to array of documents
               }
             }
-
-          }
-          if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[meta.report_type].firstKey) {
-            // found where the data starts, begin reading on next iteration
-            read = true
-            keyRowIndex = i // the row where the DB key values are found
-            i++ // skip over visible headings in Excel
+            if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[meta.report_type].firstKey) {
+              read = true; // found where the data starts, begin reading on next iteration
+              keyRowIndex = i // the row where the DB key values are found
+              i++ // skip over visible headings in Excel
+            }
           }
         }
       }
-
     }
     // insert all of the completed documents to the DB (server method)
     if (meta.report_type && parameters[meta.report_type]) {
@@ -210,38 +191,31 @@ export default class Upload extends TrackerReact(React.Component) {
         ...meta
       }))
 
-      Meteor.call('batchInsert', documents, parameters[meta.report_type].dbName, function(f, f2, desc) {
-        // callback after successful insert
-
-        Meteor.call('fileInsert', f2)
-
-        console.log("documents inserted")
-
-        this.filesToEmail.push(desc)
-        this.dz.removeFile(f)
-      }.bind(this, file, completeFile, (
+      Meteor.call('batchInsert', // method name
+      documents, // document array to insert
+      parameters[meta.report_type].dbName, // DB to add to
+       function(f, f2, desc) { // callback after insert
+        Meteor.call('fileInsert', f2) // add file meta data to uploads DB
+        this.filesToEmail.push(desc) // drafting the email
+        this.dz.removeFile(f) // remove element from dropzone
+      }.bind(this, file, completeFile, ( // bind variables for use within callback
         meta.report_type + " report for " + ref.months[meta.report_month] + " " + meta.report_year
-      ) ))
+      )))
     }
   }
 
-  sendEmail(){
-    if(this.filesToEmail.length > 0){
-      Meteor.call("sendEmail", "Kamis Report Upload", (
-        "The following reports have just been uploaded by <b>" + Meteor.user().username + "</b>:<br/><br/>" +
-        this.filesToEmail.join("<br/>")
-      ))
+  sendEmail() {
+    if (this.filesToEmail.length > 0) {
+      Meteor.call("sendEmail", "Kamis Report Upload", ("The following reports have just been uploaded by <b>" + Meteor.user().username + "</b>:<br/><br/>" + this.filesToEmail.join("<br/>")))
       this.filesToEmail = []
     }
   }
 
-
   render() {
-    if(Session.get('uploadsSubscribed')){
+    if (Session.get('uploadsSubscribed')) {
 
       // return page content
-      return (
-        <div style={{
+      return (<div style={{
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
@@ -259,54 +233,66 @@ export default class Upload extends TrackerReact(React.Component) {
             fontStyle: 'italic',
             borderRadius: '0.2em',
             position: 'relative',
-            flexShrink: 0,
+            flexShrink: 0
           }}>
-          <DropzoneComponent config={{
-              iconFiletypes: [
-                '.jpg', '.png', '.gif'
-              ],
-              showFiletypeIcon: true,
-              postUrl: '/uploadHandler'
-            }} eventHandlers={{
-              init: (dz) => {this.dz = dz},
+
+          <DropzoneComponent
+            eventHandlers={{
+              init: (dz) => {
+                this.dz = dz
+              },
               removedfile: (file) => {
-                console.log("removing ", file)
-                if(file){
+                if (file) {
                   var droppedFiles = this.state.droppedFiles.slice(0)
                   droppedFiles.splice(droppedFiles.indexOf(file.upload.uuid), 1)
-                  if(this.state.uploading && droppedFiles.length < 1){
+                  if (this.state.uploading && droppedFiles.length < 1) {
                     this.sendEmail()
                   }
                   this.setState({
                     droppedFiles,
-                    uploading: droppedFiles.length < 1? false: this.state.uploading
+                    uploading: droppedFiles.length < 1
+                      ? false
+                      : this.state.uploading
                   })
                 }
               },
               addedfile: (file) => {
-                  var droppedFiles = this.state.droppedFiles.slice(0)
-                  droppedFiles.push(file.upload.uuid)
-                  this.setState({droppedFiles})
-              },
-            }} djsConfig={{
+                var droppedFiles = this.state.droppedFiles.slice(0)
+                droppedFiles.push(file.upload.uuid)
+                this.setState({droppedFiles})
+              }
+            }}
+
+            config={{
+                iconFiletypes: [
+                  '.jpg', '.png', '.gif'
+                ],
+                showFiletypeIcon: true,
+                postUrl: '/uploadHandler'
+              }}
+             djsConfig={{
               autoProcessQueue: false,
               addRemoveLinks: true,
-              dictDefaultMessage: "Drop valid Price or Shelf report files here",
+              dictDefaultMessage: "Drop valid Price or Shelf report files here"
             }}/>
         </div>
         <div style={{
-          backgroundColor: color.content,
-          borderRadius: '.3em',
-          padding: '.5em 1.5em',
-          fontWeight: 'bold',
-          marginTop: '1em',
-          cursor: this.state.droppedFiles.length < 1 || this.state.uploading? '': 'pointer',
-          opacity: this.state.droppedFiles.length < 1 || this.state.uploading? 0.5: 1,
-          boxShadow: '0.1em 0.1em 0.2em rgba(0, 0, 0, 0.4)',
-        }} onClick={this.fileUpload.bind(this)}>
+            backgroundColor: color.content,
+            borderRadius: '.3em',
+            padding: '.5em 1.5em',
+            fontWeight: 'bold',
+            marginTop: '1em',
+            cursor: this.state.droppedFiles.length < 1 || this.state.uploading
+              ? ''
+              : 'pointer',
+            opacity: this.state.droppedFiles.length < 1 || this.state.uploading
+              ? 0.5
+              : 1,
+            boxShadow: '0.1em 0.1em 0.2em rgba(0, 0, 0, 0.4)'
+          }} onClick={this.fileUpload.bind(this)}>
           Upload
         </div>
-          <div style={{
+        <div style={{
             height: '5em',
             width: '20em',
             display: 'flex',
@@ -314,17 +300,13 @@ export default class Upload extends TrackerReact(React.Component) {
             justifyContent: 'center',
             paddingRight: '10px'
           }}>
-          {this.state.uploading &&
-            <ClipLoader color="white"/>
-          }
+          {this.state.uploading && <ClipLoader color="white"/>}
         </div>
 
-        <Table />
+        <Table/>
 
-      </div>
-    )
-    }
-    else {
+      </div>)
+    } else {
       return <PropagateLoader color="white"/>
     }
   }

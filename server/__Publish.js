@@ -52,7 +52,6 @@ Meteor.publish('shelf',function(){
 
 
 Meteor.startup(function() {
-
   var indexes = {
     Price: [
       'brand',
@@ -82,31 +81,28 @@ Meteor.startup(function() {
     ]
   }
   var uniqueValues = {}
-
-  for (dbName of Object.keys(indexes)) {
-    uniqueValues[dbName] = {}
-    var collection = DB[dbName].find().fetch().slice(0)
-    for (i of indexes[dbName]) {
-      DB[dbName]._ensureIndex({[i]: 1});
+  for (dbName of Object.keys(indexes)) { // iterate through collections
+    uniqueValues[dbName] = {} // create object for collection
+    var collection = DB[dbName].find().fetch().slice(0) // get all documents
+    for (i of indexes[dbName]) { // iterate through specified fields
+      DB[dbName]._ensureIndex({[i]: 1}); // ensure this field is indexed
+      // create array of unique values under this field
       uniqueValues[dbName][i] = [...new Set(collection.map(doc => doc[i]))]
     }
   }
-
-  DB.Global.update({
+  DB.Global.update({ // update the global reference
     id: "keyValues"
   }, {
     id: "keyValues",
-    value: uniqueValues
+    value: uniqueValues // with the new unique value arrays
   }, {
-    upsert: true
-  }, function(err) {
+    upsert: true // if document doesn't exist, create it
+  }, function(err) { // callback function
     if (err) {
-      console.log(err)
+      console.log(err) // log error if needed
     }
     else {
       console.log("key values updated")
     }
   })
-
-
 });

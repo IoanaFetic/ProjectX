@@ -15,7 +15,9 @@ Meteor.methods ({
     }
     */
 
-    DB[dbName].batchInsert(documents) // mikowals/batch-insert for performance boost. 1 sheet at a time instead of 1 document.
+    if(documents.length > 0){
+      DB[dbName].batchInsert(documents) // mikowals/batch-insert for performance boost. 1 sheet at a time instead of 1 document.
+    }
   },
 
   fileInsert(file){

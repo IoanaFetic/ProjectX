@@ -174,12 +174,13 @@ export default class Upload extends TrackerReact(React.Component) {
                 documents.push(document) // add document object to array of documents
               }
             }
-            if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[meta.report_type].firstKey) {
-              read = true; // found where the data starts, begin reading on next iteration
-              keyRowIndex = i // the row where the DB key values are found
-              i++ // skip over visible headings in Excel
-            }
           }
+          if (!read && sheet['A' + i] && sheet['A' + i].v == parameters[meta.report_type].firstKey) {
+            read = true; // found where the data starts, begin reading on next iteration
+            keyRowIndex = i // the row where the DB key values are found
+            i++ // skip over visible headings in Excel
+          }
+
         }
       }
     }
@@ -194,7 +195,7 @@ export default class Upload extends TrackerReact(React.Component) {
       Meteor.call('batchInsert', // method name
       documents, // document array to insert
       parameters[meta.report_type].dbName, // DB to add to
-       function(f, f2, desc) { // callback after insert
+      function(f, f2, desc) { // callback after insert
         Meteor.call('fileInsert', f2) // add file meta data to uploads DB
         this.filesToEmail.push(desc) // drafting the email
         this.dz.removeFile(f) // remove element from dropzone

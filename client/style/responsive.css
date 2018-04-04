@@ -13,6 +13,10 @@
     display: none !important;
   }
   .reduceFont {
-    font-size: 0.8em;
+    font-size: 0.9em;
+  }
+
+  .reduceIcon {
+    font-size: 0.5em;
   }
 }

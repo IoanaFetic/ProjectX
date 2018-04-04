@@ -46,7 +46,8 @@ class IconColumn extends React.Component{
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
-        margin: '2em 0em'
+        margin: '1em 0em',
+        alignItems: 'center'
       },
       iconDiv: {
         display: 'flex',
@@ -79,14 +80,16 @@ class IconColumn extends React.Component{
     }
     return(
         <div style={style.columnDiv} >
-          <a className='reduceFont' href={this.props.link}>
-            <div className='reduceFont' style={
+
+            <div className='reduceIcon' onClick={function(){
+                FlowRouter.go('/' + this.props.link)
+              }.bind(this)} style={
                 {...style.iconDiv, ...{
                   backgroundImage: 'url(images/'+this.props.image+'.png)'
                 }}
               }>
             </div>
-          </a>
+
           <div style={style.titleDiv}>
             {this.props.title}
           </div>

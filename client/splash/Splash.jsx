@@ -46,7 +46,7 @@ class IconColumn extends React.Component{
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
-        marginBottom: '2em'
+        margin: '2em 0em'
       },
       iconDiv: {
         display: 'flex',

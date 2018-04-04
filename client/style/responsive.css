@@ -12,5 +12,7 @@
   #footer {
     display: none !important;
   }
-
+  .reduceFont {
+    font-size: 0.8em;
+  }
 }

@@ -10,7 +10,7 @@ export default class Splash extends TrackerReact(React.Component) {
   render (){
     if(Meteor.userId()){
       return (
-        <div style={{
+        <div className="forceColumn reduceFont" style={{
             //border: '1px red solid',
             display: 'flex',
             marginTop: "-5em",
@@ -44,7 +44,9 @@ class IconColumn extends React.Component{
     var style = {
       columnDiv: {
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        flexShrink: 0,
+        marginBottom: '2em'
       },
       iconDiv: {
         display: 'flex',
@@ -76,7 +78,7 @@ class IconColumn extends React.Component{
       }
     }
     return(
-        <div style={style.columnDiv}>
+        <div style={style.columnDiv} >
           <a href={this.props.link}>
             <div style={
                 {...style.iconDiv, ...{

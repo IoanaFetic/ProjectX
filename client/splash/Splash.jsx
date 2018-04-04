@@ -79,8 +79,8 @@ class IconColumn extends React.Component{
     }
     return(
         <div style={style.columnDiv} >
-          <a href={this.props.link}>
-            <div style={
+          <a className='reduceFont' href={this.props.link}>
+            <div className='reduceFont' style={
                 {...style.iconDiv, ...{
                   backgroundImage: 'url(images/'+this.props.image+'.png)'
                 }}

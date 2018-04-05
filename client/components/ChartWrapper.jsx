@@ -9,7 +9,8 @@ import moment from 'moment'
 import { saveAs } from 'file-saver'
 
 import {defaults} from 'react-chartjs-2';
-defaults.global.defaultFontSize = ref.size;
+
+
 
 import 'react-tippy/dist/tippy.css'
 import {
@@ -20,6 +21,8 @@ import {
 
 export default class ChartWrapper extends TrackerReact(React.Component) {
   constructor(props){
+    defaults.global.defaultFontSize = ref.size;
+    defaults.global.elements.arc.borderWidth = device < 2? 2: 6;
     super(props)
     this.state = {
       showSettings: false
@@ -135,6 +138,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
         right: margin + "em",
         top: 0,
         bottom: margin*2 + "em",
+        padding: device < 2? 0: "0 1em 0 .5em"
       },
 
     }

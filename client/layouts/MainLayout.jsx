@@ -107,7 +107,7 @@ export default class MainLayout extends TrackerReact(React.Component) {
               {Meteor.userId() && <NavIcon name='Shelf' link='shelf' highlight={this.props.page=='shelf'}/>}
             </div>
             <div style={{
-                margin: '1em',
+                margin: '1em'
             }} >
             {Meteor.userId() && <span>Logged in as </span> }
             <AccountsUI/>

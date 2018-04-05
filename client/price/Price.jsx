@@ -55,7 +55,7 @@ resubscribe(){
 										title='Average Pepper Prices'
 										tip='A fixed line chart showing the monthly evolution of pepper average price across brands'
 										dbName='Price'
-										id='avg_pepper_price'
+										id='price_avg_pepper'
 										chart='line'
 										settings={settings}
 										resubscribe={this.resubscribe.bind(this)}
@@ -66,7 +66,7 @@ resubscribe(){
 										title='Average Herbs Prices'
 										tip='A fixed line chart showing the monthly evolution of herbs average price across brand'
 										dbName='Price'
-										id='avg_herbs_price'
+										id='price_avg_herbs'
 										chart='line'
 										settings={settings}
 									resubscribe={this.resubscribe.bind(this)}
@@ -79,7 +79,7 @@ resubscribe(){
 										title='Monthly Product Price Comparison'
 										tip="A fully customisable bar chart showing any product price comparison for a specific month"
 										dbName='Price'
-										id='product_price_bar'
+										id='price_product_bar_chart'
 										chart='bar'
 										edit={true}
 										settings={settings}
@@ -91,7 +91,7 @@ resubscribe(){
 										title='Average Grinders Prices'
 										tip='A fixed line chart showing the monthly evolution of the average price for grinders across brands'
 										dbName='Price'
-										id='avg_grinders_price'
+										id='price_avg_grinders'
 										chart='line'
 										settings={settings}
 										resubscribe={this.resubscribe.bind(this)}

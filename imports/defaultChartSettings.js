@@ -5,7 +5,7 @@ export const defaultChartSettings = {
     },
     "sort": "brand"
   },
-  "avg_pepper_price": {
+  "price_avg_pepper": {
     "filter": {
       "product": [
         "Pepper", "White Pepper"
@@ -14,14 +14,14 @@ export const defaultChartSettings = {
     },
     "sort": "brand"
   },
-  "avg_herbs_price": {
+  "price_avg_herbs": {
     "filter": {
       "product": ["General"],
       "brand": ["Kamis", "Fuchs", "Kotanyi", "Galeo", "Cosmin"]
     },
     "sort": "brand"
   },
-  "product_price_bar_chart": {
+  "price_product_bar_chart": {
     "filter": {
       "product": [
         "Pepper", "White Pepper"
@@ -30,7 +30,7 @@ export const defaultChartSettings = {
     },
     "sort": "brand"
   },
-  "avg_grinders_price": {
+  "price_avg_grinders": {
     "filter": {
       "brand": [
         "Kamis", "Fuchs", "Kotanyi"
@@ -46,7 +46,7 @@ export const defaultChartSettings = {
     "sort": "brand",
     "sum": true
   },
-  "pie_shelf": {
+  "shelf_pie_chart": {
     "filter": {
       "value_type": ["shelf"],
       "report_month": ["August"]
@@ -54,7 +54,7 @@ export const defaultChartSettings = {
     "sort": "brand",
     "sum": true
   },
-  "pie_extra": {
+  "shelf_pie_chart_extra": {
     "filter": {
       "value_type": ["extra"],
       "report_month": ["August"]
@@ -62,14 +62,14 @@ export const defaultChartSettings = {
     "sort": "brand",
     "sum": true
   },
-  "grouped_bar": {
+  "shelf_grouped_bar": {
     "filter": {
       "brand": ["Kamis", "Galeo"]
     },
     "sort": "brand",
     "sum": true
   },
-  "donut_chart": {
+  "shelf_donut_chart": {
     "filter": {
       "report_month": ["August"]
     },

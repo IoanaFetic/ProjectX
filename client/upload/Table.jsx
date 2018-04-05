@@ -62,7 +62,7 @@ export default class Table extends TrackerReact(React.Component) {
    }]
     return (
       <ReactTable
-      pageSize={12}
+      pageSize={10}
       resizable={false}
       sortable={true}
        data={data}

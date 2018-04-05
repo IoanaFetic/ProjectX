@@ -56,7 +56,7 @@ export default class Shelf extends TrackerReact(React.Component) {
                 chart="pie"
                 edit={true}
                 dbName='Shelf'
-                id='pie_shelf'
+                id='shelf_pie_chart'
                 settings={settings}
                 resubscribe={this.resubscribe.bind(this)}
               />
@@ -68,7 +68,7 @@ export default class Shelf extends TrackerReact(React.Component) {
                 chart="pie"
                 edit={true}
                 dbName='Shelf'
-                id='pie_extra'
+                id='shelf_pie_chart_extra'
                 settings={settings}
                 resubscribe={this.resubscribe.bind(this)}
               />
@@ -82,7 +82,7 @@ export default class Shelf extends TrackerReact(React.Component) {
                 edit={true}
                 chart="groupbar"
                 dbName='Shelf'
-                id='grouped_bar'
+                id='shelf_grouped_bar'
                 settings={settings}
                 resubscribe={this.resubscribe.bind(this)}
               />
@@ -94,7 +94,7 @@ export default class Shelf extends TrackerReact(React.Component) {
                 edit={true}
                 chart='donut'
                 dbName='Shelf'
-                id='donut_chart'
+                id='shelf_donut_chart'
                 settings={settings}
                 resubscribe={this.resubscribe.bind(this)}
               />

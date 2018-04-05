@@ -186,10 +186,11 @@ export default class ChartSettings extends React.Component {
                 <div style={{margin: "0 .5em"}}>
                   Year:
                 </div>
-                <div style={{width: "5em"}}>
+                <div style={{width: "7em"}}>
                   <div style={{width: "100%"}}>
                   <Dropdown options={keyValues.report_year} onChange={this.setYear.bind(this)} value={
-                    Meteor.user().selectedYear && Meteor.user().selectedYear.toString() || ""
+                    Meteor.user().selectedYear && Meteor.user().selectedYear.toString() ||
+                    this.state.selectedYear && this.state.selectedYear.toString()
                   }/>
                 </div>
                 </div>

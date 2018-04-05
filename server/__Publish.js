@@ -1,3 +1,5 @@
+import { defaultChartSettings } from '../imports/defaultChartSettings.js'
+
 DB = {
   Price: new Mongo.Collection ('price'),
   Shelf: new Mongo.Collection ('shelf'),
@@ -144,7 +146,26 @@ var initialise = function() {
       console.log("key values updated")
     }
   })
+
+  DB.Global.update({
+    id: "defaultChartSettings"
+  }, {
+    id: "defaultChartSettings",
+    value: defaultChartSettings
+  }, {
+    upsert: true
+  }, function(err) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      console.log("chart settings imported")
+    }
+  })
+
+
 }
+
 
 Meteor.startup(initialise);
 Meteor.setInterval(initialise, 1000*60*60)

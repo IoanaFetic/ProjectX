@@ -35,7 +35,7 @@ Meteor.publish('data',function(dbName){
 
     for(key of Object.keys(userChartSettings)){ // loop through chart IDs with custom settings
       if(key.match(dbName.toLowerCase()) && userChartSettings[key].filter){ // check it has a filter field
-        console.log("user settings for " + key)
+      //  console.log("user settings for " + key)
         chartsWithUserSettings.push(key) // add chart ID to array
         if(Object.keys(userChartSettings[key].filter).length > 0){ // check if filter has inputs
           filters.push(userChartSettings[key].filter) // add this filter to the filter array
@@ -45,7 +45,7 @@ Meteor.publish('data',function(dbName){
     for(key of Object.keys(defaultChartSettings)){
       // if chart ID was found in custom settings, don't get the default settings
       if(key.match(dbName.toLowerCase()) && defaultChartSettings[key].filter && chartsWithUserSettings.indexOf(key) == -1){
-        console.log("default settings for " + key)
+      //  console.log("default settings for " + key)
         if(Object.keys(defaultChartSettings[key].filter).length > 0){
           filters.push(defaultChartSettings[key].filter) // same as before, add to filter array
         }
@@ -56,7 +56,7 @@ Meteor.publish('data',function(dbName){
         for(key of Object.keys(filter)){
           filter[key] = {$in: filter[key]} // change field arrays to mongoDB query format
         }
-      console.log(filter)
+      //console.log(filter)
     }
 
     if(Meteor.user().admin){

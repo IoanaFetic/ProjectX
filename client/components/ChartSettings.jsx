@@ -11,7 +11,8 @@ export default class ChartSettings extends React.Component {
         filter: {},
         sort: '',
         sum: false
-      }
+      },
+      selectedYear: false
     }
   }
   saveSettings(){
@@ -25,7 +26,12 @@ export default class ChartSettings extends React.Component {
       console.log("saving user specific settings")
       Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings)
     }
+
+    if(this.state.selectedYear){
+      Meteor.call('updateUser', 'selectedYear', this.state.selectedYear)
+    }
     this.props.toggleSettings()
+    this.props.resubscribe()
 
   }
   setFilter(key){
@@ -71,6 +77,11 @@ export default class ChartSettings extends React.Component {
     })
   }
 
+  setYear(val){
+    this.setState({
+      selectedYear: val.value
+    })
+  }
   render(){
     var isOriginal = JSON.stringify(this.state.settings) == this.origSettings
     var keyValues = DB.Global.findOne({id: "keyValues"}).value
@@ -131,10 +142,10 @@ export default class ChartSettings extends React.Component {
           <div style={{
             marginBottom: "1em",
             display: "flex",
-            alignItems: "center"
+            justifyContent: "space-between"
           }}>
 
-
+          <div style={{display: "flex", alignItems: "center"}}>
             <Ionicon icon="md-funnel" fontSize={iconSize+"px"} style={{
               margin: "0 .5em"
             }}/>
@@ -166,9 +177,23 @@ export default class ChartSettings extends React.Component {
                   flexShrink: 0
               }}>
                 <div style={{width: "100%"}}>
-                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder="Filter by key..." />
+                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder="Include data for..." />
               </div>
               </div>
+            </div>
+
+              <div style={{display: "flex", alignItems: "center"}}>
+                <div style={{margin: "0 .5em"}}>
+                  Year:
+                </div>
+                <div style={{width: "5em"}}>
+                  <div style={{width: "100%"}}>
+                  <Dropdown options={keyValues.report_year} onChange={this.setYear.bind(this)} value={Meteor.user().selectedYear.toString() || ""}/>
+                </div>
+                </div>
+              </div>
+
+
 
 
           </div>

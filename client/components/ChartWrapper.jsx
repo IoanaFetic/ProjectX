@@ -107,21 +107,25 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
       Meteor.user().chartSettings &&
       Meteor.user().chartSettings[this.props.id]
     )
+    var settings = this.props.settings[this.props.id]
     var data = {}
     if(this.props.dbName){
       var query = this.convertToQuery(
-        JSON.stringify(userSettings && userSettings.filter || this.props.settings && this.props.settings.filter || {})
+        JSON.stringify(userSettings && userSettings.filter || settings && settings.filter || {})
       )
       var sortValue = (
-        userSettings && userSettings.sort || this.props.settings && this.props.settings.sort || ''
+        userSettings && userSettings.sort || settings && settings.sort || ''
       )
-      var data = this.gatherData(
-        DB[this.props.dbName].find(query).fetch()
-        ,
-        sortValue)
+      if(Object.keys(query).length > 0){
+        var data = this.gatherData(DB[this.props.dbName].find(query).fetch(), sortValue)
+      }
+      else {
+        var data = {}
+      }
+
     }
 
-    var sum = userSettings && userSettings.sum || this.props.settings && this.props.settings.sum
+    var sum = userSettings && userSettings.sum || settings && settings.sum
     var margin = .5
 
     var style = {
@@ -228,8 +232,8 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
 
       {this.state.showSettings &&
         <ChartSettings ref="chartSettings" userSettings={userSettings} dbName={this.props.dbName} origSettings={
-          JSON.stringify(this.props.settings)
-        } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)} />
+          JSON.stringify(settings)
+        } id={this.props.id} toggleSettings={this.toggleSettings.bind(this)} resubscribe={this.props.resubscribe}/>
       }
     </div>
   )

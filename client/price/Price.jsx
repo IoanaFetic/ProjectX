@@ -8,7 +8,7 @@ export default class Price extends TrackerReact(React.Component){
 	  super()
 		Session.set('priceSubscribed', false)
 		this.state={
-			priceSubscription: Meteor.subscribe('price',function(){
+			priceSubscription: Meteor.subscribe('data', 'Price', function(){
 				Session.set('priceSubscribed', true)
 		})
 	}
@@ -16,9 +16,15 @@ export default class Price extends TrackerReact(React.Component){
 componentWillUnmount(){
 	this.state.priceSubscription.stop()
 }
+resubscribe(){
+	this.state.priceSubscription.stop()
+	this.setState({
+		priceSubscription: Meteor.subscribe('data', 'Price')
+	})
+}
  render() {
-	 if (Session.get('priceSubscribed')){
-
+	 if (Session.get('priceSubscribed') && Session.get('globalSubscribed')){
+		var settings = DB.Global.findOne({id: "defaultChartSettings"}).value
 		var style = Style.dashStyle
 
 			return (
@@ -36,15 +42,12 @@ componentWillUnmount(){
                 id='price_main'
 								chart='line'
 								edit={true}
-                settings={{
-                  filter: {
-                    product: ['Pepper']
-                  },
-                  sort: 'brand'
-                }}
-              showTotal={true}
+                settings={settings}
+              	showTotal={true}
+								resubscribe={this.resubscribe.bind(this)}
 							/>
 						</div>
+
 						<div style={style.lowerContainer} className="forceColumn">
 							<div style={style.column}>
 								<div style={style.cell} className="chartCell">
@@ -54,22 +57,9 @@ componentWillUnmount(){
 										dbName='Price'
 										id='avg_pepper_price'
 										chart='line'
-										settings={{
-											filter: {
-												product: [
-													'Pepper',
-													'White Pepper'
-												],
-												brand: [
-													'Kamis',
-													'Fuchs',
-													'Kotanyi',
-													'Galeo',
-													'Cosmin'
-												]
-											},
-											sort: 'brand'
-										}}/>
+										settings={settings}
+										resubscribe={this.resubscribe.bind(this)}
+								/>
 								</div>
 								<div style={style.cell} className="chartCell">
 									<ChartWrapper
@@ -78,19 +68,9 @@ componentWillUnmount(){
 										dbName='Price'
 										id='avg_herbs_price'
 										chart='line'
-										settings={{
-											filter:{
-												product: ['General'],
-												brand: [
-													'Kamis',
-													'Fuchs',
-													'Kotanyi',
-													'Galeo',
-													'Cosmin'
-												]
-											},
-											sort: 'brand'
-										}}/>
+										settings={settings}
+									resubscribe={this.resubscribe.bind(this)}
+								/>
 								</div>
 							</div>
 							<div style={style.column}>
@@ -99,22 +79,12 @@ componentWillUnmount(){
 										title='Monthly Product Price Comparison'
 										tip="A fully customisable bar chart showing any product price comparison for a specific month"
 										dbName='Price'
-										id='bar_chart'
+										id='product_price_bar'
 										chart='bar'
 										edit={true}
-										settings={{
-											filter:{
-												product: [
-													'Pepper',
-													'White Pepper'
-												],
-												report_month:
-												[
-													'March'
-												]
-											},
-											sort: 'brand'
-										}}/>
+										settings={settings}
+									resubscribe={this.resubscribe.bind(this)}
+								/>
 								</div>
 								<div style={style.cell} className="chartCell">
 									<ChartWrapper
@@ -123,22 +93,15 @@ componentWillUnmount(){
 										dbName='Price'
 										id='avg_grinders_price'
 										chart='line'
-										settings={{
-											filter:{
-												brand: [
-													'Kamis',
-													'Fuchs',
-													'Kotanyi'
-												],
-												package_type: ['Grinders']
-											},
-											sort: 'brand'
-										}}
+										settings={settings}
+										resubscribe={this.resubscribe.bind(this)}
 										/>
 								</div>
 
 							</div>
 							</div>
+
+
 
 				</div>
 			)
@@ -198,5 +161,12 @@ content={
 			}}/>
 		</div>
 
+
+	*/
+
+
+
+
+/*
 
 	*/

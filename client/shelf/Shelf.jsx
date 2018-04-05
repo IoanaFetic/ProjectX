@@ -16,9 +16,15 @@ export default class Shelf extends TrackerReact(React.Component) {
   componentWillUnmount() {
     this.state.shelfSubscription.stop()
   }
+  resubscribe(){
+  	this.state.priceSubscription.stop()
+  	this.setState({
+  		priceSubscription: Meteor.subscribe('data', 'Price')
+  	})
+  }
   render() {
     if (Session.get('shelfSubscribed')) {
-
+      var settings = DB.Global.findOne({id: "defaultChartSettings"}).value
       var style = Style.dashStyle
 
       return (
@@ -36,18 +42,9 @@ export default class Shelf extends TrackerReact(React.Component) {
               tip='A fully customisable line chart based on historic monthly shelf faces data'
               dbName='Shelf'
               id='shelf_main'
-              settings={{
-                filter: {
-                  brand: [
-                    'Kamis',
-                    'Fuchs',
-                    'Kotanyi'
-                  ]
-                },
-                sort: 'brand',
-                sum: true
-              }}
-              showTotal={true}/>
+              settings={settings}
+              resubscribe={this.resubscribe.bind(this)}
+              />
 
         </div>
         <div style={style.lowerContainer} className="forceColumn">
@@ -60,18 +57,9 @@ export default class Shelf extends TrackerReact(React.Component) {
                 edit={true}
                 dbName='Shelf'
                 id='pie_shelf'
-                settings={{
-                  filter: {
-                    value_type: [
-                      'shelf'
-                    ],
-                    report_month: [
-                      'August'
-                    ]
-                  },
-                  sort: 'brand',
-                  sum: true
-                }}/>
+                settings={settings}
+                resubscribe={this.resubscribe.bind(this)}
+              />
             </div>
             <div style={style.cell} className="chartCell">
               <ChartWrapper
@@ -81,18 +69,9 @@ export default class Shelf extends TrackerReact(React.Component) {
                 edit={true}
                 dbName='Shelf'
                 id='pie_extra'
-                settings={{
-                  filter: {
-                    value_type: [
-                      'extra'
-                    ],
-                    report_month: [
-                      'August'
-                    ]
-                  },
-                  sort: 'brand',
-                  sum: true
-                }}/>
+                settings={settings}
+                resubscribe={this.resubscribe.bind(this)}
+              />
             </div>
           </div>
           <div style={style.column}>
@@ -104,16 +83,9 @@ export default class Shelf extends TrackerReact(React.Component) {
                 chart="groupbar"
                 dbName='Shelf'
                 id='grouped_bar'
-                settings={{
-                  filter: {
-                    brand: [
-                      'Kamis',
-                      'Galeo'
-                    ],
-                  },
-                  sort: 'brand',
-                  sum: true
-                }}/>
+                settings={settings}
+                resubscribe={this.resubscribe.bind(this)}
+              />
             </div>
             <div style={style.cell} className="chartCell">
               <ChartWrapper
@@ -123,15 +95,8 @@ export default class Shelf extends TrackerReact(React.Component) {
                 chart='donut'
                 dbName='Shelf'
                 id='donut_chart'
-                settings={{
-                  filter: {
-                    report_month: [
-                      'August'
-                    ]
-                  },
-                  sort: 'merchandiser',
-                  sum: true
-                }}
+                settings={settings}
+                resubscribe={this.resubscribe.bind(this)}
               />
             </div>
           </div>

@@ -18,7 +18,7 @@ export default class ChartSettings extends React.Component {
   saveSettings(){
     if(JSON.stringify(this.state.settings) == this.origSettings){
       console.log("default settings set, so removing user specific settings")
-      var newSettings = Meteor.user().chartSettings
+      var newSettings = Meteor.user().chartSettings || {}
       delete newSettings[this.props.id]
       Meteor.call("updateUser", "chartSettings", newSettings)
     }

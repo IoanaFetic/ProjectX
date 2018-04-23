@@ -57,7 +57,8 @@ class IconColumn extends React.Component{
         backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        margin: '3em 5em'
+        margin: '3em 5em',
+        cursor: 'pointer'
       },
       titleDiv: {
         display: 'flex',

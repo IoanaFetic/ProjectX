@@ -8,7 +8,7 @@ export default class Shelf extends TrackerReact(React.Component) {
     super()
     Session.set('shelfSubscribed', false)
     this.state = {
-      shelfSubscription: Meteor.subscribe('shelf', function() {
+      shelfSubscription: Meteor.subscribe('data', 'Shelf', function() {
         Session.set('shelfSubscribed', true)
       })
     }
@@ -19,7 +19,7 @@ export default class Shelf extends TrackerReact(React.Component) {
   resubscribe(){
   	this.state.priceSubscription.stop()
   	this.setState({
-  		priceSubscription: Meteor.subscribe('data', 'Price')
+  		priceSubscription: Meteor.subscribe('data', 'Shelf')
   	})
   }
   render() {

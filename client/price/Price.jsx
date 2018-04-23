@@ -83,7 +83,7 @@ resubscribe(){
 										chart='bar'
 										edit={true}
 										settings={settings}
-									resubscribe={this.resubscribe.bind(this)}
+										resubscribe={this.resubscribe.bind(this)}
 								/>
 								</div>
 								<div style={style.cell} className="chartCell">

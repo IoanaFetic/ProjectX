@@ -64,7 +64,7 @@ export default class Chart extends React.Component {
             legend: {
               labels: {
                 boxWidth: 2,
-                padding: 20,
+                padding: 14,
               },
               position: device < 2? 'right': 'top'
             },

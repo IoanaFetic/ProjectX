@@ -1,4 +1,18 @@
 import { defaultChartSettings } from '../imports/defaultChartSettings.js'
+var months = [
+  'January',
+  'Feburary',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
 
 DB = {
   Price: new Mongo.Collection ('price'),
@@ -20,11 +34,12 @@ Meteor.publish('user', function(){
 })
 
 Meteor.publish('data',function(dbName){
+  console.log("publishing")
   if(Meteor.user()){
+
     var userChartSettings = Meteor.user().chartSettings? Meteor.user().chartSettings: {} // user chart settings, if they exist
     var defaultChartSettings = DB.Global.findOne({id: "defaultChartSettings"})
     defaultChartSettings = defaultChartSettings.value || {} // default chart settings, if found (should be)
-
     var chartsWithUserSettings = [] // keep track of charts with custom settings (to ignore default)
     var filters = [] // build an array of filters to query for
     /* ie.
@@ -32,7 +47,6 @@ Meteor.publish('data',function(dbName){
       or
       ( "product" : [ "White Pepper" ], "brand" : ["Fuchs"] )
     */
-
     for(key of Object.keys(userChartSettings)){ // loop through chart IDs with custom settings
       if(key.match(dbName.toLowerCase()) && userChartSettings[key].filter){ // check it has a filter field
       //  console.log("user settings for " + key)
@@ -54,43 +68,34 @@ Meteor.publish('data',function(dbName){
 
     for(filter of filters){ // loop through all gathered filters
         for(key of Object.keys(filter)){
+          if (key == "report_month") {
+            // filtering by months, so convert string to month index
+            for (m in filter[key]) {
+              filter[key][m] = months.indexOf(filter[key][m])
+            }
+          }
           filter[key] = {$in: filter[key]} // change field arrays to mongoDB query format
         }
-      //console.log(filter)
     }
 
     if(Meteor.user().admin){
       return DB[dbName].find({...{
         report_year: Meteor.user().selectedYear
-      }, ...{$or: filters}}) // query for any of the filters
+      }, ...{$or: filters}}, {sort: {datetime: -1}}) // query for any of the filters
     }
     else {
       return DB[dbName].find({...{
         user: Meteor.user().username, // add extra filter, for only uploads by this user
         report_year: Meteor.user().selectedYear
-      }, ...{$or: filters}})
+      }, ...{$or: filters}}, {sort: {datetime: -1}})
     }
   }
   else {
-    this.ready()
+    this.ready() // Not logged in, so return nothing
   }
 })
 
-Meteor.publish('shelf',function(){
-  if(Meteor.user()){
-    if(Meteor.user().admin){
-      return DB.Shelf.find()
-    }
-    else {
-      return DB.Shelf.find({
-        user: Meteor.user().username
-      })
-    }
-  }
-  else {
-    this.ready()
-  }
-})
+
 
 var initialise = function() {
   var indexes = {

@@ -10,7 +10,8 @@ export default class Price extends TrackerReact(React.Component){
 		this.state={
 			priceSubscription: Meteor.subscribe('data', 'Price', function(){
 				Session.set('priceSubscribed', true)
-		})
+		}),
+		userSubscription: Meteor.subscribe('user')
 	}
 }
 componentWillUnmount(){
@@ -100,9 +101,6 @@ resubscribe(){
 
 							</div>
 							</div>
-
-
-
 				</div>
 			)
 	 }

@@ -22,18 +22,24 @@ export default class ChartSettings extends React.Component {
       console.log("default settings set, so removing user specific settings")
       var newSettings = Meteor.user().chartSettings || {}
       delete newSettings[this.props.id]
-      Meteor.call("updateUser", "chartSettings", newSettings)
+      Meteor.call("updateUser", "chartSettings", newSettings, function(){
+        this.props.resubscribe()
+      }.bind(this))
     } else {
       console.log("saving user specific settings")
-      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings)
+      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings, function(){
+        this.props.resubscribe()
+      }.bind(this))
     }
 
     if (this.state.selectedYear) {
-      Meteor.call('updateUser', 'selectedYear', this.state.selectedYear)
+      Meteor.call('updateUser', 'selectedYear', this.state.selectedYear, function(){
+        this.props.resubscribe()
+        console.log("year changed, resubscribe")
+      }.bind(this))
+
     }
     this.props.toggleSettings()
-    this.props.resubscribe()
-
   }
   setFilter(key) {
     var settings = this.state.settings

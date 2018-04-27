@@ -103,26 +103,23 @@ var initialise = function() {
       'brand',
       'client_name',
       'report_month',
-      'report_dbName',
       'upload_id',
       'user',
       'report_year',
-      'package_dbName',
       'product'
     ],
     Shelf: [
       'brand',
       'client_name',
       'report_month',
-      'report_dbName',
       'upload_id',
       'user',
       'report_year',
-      'value_dbName',
       'city',
       'district',
       'salesman',
       'merchandiser',
+      'value_type',
       'regional_manager'
     ]
   }

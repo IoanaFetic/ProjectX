@@ -24,7 +24,7 @@ export default class Shelf extends TrackerReact(React.Component) {
   	})
   }
   render() {
-    if (Session.get('shelfSubscribed')) {
+    if (Session.get('shelfSubscribed') && Session.get('globalSubscribed') && !Session.get('reload')) {
       var settings = DB.Global.findOne({id: "defaultChartSettings"}).value
       var style = Style.dashStyle
 

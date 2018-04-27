@@ -84,6 +84,19 @@ export default class Chart extends React.Component {
           legend: {
             display: false
           },
+          tooltips: {
+             callbacks: {
+               label: function(tooltipItem, data) {
+                 var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                 if (label) {
+                   label += ': ';
+                 }
+                 label += Math.round(tooltipItem.yLabel * 100) / 100;
+                 return label;
+               }
+             }
+           },
           title: {
             display: true,
             text: this.props.title + (this.props.sum? " (sum)": " (mean)")

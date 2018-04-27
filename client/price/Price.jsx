@@ -24,7 +24,7 @@ resubscribe(){
 	})
 }
  render() {
-	 if (Session.get('priceSubscribed') && Session.get('globalSubscribed')){
+	 if (Session.get('priceSubscribed') && Session.get('globalSubscribed') && !Session.get('reload')){
 		var settings = DB.Global.findOne({id: "defaultChartSettings"}).value
 		var style = Style.dashStyle
 

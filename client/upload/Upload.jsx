@@ -213,7 +213,7 @@ export default class Upload extends TrackerReact(React.Component) {
   }
 
   render() {
-    if (Session.get('uploadsSubscribed')) {
+    if (Session.get('uploadsSubscribed') && Meteor.user()) {
 
       // return page content
       return (<div style={{

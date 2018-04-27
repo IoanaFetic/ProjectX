@@ -4,6 +4,9 @@
 import React from 'react'
 import AccountsUI from './AccountsUI.jsx'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
+import Ionicon from 'react-ionicons'
+import {defaults} from 'react-chartjs-2'; // handle to change default chart settings
+
 
 device = screen.width < 850? 2: (screen.width < 1500? 1: 0)
 // 2 = small screens (phone)
@@ -11,6 +14,15 @@ device = screen.width < 850? 2: (screen.width < 1500? 1: 0)
 // 0 = high res screens
 iconSize = device < 2? (device < 1? ref.size*2: ref.size*1.5): ref.size*4
 baseSize = device < 2? (device < 1? ref.size*1.3: ref.size*0.9): ref.size*2.8;
+
+defaults.global.defaultFontSize = baseSize; // set default chart settings
+defaults.global.elements.arc.borderWidth = device < 2
+  ? 2
+  : 6;
+if (device == 1) {
+  defaults.global.elements.line.borderWidth = 2;
+  defaults.global.elements.point.radius = 2;
+}
 
 // initiate client side copy of MongoDB (miniMongo)
 // Meteor handles synchronisation between this copy and the server master copy
@@ -48,9 +60,26 @@ export default class MainLayout extends TrackerReact(React.Component) {
       }),
       userSubscription: Meteor.subscribe('user', function(){
         Session.set('userSubscribed', true)
-      })
-
+      }),
+      magnify: 10
     }
+  }
+  magnify(z){
+
+    if(z > 5 && z < 15){
+      Session.set('reload', true)
+
+      defaults.global.defaultFontSize = baseSize*parseInt(z)/10; // set default chart settings
+      this.setState({
+        magnify: parseInt(z)
+      })
+      Meteor.setTimeout(function(){
+        Session.set('reload', false)
+      }, 200)
+        console.log(z)
+    }
+
+
   }
   componentWillMount(){
     // runs after initial construction, but before mounting to DOM
@@ -78,7 +107,8 @@ export default class MainLayout extends TrackerReact(React.Component) {
         <div style={{ // in React.js, inline styles are encouraged
           height: '100%', // conventional CSS syntax is replaced by object notation
           display: 'flex', // as CSS is written in JS, strings must be quoted
-          flexDirection: 'column' // a CSS dash is replaced by upper case character
+          flexDirection: 'column', // a CSS dash is replaced by upper case character
+          fontSize: (this.state.magnify/10) + 'em'
         }}>
           <nav style={{
             display: 'flex',
@@ -107,9 +137,9 @@ export default class MainLayout extends TrackerReact(React.Component) {
               </div>
 
               <NavIcon name='Home' link='/' highlight={this.props.page=='splash'}/>
-              {Meteor.userId() && <NavIcon name='Upload' link='upload' highlight={this.props.page=='upload'}/>}
-              {Meteor.userId() && <NavIcon name='Price' link='price' highlight={this.props.page=='price'}/>}
-              {Meteor.userId() && <NavIcon name='Shelf' link='shelf' highlight={this.props.page=='shelf'}/>}
+              {Meteor.userId() && <NavIcon name='Upload' magnify={this.state.magnify} link='upload' highlight={this.props.page=='upload'}/>}
+              {Meteor.userId() && <NavIcon name='Price' magnify={this.state.magnify} link='price' highlight={this.props.page=='price'}/>}
+              {Meteor.userId() && <NavIcon name='Shelf' magnify={this.state.magnify} link='shelf' highlight={this.props.page=='shelf'}/>}
             </div>
             <div style={{
                 margin: '1em'
@@ -134,13 +164,42 @@ export default class MainLayout extends TrackerReact(React.Component) {
         </div>
         <footer id="footer" style={{
             display: 'flex',
+            justifyContent: 'space-between',
             backgroundColor: 'white',
-            color: 'white',
             height: '2em',
             alignItems: 'center',
             flexShrink: 0,
             borderTop: color.border + ' 1px solid'
           }}>
+
+
+          <div style={{
+              display: "flex"
+            }}>
+              <Ionicon icon="md-search" fontSize={iconSize + "px"} style={{
+                  margin: "0 1em",
+                  cursor: "pointer"
+              }} onClick={this.magnify.bind(this, 10)}/>
+              <Ionicon icon="md-remove" fontSize={iconSize + "px"} style={{
+                        margin: "0 1em",
+                        cursor: "pointer"
+                  }} onClick={this.magnify.bind(this, this.state.magnify - 4)} color={
+                    this.state.magnify < 10? color.green: ''
+                  }/>
+              <Ionicon icon="md-add" fontSize={iconSize + "px"} style={{
+                    margin: "0 1em",
+                    cursor: "pointer"
+              }} onClick={this.magnify.bind(this, this.state.magnify + 4)} color={
+                this.state.magnify > 10? color.green: ''
+              }/>
+          </div>
+
+          <div style={{
+              paddingRight: '1em'
+            }}>
+            Copyright some stuff
+          </div>
+
         </footer>
       </div>
     )

@@ -27,3 +27,7 @@
 .chips DIV {
   font-size: 1em !important;
 }
+
+#signup-link {
+  display: none;
+}

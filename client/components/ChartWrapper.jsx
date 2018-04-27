@@ -7,7 +7,7 @@ import ChartSettings from './ChartSettings.jsx'
 import Ionicon from 'react-ionicons'
 import moment from 'moment'
 import {saveAs} from 'file-saver'
-import {defaults} from 'react-chartjs-2'; // handle to change default chart settings
+
 
 import 'react-tippy/dist/tippy.css' // style for tooltips (from API)
 import {Tooltip} from 'react-tippy';
@@ -16,14 +16,7 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
   // reactive, changes with database updates
   constructor(props) {
     super(props)
-    defaults.global.defaultFontSize = baseSize; // set default chart settings
-    defaults.global.elements.arc.borderWidth = device < 2
-      ? 2
-      : 6;
-    if (device == 1) {
-      defaults.global.elements.line.borderWidth = 2;
-      defaults.global.elements.point.radius = 2;
-    }
+
     this.state = {
       showSettings: false
     }
@@ -33,10 +26,10 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
     var firstMonth = 11 // to be updated with earliest month found
     var lastMonth = 0 // to be updated with latest month found
     for (doc of data) { // loop through filtered documents in DB
-      var sortEntry = doc[sortKey] // the value this document will be sorted by. ie Kamis
-      var valueEntry = doc['value'] // ie. shelf price
+      var sortEntry = doc[sortKey] // the value this document will be sorted by (e.g. Kamis)
+      var valueEntry = doc['value'] // e.g. shelf price
       if (sortEntry && !isNaN(parseFloat(valueEntry))) { // check value is numerical
-        if (!dataObj[sortEntry]) { // if no document with the sort value has been found so far (ie Kamis)
+        if (!dataObj[sortEntry]) { // if no document with the sort value has been found so far (e.g. Kamis)
           dataObj[sortEntry] = { // initiate field in dataObj with group as the key
             n: new Array(12).fill(0), // array of 0s (number of documents found)
             t: new Array(12).fill(0) // array of 0s (total of values)
@@ -95,6 +88,9 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
     this.refs.chartSettings.resetSettings()
   }
   render() {
+
+
+
     if (Meteor.user()) { // if logged in
       // retrieve and sort data
       var userSettings = (Meteor.user().chartSettings && Meteor.user().chartSettings[this.props.id]) // false if no settings found for this chart

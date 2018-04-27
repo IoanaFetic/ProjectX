@@ -14,7 +14,13 @@ export default class Table extends TrackerReact(React.Component) {
     }
   }
   render(){
-    var data = DB.Uploads.find().fetch() // add uploads data
+    if(Meteor.user().admin){
+      var data = DB.Uploads.find().fetch() 
+    }
+    else {
+      var data = DB.Uploads.find({user: Meteor.user().username}).fetch() // add uploads data
+    }
+
 
     // define table column structure and data
    const columns = [{

@@ -61,7 +61,8 @@ export default class MainLayout extends TrackerReact(React.Component) {
       userSubscription: Meteor.subscribe('user', function(){
         Session.set('userSubscribed', true)
       }),
-      magnify: 10
+      magnify: 10,
+      language: true,
     }
   }
   magnify(z){
@@ -81,6 +82,16 @@ export default class MainLayout extends TrackerReact(React.Component) {
 
 
   }
+
+  language(){
+  Session.set('reload', true)
+    this.setState({
+      language: !this.state.language
+    })
+    Meteor.setTimeout(function(){
+      Session.set('reload', false)
+    }, 200)
+  }
   componentWillMount(){
     // runs after initial construction, but before mounting to DOM
   }
@@ -98,7 +109,12 @@ export default class MainLayout extends TrackerReact(React.Component) {
   // UPDATING METHODS
 
   render(){
-
+    if(this.state.language){
+      rom = true;
+    }
+    else {
+      rom = false;
+    }
     // render(){} always required for react component
     // excecutes code for every lifecycle of component
     // content of return() is converted to HTML then appended to DOM
@@ -136,15 +152,15 @@ export default class MainLayout extends TrackerReact(React.Component) {
                 }}>
               </div>
 
-              <NavIcon name='Home' link='/' highlight={this.props.page=='splash'}/>
-              {Meteor.userId() && <NavIcon name='Upload' magnify={this.state.magnify} link='upload' highlight={this.props.page=='upload'}/>}
-              {Meteor.userId() && <NavIcon name='Price' magnify={this.state.magnify} link='price' highlight={this.props.page=='price'}/>}
-              {Meteor.userId() && <NavIcon name='Shelf' magnify={this.state.magnify} link='shelf' highlight={this.props.page=='shelf'}/>}
+              <NavIcon name={rom? 'Acasă' : 'Home'} link='/' highlight={this.props.page=='splash'}/>
+              {Meteor.userId() && <NavIcon name={rom? 'Încarcăre' : 'Upload'} magnify={this.state.magnify} link='upload' highlight={this.props.page=='upload'}/>}
+              {Meteor.userId() && <NavIcon name={rom? 'Preț' : 'Price'} magnify={this.state.magnify} link='price' highlight={this.props.page=='price'}/>}
+              {Meteor.userId() && <NavIcon name={rom? 'Raft' : 'Shelf'} magnify={this.state.magnify} link='shelf' highlight={this.props.page=='shelf'}/>}
             </div>
             <div style={{
                 margin: '1em'
             }} >
-            {Meteor.userId() && <span>Logged in as </span> }
+            {Meteor.userId() && <span> {rom? 'Cont conectat ': 'Logged in as'} </span> }
             <AccountsUI/>
             </div>
           </nav>
@@ -174,7 +190,8 @@ export default class MainLayout extends TrackerReact(React.Component) {
 
 
           <div style={{
-              display: "flex"
+              display: "flex",
+              alignItems: 'center'
             }}>
               <Ionicon icon="md-search" fontSize={iconSize + "px"} style={{
                   margin: "0 1em",
@@ -192,12 +209,25 @@ export default class MainLayout extends TrackerReact(React.Component) {
               }} onClick={this.magnify.bind(this, this.state.magnify + 4)} color={
                 this.state.magnify > 10? color.green: ''
               }/>
+
+            <div style={{
+                width: '1.5em',
+                height: '1em',
+                backgroundImage: 'url("' + (!this.state.language? 'images/rom.png': 'images/gb.png') + '")',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'contain',
+                cursor: 'pointer',
+                marginLeft: '1em'
+              }} onClick={this.language.bind(this)} >
+            </div>
+
+
           </div>
 
           <div style={{
               paddingRight: '1em'
             }}>
-            Copyright some stuff
+            {rom? "Drept de Autor" : "Copyright"}: Ioana Fetic 2018
           </div>
 
         </footer>

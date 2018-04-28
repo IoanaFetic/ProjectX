@@ -38,7 +38,7 @@ export default class Chart extends React.Component {
       p++ // increment to next colour
     }
     return { // return Chart.js friendly object
-      labels: ref.months,
+      labels: rom? ref.rommonths : ref.months,
       datasets
     }
   }
@@ -47,10 +47,10 @@ export default class Chart extends React.Component {
     // create empty DIV for google chart to be appended to
     var yLabel = ""
     if(this.props.dbName == "Price"){
-      yLabel = "Product Price (RON)"
+      yLabel = rom? "Prețul Produsului (RON)": "Product Price (RON)"
     }
     if(this.props.dbName == "Shelf"){
-      yLabel = "Number of Faces"
+      yLabel = rom? "Numărul de Fețe":"Number of Facings"
     }
 
     return (

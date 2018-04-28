@@ -213,7 +213,7 @@ export default class Upload extends TrackerReact(React.Component) {
   }
 
   render() {
-    if (Session.get('uploadsSubscribed') && Meteor.user()) {
+    if (Session.get('uploadsSubscribed') && Meteor.user() && !Session.get('reload'))  {
 
       // return page content
       return (<div style={{
@@ -274,7 +274,7 @@ export default class Upload extends TrackerReact(React.Component) {
              djsConfig={{
               autoProcessQueue: false,
               addRemoveLinks: true,
-              dictDefaultMessage: "Drop valid Price or Shelf report files here"
+              dictDefaultMessage: rom? "Încarcă raport validat de Preț sau Raft" : "Drop valid Price or Shelf report files here"
             }}/>
         </div>
         <div style={{
@@ -291,7 +291,7 @@ export default class Upload extends TrackerReact(React.Component) {
               : 1,
             boxShadow: '0.1em 0.1em 0.2em rgba(0, 0, 0, 0.4)'
           }} onClick={this.fileUpload.bind(this)}>
-          Upload
+          {rom? 'Încărcare' : 'Upload'}
         </div>
         <div style={{
             height: '5em',

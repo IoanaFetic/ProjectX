@@ -15,9 +15,9 @@ export default class Splash extends TrackerReact(React.Component) {
             display: 'flex',
             marginTop: "-5em",
           }}>
-          <IconColumn image='upload' link='upload' title='Upload Reports' subtitle='Upload reports for current or past months'/>
-          <IconColumn image='price' link='price'  title='Product Prices' subtitle='View metrics dashboard from the Price reports'/>
-          <IconColumn image='shelf' link='shelf' title='Shelf Statistics' subtitle='View metrics dashboard from the Shelf reports' />
+          <IconColumn image='upload' link='upload' title={rom? 'Încarcăre Raport' : 'Upload Reports'} subtitle={rom? 'Încarcăre raport pentru luna curentă' : 'Upload reports for current or past months'}/>
+          <IconColumn image='price' link='price'  title={rom? 'Preț Produse' : 'Product Prices'} subtitle={rom? 'Vizualizeaza date de la graficele de Preț' : 'View metrics dashboard from the Price reports'}/>
+          <IconColumn image='shelf' link='shelf' title={rom? 'Fețe Raft' : 'Shelf Statistics'} subtitle={rom? 'Vizualizeaza date de la graficele de Raft' : 'View metrics dashboard from the Shelf reports'} />
         </div>
       )
     } else {

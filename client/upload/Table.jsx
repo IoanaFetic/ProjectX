@@ -15,7 +15,7 @@ export default class Table extends TrackerReact(React.Component) {
   }
   render(){
     if(Meteor.user().admin){
-      var data = DB.Uploads.find().fetch() 
+      var data = DB.Uploads.find().fetch()
     }
     else {
       var data = DB.Uploads.find({user: Meteor.user().username}).fetch() // add uploads data
@@ -24,11 +24,11 @@ export default class Table extends TrackerReact(React.Component) {
 
     // define table column structure and data
    const columns = [{
-     Header: 'Username',
+     Header: rom? 'Nume Cont' : 'Username',
      accessor: 'user',
      style: {textAlign: 'center'}
    }, {
-     Header: 'Date Submitted',
+     Header: rom? 'Dată Încărcare': 'Date Submitted',
      accessor: 'datetime',
      Cell: (function({row}){
        // convert time into readable format
@@ -36,20 +36,20 @@ export default class Table extends TrackerReact(React.Component) {
      }),
      style: {textAlign: 'center'}
    }, {
-     Header: 'Report Type',
+     Header: rom? 'Tip Raport' : 'Report Type',
      accessor: 'report_type',
      style: {textAlign: 'center'}
    }, {
-     Header: 'Month of Report',
+     Header: rom? 'Lună Raport' : 'Month of Report',
      accessor: 'report_month',
      id: 'report_month',
      Cell: (function({row}){
        // convert numerical month to word
-       return ref.months[row._original.report_month]
+       return rom? ref.rommonths[row._original.report_month] : ref.months[row._original.report_month]
      }.bind(this)),
      style: {textAlign: 'center'}
    }, {
-     Header: 'Remove',
+     Header: rom? 'Șterge' : 'Remove',
      id: 'remove',
      Cell: (function({row}){
        // button to remove a submission. calls component method.

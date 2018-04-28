@@ -37,8 +37,8 @@ resubscribe(){
 					}}>
 						<div style={style.upperContainer} className="chartCell">
 							<ChartWrapper
-								title='Monthly product price evolution'
-								tip='A fully customisable line chart based on historic monthly price data'
+								title= {rom? 'Evoluția Lunară a Prețului' : 'Monthly product price evolution'}
+								tip= {rom? 'Un grafic tip linie ce poate fi schimbat și arată evoluția lunară a prețului' : 'A fully customisable line chart based on historic monthly price data'}
                 dbName='Price'
                 id='price_main'
 								chart='line'
@@ -53,8 +53,8 @@ resubscribe(){
 							<div style={style.column}>
 								<div style={style.cell} className="chartCell">
 									<ChartWrapper
-										title='Average Pepper Prices'
-										tip='A fixed line chart showing the monthly evolution of pepper average price across brands'
+										title= {rom? 'Prețul Mediu al Piperului' : 'Average Pepper Prices'}
+										tip= {rom? 'Un grafic tip linie ce arată evoluția lunară a prețului piperului' : 'A fixed line chart showing the monthly evolution of pepper average price across brands'}
 										dbName='Price'
 										id='price_avg_pepper'
 										chart='line'
@@ -64,8 +64,8 @@ resubscribe(){
 								</div>
 								<div style={style.cell} className="chartCell">
 									<ChartWrapper
-										title='Average Herbs Prices'
-										tip='A fixed line chart showing the monthly evolution of herbs average price across brand'
+										title={rom? 'Prețul Mediu al Ierburilor' : 'Average Herbs Prices'}
+										tip= {rom? 'Un grafic tip linie ce arată evoluția lunară a prețului Ierburilor' : 'A fixed line chart showing the monthly evolution of herbs average price across brand'}
 										dbName='Price'
 										id='price_avg_herbs'
 										chart='line'
@@ -77,8 +77,8 @@ resubscribe(){
 							<div style={style.column}>
 								<div style={style.cell} className="chartCell">
 									<ChartWrapper
-										title='Monthly Product Price Comparison'
-										tip="A fully customisable bar chart showing any product price comparison for a specific month"
+										title={rom? 'Comparație Lunară a Oricărui Produs ' : 'Monthly Product Price Comparison'}
+										tip={rom? 'Un grafic tip bară ce poate fi schimbat si arată comparația prețului oricărui produs pe o singură lună' : "A fully customisable bar chart showing any product price comparison for a specific month"}
 										dbName='Price'
 										id='price_product_bar_chart'
 										chart='bar'
@@ -89,8 +89,8 @@ resubscribe(){
 								</div>
 								<div style={style.cell} className="chartCell">
 									<ChartWrapper
-										title='Average Grinders Prices'
-										tip='A fixed line chart showing the monthly evolution of the average price for grinders across brands'
+										title={rom? 'Prețul Mediu al Râșnițelor' : 'Average Grinders Prices'}
+										tip={rom? 'Un grafic tip linie ce arată evoluția lunară a prețului Râșnițelor' : 'A fixed line chart showing the monthly evolution of the average price for grinders across brands'}
 										dbName='Price'
 										id='price_avg_grinders'
 										chart='line'

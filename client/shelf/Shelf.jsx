@@ -39,8 +39,8 @@ export default class Shelf extends TrackerReact(React.Component) {
             <ChartWrapper
               edit={true}
               chart="line"
-              title='Monthly Shelf Faces Evolution'
-              tip='A fully customisable line chart based on historic monthly shelf faces data'
+              title={rom? 'Evoluția Lunară a Numărului de Fețe': 'Monthly Shelf Faces Evolution'}
+              tip={rom? 'Un grafic tip linie ce poate fi schimbat și arată evoluția lunară a numărului de fețe' : 'A fully customisable line chart based on historic monthly shelf faces data'}
               dbName='Shelf'
               id='shelf_main'
               settings={settings}
@@ -52,8 +52,8 @@ export default class Shelf extends TrackerReact(React.Component) {
           <div style={style.column}>
             <div style={style.cell} className="chartCell">
               <ChartWrapper
-                title="Monthly Total Shelf Faces"
-                tip='A fully customisable pie chart showing the total normal shelf faces accross brands for a specific month'
+                title={rom? 'Numărul Total de Fețe la Raft pe Lună' : "Monthly Total Shelf Faces"}
+                tip={rom? 'Un grafic circular ce poate fi schimbat și arată numărul de fețe la raft pe lună' : 'A fully customisable pie chart showing the total normal shelf faces accross brands for a specific month'}
                 chart="pie"
                 edit={true}
                 dbName='Shelf'
@@ -64,8 +64,8 @@ export default class Shelf extends TrackerReact(React.Component) {
             </div>
             <div style={style.cell} className="chartCell">
               <ChartWrapper
-                title="Monthly Total Extra Shelf Faces"
-                tip='A fully customisable pie chart showing the total extra shelf faces accross brands for a specific month'
+                title={rom? 'Numărul Total de Fețe în Plasări Secundare pe Lună' : "Monthly Total Extra Shelf Faces"}
+                tip={rom? 'Un grafic circular ce poate fi schimbat și arată numărului de fețe în plasări secundare pe lună' : 'A fully customisable pie chart showing the total extra shelf faces accross brands for a specific month'}
                 chart="pie"
                 edit={true}
                 dbName='Shelf'
@@ -78,8 +78,8 @@ export default class Shelf extends TrackerReact(React.Component) {
           <div style={style.column}>
             <div style={style.cell} className="chartCell">
               <ChartWrapper
-                title="Grouped Bar Chart"
-                tip="A fixed grouped bar chart showing the evolution of Kamis + Galeo total shelf faces compared to Kamis + Galeo total extra shelf faces"
+                title={rom? 'Grafic Tip Bară Grupat' : "Grouped Bar Chart"}
+                tip={rom? "Un grafic tip bară grupat ce arată comparația lunară a numărului de fețe între Kamis și Galeo" : "A fixed grouped bar chart showing the evolution of Kamis total shelf faces compared to Galeo total shelf faces"}
                 edit={true}
                 chart="groupbar"
                 dbName='Shelf'
@@ -90,8 +90,8 @@ export default class Shelf extends TrackerReact(React.Component) {
             </div>
             <div style={style.cell} className="chartCell">
               <ChartWrapper
-                title='Monthly Total Shelf Faces Across Merchandisers'
-                tip='A customisable donut chart showing the total shelf faces for each Merchandiser for a specific month'
+                title={rom? 'Numărul Total de Fețe pentru Fiecare Merchandiser': 'Monthly Total Shelf Faces Across Merchandisers'}
+                tip={rom? 'Un grafic circular ce arată numărul total de fețe pentru fiecare merchandiser' : 'A customisable donut chart showing the total shelf faces for each Merchandiser for a specific month'}
                 edit={true}
                 chart='donut'
                 dbName='Shelf'

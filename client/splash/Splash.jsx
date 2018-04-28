@@ -8,7 +8,7 @@ export default class Splash extends TrackerReact(React.Component) {
   }
 
   render (){
-    if(Meteor.userId()){
+    if(Meteor.userId() && !Session.get('reload')){
       return (
         <div className="forceColumn reduceFont" style={{
             //border: '1px red solid',

@@ -160,7 +160,7 @@ export default class MainLayout extends TrackerReact(React.Component) {
             <div style={{
                 margin: '1em'
             }} >
-            {Meteor.userId() && <span> {rom? 'Cont conectat ': 'Logged in as'} </span> }
+            {Meteor.userId() && <span> {rom? 'Cont conectat ': 'Logged in as '} </span> }
             <AccountsUI/>
             </div>
           </nav>

@@ -37,7 +37,7 @@ resubscribe(){
 					}}>
 						<div style={style.upperContainer} className="chartCell">
 							<ChartWrapper
-								title= {rom? 'Evoluția Lunară a Prețului' : 'Monthly product price evolution'}
+								title= {rom? 'Evoluția Lunară a Prețului' : 'Monthly Product Price Evolution'}
 								tip= {rom? 'Un grafic tip linie ce poate fi schimbat și arată evoluția lunară a prețului' : 'A fully customisable line chart based on historic monthly price data'}
                 dbName='Price'
                 id='price_main'

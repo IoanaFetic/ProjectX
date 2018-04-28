@@ -62,7 +62,7 @@ export default class MainLayout extends TrackerReact(React.Component) {
         Session.set('userSubscribed', true)
       }),
       magnify: 10,
-      language: true,
+      language: false,
     }
   }
   magnify(z){

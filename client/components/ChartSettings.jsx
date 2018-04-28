@@ -108,18 +108,18 @@ export default class ChartSettings extends React.Component {
           display: "flex"
         }}>
         <div onClick={this.props.toggleSettings}>
-          Cancel
+          {rom? 'Anulare' : 'Cancel'}
         </div>
         <div onClick={this.saveSettings.bind(this)} style={{
             marginLeft: "1.5em"
           }}>
-          Save
+          {rom? 'Salvare' : 'Save'}
         </div>
         {
           !isOriginal && <div onClick={this.resetSettings.bind(this)} style={{
                 marginLeft: "1.5em"
               }}>
-              Reset
+            {rom? 'Resetare' : 'Reset'}
             </div>
         }
       </div>
@@ -129,7 +129,7 @@ export default class ChartSettings extends React.Component {
           top: "0.5em",
           right: "1em"
         }}>
-        {'Database: ' + this.props.dbName}
+        { rom? 'Baza de Date: ' : 'Database: '} + this.props.dbName
       </div>
 
       <div style={{
@@ -164,8 +164,8 @@ export default class ChartSettings extends React.Component {
             <Toggle defaultChecked={this.state.settings.sum} onChange={this.toggleSum.bind(this)} style={{
                 width: "500px"
               }} icons={{
-                checked: <div>Sum</div>,
-                unchecked: <div>Mean</div>
+                checked: <div>{rom? 'Sumă' : 'Sum'} </div>,
+                unchecked: <div>{rom? 'Medie' : 'Mean'} </div>
               }}/>
 
             <Ionicon icon="md-add" fontSize={iconSize * 0.7 + "px"} style={{
@@ -179,7 +179,7 @@ export default class ChartSettings extends React.Component {
               <div style={{
                   width: "100%"
                 }}>
-                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder="Include data for..."/>
+                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder={rom? "Adăugați date..." : "Include data for..."}/>
               </div>
             </div>
           </div>

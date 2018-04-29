@@ -76,7 +76,7 @@ export default class MainLayout extends TrackerReact(React.Component) {
   magnify(z) {
     if (z > 5 && z < 15) {
       Session.set('reload', true)
-      //defaults.global.defaultFontSize = baseSize*parseInt(z)/10;  set default chart settings
+      defaults.global.defaultFontSize = baseSize*parseInt(z)/10;
       this.setState({magnify: parseInt(z)})
       Meteor.setTimeout(function() {
         Session.set('reload', false)

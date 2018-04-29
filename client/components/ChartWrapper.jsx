@@ -7,8 +7,6 @@ import ChartSettings from './ChartSettings.jsx'
 import Ionicon from 'react-ionicons'
 import moment from 'moment'
 import {saveAs} from 'file-saver'
-
-
 import 'react-tippy/dist/tippy.css' // style for tooltips (from API)
 import {Tooltip} from 'react-tippy';
 
@@ -16,7 +14,6 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
   // reactive, changes with database updates
   constructor(props) {
     super(props)
-
     this.state = {
       showSettings: false
     }
@@ -88,9 +85,6 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
     this.refs.chartSettings.resetSettings()
   }
   render() {
-
-
-
     if (Meteor.user()) { // if logged in
       // retrieve and sort data
       var userSettings = (Meteor.user().chartSettings && Meteor.user().chartSettings[this.props.id]) // false if no settings found for this chart
@@ -151,7 +145,6 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
                 }}/>
             </div>
         }
-
         <div style={{
             position: "absolute",
             top: 0,

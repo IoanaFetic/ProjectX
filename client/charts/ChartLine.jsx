@@ -1,13 +1,10 @@
 import React from 'react'
 import {Line} from 'react-chartjs-2';
 
-
-
 export default class Chart extends React.Component {
   constructor(props) {
     super()
   }
-
   formatData(dataObj) {
     // convert dataObj into Chart.js friendly object
     var datasets = [] // to be entered into Chart.js object
@@ -16,7 +13,8 @@ export default class Chart extends React.Component {
     for (key of keys) { // loop through groups, to create key for each
       var keyData = [] // data array for this key
       var lastKnownValue = 0 // to carry over last known value (if months are missing)
-      for (m = dataObj[key].firstMonth; m <= dataObj[key].lastMonth; m++) { // loop through month indexes
+      // loop through month indexes
+      for (m = dataObj[key].firstMonth; m <= dataObj[key].lastMonth; m++) {
         if (dataObj[key].n[m] > 0) { // if any documents were found for this month
           lastKnownValue = this.props.sum
             ? dataObj[key].t[m]
@@ -24,7 +22,6 @@ export default class Chart extends React.Component {
         }
         keyData[m] = lastKnownValue // assign data point the last known avg value
       }
-
       datasets.push({
         // add this key to the datasets array
         data: keyData,
@@ -37,66 +34,76 @@ export default class Chart extends React.Component {
       })
       p++ // increment to next colour
     }
-    return { // return Chart.js friendly object
-      labels: rom? ref.rommonths : ref.months,
+    return {
+      // return Chart.js friendly object
+      labels: rom
+        ? ref.rommonths
+        : ref.months,
       datasets
     }
   }
-
   render() {
     // create empty DIV for google chart to be appended to
     var yLabel = ""
-    if(this.props.dbName == "Price"){
-      yLabel = rom? "Prețul Produsului (RON)": "Product Price (RON)"
+    if (this.props.dbName == "Price") {
+      yLabel = rom
+        ? "Prețul Produsului (RON)"
+        : "Product Price (RON)"
     }
-    if(this.props.dbName == "Shelf"){
-      yLabel = rom? "Numărul de Fețe":"Number of Facings"
+    if (this.props.dbName == "Shelf") {
+      yLabel = rom
+        ? "Numărul de Fețe"
+        : "Number of Facings"
     }
-
-    return (
-      <div style={{position: "relative", height: "100%", width: "100%"}}>
-        <Line
-          ref="chartObj"
-          data={this.formatData(this.props.data)}
-          options={{
+    return (<div style={{
+        position: "relative",
+        height: "100%",
+        width: "100%"
+      }}>
+      <Line ref="chartObj" data={this.formatData(this.props.data)} options={{
           ...globalChartOptions,
           ...{
             legend: {
               labels: {
                 boxWidth: 2,
-                padding: 14,
+                padding: 14
               },
-              position: device < 2? 'right': 'top'
+              position: device < 2
+                ? 'right'
+                : 'top'
             },
             scales: {
-              yAxes: [{
-                scaleLabel: {
-                  display: true,
-                  labelString: yLabel
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: yLabel
+                  }
                 }
-              }]
+              ]
             },
             tooltips: {
-               callbacks: {
-                 label: function(tooltipItem, data) {
-                   var label = data.datasets[tooltipItem.datasetIndex].label || '';
+              callbacks: {
+                label: function(tooltipItem, data) {
+                  var label = data.datasets[tooltipItem.datasetIndex].label || '';
 
-                   if (label) {
-                     label += ': ';
-                   }
-                   label += Math.round(tooltipItem.yLabel * 100) / 100;
-                   return label;
-                 }
-               }
-             },
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += Math.round(tooltipItem.yLabel * 100) / 100;
+                  return label;
+                }
+              }
+            },
             title: {
               display: true,
-              text: this.props.title + (this.props.sum? " (sum)": " (mean)")
-            },
-        },
-        ...this.props.options || {}
-      }}/></div>
-
-  )
+              text: this.props.title + (
+                this.props.sum
+                ? " (sum)"
+                : " (mean)")
+            }
+          },
+          ...this.props.options || {}
+        }}/></div>)
   }
 }

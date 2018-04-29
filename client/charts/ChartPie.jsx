@@ -2,14 +2,12 @@ import React from 'react'
 import {Pie} from 'react-chartjs-2';
 import {Doughnut} from 'react-chartjs-2';
 
-
 export default class Chart extends React.Component {
   constructor(props) {
 		super()
 		this.PieNut = props.hollow? Doughnut: Pie
     this.chart = false // later defined as the chart object
   }
-
   formatData(dataObj) {
     // convert dataObj into Chart.js friendly object
     var keys = Object.keys(dataObj) // sorted group names (ie Kamis, etc.)
@@ -36,7 +34,6 @@ export default class Chart extends React.Component {
         : palette[p % (palette.length - 1)])
       p++
     }
-
     return { // return Chart.js friendly object
       labels: keys,
       datasets: [
@@ -47,7 +44,6 @@ export default class Chart extends React.Component {
       ]
     }
   }
-
   render() {
     return (
       <this.PieNut

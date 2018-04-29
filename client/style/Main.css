@@ -1,28 +1,31 @@
 html, body, #react-root {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
   height: 100%;
   width: 100%;
-  font-family: "foco","myriad-pro","Myriad Pro",sans-serif!important;
+  font-family: "foco", "myriad-pro", "Myriad Pro", sans-serif!important;
   font-size: 14px;
   color: #3c3c3c;
 }
+
 INPUT {
   border-color: DarkGreen !important;
+}
 
+textarea:focus, input:focus {
+  outline: none !important;
 }
-textarea:focus, input:focus{
-    outline: none !important;
-}
+
 a {
   color: #3c3c3c;
   text-decoration: none;
 }
+
 a:hover, a div:hover {
   color: #00a850;
 }
 
 canvas {
-        height: 100% !important;
-        width: 100% !important;
+  height: 100% !important;
+  width: 100% !important;
 }

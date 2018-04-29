@@ -19,25 +19,23 @@ export default class ChartSettings extends React.Component {
   }
   saveSettings() {
     if (JSON.stringify(this.state.settings) == this.origSettings) {
-      console.log("default settings set, so removing user specific settings")
+      // default settings set, so removing user specific settings
       var newSettings = Meteor.user().chartSettings || {}
       delete newSettings[this.props.id]
-      Meteor.call("updateUser", "chartSettings", newSettings, function(){
+      Meteor.call("updateUser", "chartSettings", newSettings, function() {
         this.props.resubscribe()
       }.bind(this))
     } else {
-      console.log("saving user specific settings")
-      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings, function(){
+      //saving user specific settings
+      Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings, function() {
         this.props.resubscribe()
       }.bind(this))
     }
-
     if (this.state.selectedYear) {
-      Meteor.call('updateUser', 'selectedYear', this.state.selectedYear, function(){
+      Meteor.call('updateUser', 'selectedYear', this.state.selectedYear, function() {
         this.props.resubscribe()
-        console.log("year changed, resubscribe")
+        //year changed, resubscribe
       }.bind(this))
-
     }
     this.props.toggleSettings()
   }
@@ -57,7 +55,6 @@ export default class ChartSettings extends React.Component {
     this.setState({settings})
   }
   resetSettings() {
-    console.log("resetting to ", JSON.parse(this.origSettings))
     this.setState({
       settings: JSON.parse(this.origSettings)
     })
@@ -67,13 +64,11 @@ export default class ChartSettings extends React.Component {
     settings.sum = !settings.sum
     this.setState({settings})
   }
-
   setSort(val) {
     var settings = this.state.settings
     settings.sort = val.value
     this.setState({settings})
   }
-
   setYear(val) {
     this.setState({selectedYear: val.value})
   }
@@ -108,30 +103,45 @@ export default class ChartSettings extends React.Component {
           display: "flex"
         }}>
         <div onClick={this.props.toggleSettings}>
-          {rom? 'Anulare' : 'Cancel'}
+          {
+            rom
+              ? 'Anulare'
+              : 'Cancel'
+          }
         </div>
         <div onClick={this.saveSettings.bind(this)} style={{
             marginLeft: "1.5em"
           }}>
-          {rom? 'Salvare' : 'Save'}
+          {
+            rom
+              ? 'Salvare'
+              : 'Save'
+          }
         </div>
         {
           !isOriginal && <div onClick={this.resetSettings.bind(this)} style={{
                 marginLeft: "1.5em"
               }}>
-            {rom? 'Resetare' : 'Reset'}
+              {
+                rom
+                  ? 'Resetare'
+                  : 'Reset'
+              }
             </div>
         }
       </div>
-
       <div style={{
           position: "absolute",
           top: "0.5em",
           right: "1em"
         }}>
-        { rom? 'Baza de Date: ' : 'Database: '} + this.props.dbName
+        {
+          (
+            rom
+            ? 'Baza de Date: '
+            : 'Database: ') + this.props.dbName
+        }
       </div>
-
       <div style={{
           display: "flex",
           flexDirection: "column"
@@ -141,7 +151,6 @@ export default class ChartSettings extends React.Component {
             display: "flex",
             justifyContent: "space-between"
           }}>
-
           <div style={{
               display: "flex",
               alignItems: "center"
@@ -161,13 +170,24 @@ export default class ChartSettings extends React.Component {
                 <Dropdown options={Object.keys(keyValues)} onChange={this.setSort.bind(this)} value={this.state.settings.sort}/>
               </div>
             </div>
-            <Toggle defaultChecked={this.state.settings.sum} onChange={this.toggleSum.bind(this)} style={{
-                width: "500px"
-              }} icons={{
-                checked: <div>{rom? 'Sumă' : 'Sum'} </div>,
-                unchecked: <div>{rom? 'Medie' : 'Mean'} </div>
-              }}/>
-
+            {
+              this.props.dbName != 'Price' && <Toggle defaultChecked={this.state.settings.sum} onChange={this.toggleSum.bind(this)} style={{
+                    width: "500px"
+                  }} icons={{
+                    checked: <div>{
+                        rom
+                          ? 'Sumă'
+                          : 'Sum'
+                      }
+                    </div>,
+                    unchecked: <div>{
+                          rom
+                            ? 'Medie'
+                            : 'Mean'
+                        }
+                      </div>
+                  }}/>
+            }
             <Ionicon icon="md-add" fontSize={iconSize * 0.7 + "px"} style={{
                 margin: "0 .5em 0 2em"
               }}/>
@@ -179,11 +199,12 @@ export default class ChartSettings extends React.Component {
               <div style={{
                   width: "100%"
                 }}>
-                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder={rom? "Adăugați date..." : "Include data for..."}/>
+                <Dropdown options={Object.keys(keyValues)} onChange={this.setFilter.bind(this)} placeholder={rom
+                    ? "Adăugați date..."
+                    : "Include data for..."}/>
               </div>
             </div>
           </div>
-
           <div style={{
               display: "flex",
               alignItems: "center"
@@ -203,22 +224,16 @@ export default class ChartSettings extends React.Component {
               </div>
             </div>
           </div>
-
         </div>
-
         {!Meteor.user().admin && <FilterField field={"username"} chips={[Meteor.user().username]} disable={true}/>}
         {
           Object.keys(this.state.settings.filter).map((field, k) => {
-
             return (<FilterField key={'filterfield_' + k} field={field} chips={this.state.settings.filter[field]} removeFilter={this.removeFilter.bind(this)} changeChips={this.changeChips.bind(this, field)} suggestions={field == "report_month"
                 ? ref.months
                 : keyValues[field]}/>)
           })
         }
-
       </div>
-
     </div>)
   }
 }
-//

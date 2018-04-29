@@ -3,7 +3,6 @@ import Chips, {Chip} from 'react-chips'
 import Ionicon from 'react-ionicons'
 
 export default class FilterField extends React.Component {
-
   render() {
     return (<div style={{
         display: "flex",
@@ -26,7 +25,6 @@ export default class FilterField extends React.Component {
               zIndex: 999
             }}></div>
       }
-
       <div style={{
           display: "flex",
           justifyContent: "flex-start",
@@ -45,7 +43,6 @@ export default class FilterField extends React.Component {
             {this.props.field}
           </div>
         </div>
-
       </div>
       <div style={{
           position: "relative"
@@ -61,7 +58,6 @@ export default class FilterField extends React.Component {
               }}/>
         }
       </div>
-
     </div>)
   }
 }

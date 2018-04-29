@@ -106,3 +106,37 @@ for(filter of filters){ // loop through all gathered filters
       filter[key] = {$in: filter[key]} // change field arrays to mongoDB query format
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+saveSettings() {
+  if (JSON.stringify(this.state.settings) == this.origSettings) {
+    //default settings set, so removing user specific settings
+    var newSettings = Meteor.user().chartSettings || {}
+    delete newSettings[this.props.id]
+    Meteor.call("updateUser", "chartSettings", newSettings, function(){
+      this.props.resubscribe()
+    }.bind(this))
+  }
+  else {
+    //saving user specific settings
+    Meteor.call("updateUser", "chartSettings." + this.props.id, this.state.settings, function(){
+      this.props.resubscribe()
+    }.bind(this))
+  }
+  if (this.state.selectedYear) {
+    Meteor.call('updateUser', 'selectedYear', this.state.selectedYear, function(){
+      this.props.resubscribe()
+      //year changed, resubscribe
+    }.bind(this))
+  }
+  this.props.toggleSettings()
+}

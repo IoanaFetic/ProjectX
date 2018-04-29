@@ -6,10 +6,8 @@ import {ClipLoader, PropagateLoader} from 'react-spinners';
 import moment from 'moment'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
-
 import Table from './Table.jsx'
 
-//redundant due to uuid
 function uniqueID() {
   // based on open source example on StackOverflow
   var timestamp = (new Date().getTime() / 1000 | 0).toString(16);
@@ -17,7 +15,6 @@ function uniqueID() {
     return (Math.random() * 16 | 0).toString(16);
   }).toLowerCase()
 }
-
 export default class Upload extends TrackerReact(React.Component) {
   constructor() {
     super()
@@ -35,7 +32,6 @@ export default class Upload extends TrackerReact(React.Component) {
   componentWillUnmount() {
     this.state.uploadsSubscription.stop()
   }
-
   fileUpload() {
     if (this.dz.files.length > 0) {
       this.setState({uploading: true})
@@ -45,7 +41,6 @@ export default class Upload extends TrackerReact(React.Component) {
       this.fileRead(file)
     }
   }
-
   fileRead(file) {
     // initiate file reader object
     var reader = new FileReader();
@@ -73,7 +68,6 @@ export default class Upload extends TrackerReact(React.Component) {
     // read the raw file as an array buffer
     reader.readAsArrayBuffer(file);
   }
-
   processData(excel, file) {
     console.log(excel)
     // f = index of file in dropzone component
@@ -100,17 +94,17 @@ export default class Upload extends TrackerReact(React.Component) {
       // check if sheet contains validated data
       if (sheet.A1 && sheet.A1.v == 'Report type' && dbChecked != 'abort') {
         if (!meta) { // only defined for first valid sheet
-          meta = { upload_id, datetime,
+          meta = {
+            upload_id,
+            datetime,
             report_type: sheet.B1.v.split(' ')[0], // determine Price/Shelf from cell
             report_month: moment(sheet.B2.w, 'M/D/YY').month(), // get meta data
             report_year: moment(sheet.B2.w, 'M/D/YY').year(),
             user: Meteor.user().username
           } // initiate document with meta data
         }
-
         // check if report for this month and year is already uploaded
         var matchingDocument = DB.Uploads.findOne({report_type: meta.report_type, report_month: meta.report_month, report_year: meta.report_year})
-
         if (matchingDocument && !dbChecked) {
           if (confirm("Entries for " + ref.months[meta.report_month] + " " + meta.report_year + " already exist. Do you want to replace them?")) {
             // remove existing entries for this month and year
@@ -125,11 +119,9 @@ export default class Upload extends TrackerReact(React.Component) {
             return false
           }
         }
-
         var RE = new RegExp(/[A-Z]+[0-9]+:([A-Z]+)([0-9]+)/) // regular expression to identify meta data
         var match = RE.exec(sheet['!ref']) // meta data field read from excel
         var RowMax = parseInt(match[2]) // find last row containing data
-
         var keys = Object.keys(sheet) // get sheet titles
         var columns = [] // to become an array of unique columns containing data
         for (key of keys) { // equivalent to: for(i=0; i<keys.length; i++){var key = keys[i]
@@ -139,7 +131,6 @@ export default class Upload extends TrackerReact(React.Component) {
             columns.push(colLetter)
           }
         }
-
         var read = false // don't start reading initially (skip title rows etc.)
         var keyRowIndex = 0 // to be reset to the key row index
         for (i = 1; i <= RowMax; i++) { // loop down through rows with data
@@ -157,7 +148,8 @@ export default class Upload extends TrackerReact(React.Component) {
                 if (sheet[colLetter + keyRowIndex].v.match(parameters[meta.report_type].valueType)) {
                   valueColumns.push(colLetter) // create a unique document for this column later
                 } else { // treat as common information, add to the base document
-                  baseDocument[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v }
+                  baseDocument[sheet[colLetter + keyRowIndex].v] = sheet[colLetter + i].v
+                }
               }
             }
             for (colLetter of valueColumns) { // loop through cells which require seperate documents
@@ -180,41 +172,35 @@ export default class Upload extends TrackerReact(React.Component) {
             keyRowIndex = i // the row where the DB key values are found
             i++ // skip over visible headings in Excel
           }
-
         }
       }
     }
     // insert all of the completed documents to the DB (server method)
     if (meta.report_type && parameters[meta.report_type]) {
-
       var completeFile = JSON.parse(JSON.stringify({
         ...file,
         ...meta
       }))
-
+      console.log('adding: ', documents)
       Meteor.call('batchInsert', // method name
-      documents, // document array to insert
-      parameters[meta.report_type].dbName, // DB to add to
-      function(f, f2, desc) { // callback after insert
+          documents, // document array to insert
+          parameters[meta.report_type].dbName, // DB to add to
+          function(f, f2, desc) { // callback after insert
         Meteor.call('fileInsert', f2) // add file meta data to uploads DB
         this.filesToEmail.push(desc) // drafting the email
         this.dz.removeFile(f) // remove element from dropzone
       }.bind(this, file, completeFile, ( // bind variables for use within callback
-        meta.report_type + " report for " + ref.months[meta.report_month] + " " + meta.report_year
-      )))
+          meta.report_type + " report for " + ref.months[meta.report_month] + " " + meta.report_year)))
     }
   }
-
   sendEmail() {
     if (this.filesToEmail.length > 0) {
       Meteor.call("sendEmail", "Kamis Report Upload", ("The following reports have just been uploaded by <b>" + Meteor.user().username + "</b>:<br/><br/>" + this.filesToEmail.join("<br/>")))
       this.filesToEmail = []
     }
   }
-
   render() {
-    if (Session.get('uploadsSubscribed') && Meteor.user() && !Session.get('reload'))  {
-
+    if (Session.get('uploadsSubscribed') && Meteor.user() && !Session.get('reload')) {
       // return page content
       return (<div style={{
           display: 'flex',
@@ -224,7 +210,6 @@ export default class Upload extends TrackerReact(React.Component) {
           justifyContent: 'flex-start',
           alignItems: 'center'
         }}>
-
         <div style={{
             backgroundColor: color.content,
             height: '15em',
@@ -236,9 +221,7 @@ export default class Upload extends TrackerReact(React.Component) {
             position: 'relative',
             flexShrink: 0
           }}>
-
-          <DropzoneComponent
-            eventHandlers={{
+          <DropzoneComponent eventHandlers={{
               init: (dz) => {
                 this.dz = dz
               },
@@ -262,19 +245,18 @@ export default class Upload extends TrackerReact(React.Component) {
                 droppedFiles.push(file.upload.uuid)
                 this.setState({droppedFiles})
               }
-            }}
-
-            config={{
-                iconFiletypes: [
-                  '.jpg', '.png', '.gif'
-                ],
-                showFiletypeIcon: true,
-                postUrl: '/uploadHandler'
-              }}
-             djsConfig={{
+            }} config={{
+              iconFiletypes: [
+                '.jpg', '.png', '.gif'
+              ],
+              showFiletypeIcon: true,
+              postUrl: '/uploadHandler'
+            }} djsConfig={{
               autoProcessQueue: false,
               addRemoveLinks: true,
-              dictDefaultMessage: rom? "Încarcă raport validat de Preț sau Raft" : "Drop valid Price or Shelf report files here"
+              dictDefaultMessage: rom
+                ? "Încarcă raport validat de Preț sau Raft"
+                : "Drop valid Price or Shelf report files here"
             }}/>
         </div>
         <div style={{
@@ -291,7 +273,11 @@ export default class Upload extends TrackerReact(React.Component) {
               : 1,
             boxShadow: '0.1em 0.1em 0.2em rgba(0, 0, 0, 0.4)'
           }} onClick={this.fileUpload.bind(this)}>
-          {rom? 'Încărcare' : 'Upload'}
+          {
+            rom
+              ? 'Încărcare'
+              : 'Upload'
+          }
         </div>
         <div style={{
             height: '5em',
@@ -303,9 +289,7 @@ export default class Upload extends TrackerReact(React.Component) {
           }}>
           {this.state.uploading && <ClipLoader color="white"/>}
         </div>
-
         <Table/>
-
       </div>)
     } else {
       return <PropagateLoader color="white"/>

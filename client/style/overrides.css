@@ -1,24 +1,25 @@
 .rt-tbody::-webkit-scrollbar, .dz-progress, .-pageSizeOptions {
   display: none !important;
 }
+
 .filepicker {
   display: flex;
   justify-content: flex-start;
   overflow-x: auto !important;
   display: flex !important;
 }
+
 .dz-preview, .dz-default {
   margin: auto !important;
 }
+
 .dz-default {
   padding-bottom: 2em !important;
-
 }
 
 .dz-image, .dz-filename {
   margin: 1em !important;
 }
-
 
 .locked_filter span {
   visibility: hidden;

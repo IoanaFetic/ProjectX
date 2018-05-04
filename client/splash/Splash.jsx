@@ -28,24 +28,26 @@ export default class Splash extends TrackerReact(React.Component) {
             : 'View metrics dashboard from the Shelf reports'}/>
       </div>)
     } else {
-      return (<div style={{
-          fontSize: "1.6em",
-          color: "white",
-          marginTop: "-10em",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center"
-        }} onClick={this.signInDropdown}>
-        <div style={{
-            marginBottom: "1em"
-          }}>Welcome to the Kamis dashboard</div>
-        <div>Click
-          <span onClick={this.signIn} style={{
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}>here</span>
-          to sign in</div>
-      </div>)
+        if (!Session.get('reload')){
+          return (<div style={{
+              fontSize: "1.6em",
+              color: "white",
+              marginTop: "-10em",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center"
+            }} onClick={this.signInDropdown}>
+            <div style={{
+                marginBottom: "1em"
+              }}> {rom? "Bine ați venit pe pagina Kamis" : "Welcome to the Kamis dashboard"}</div>
+            <div> {rom? "Apăsați" : "Click"}
+              <span onClick={this.signIn} style={{
+                  fontWeight: "bold",
+                  cursor: "pointer"
+                }}>{rom? " aici " : " here "}</span>
+              {rom? "pentru a vă loga" : "to sign in"}</div>
+          </div>)
+      }
     }
   }
 }

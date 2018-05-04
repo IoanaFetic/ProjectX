@@ -27,7 +27,7 @@ baseSize = device < 2
     ? ref.size * 1.3
     : ref.size * 0.9)
   : ref.size * 2.8;
-defaults.global.defaultFontSize = baseSize; // set default chart settings
+//defaults.global.defaultFontSize = baseSize; // set default chart settings
 defaults.global.elements.arc.borderWidth = device < 2
   ? 2
   : 6;
@@ -76,7 +76,6 @@ export default class MainLayout extends TrackerReact(React.Component) {
   magnify(z) {
     if (z > 5 && z < 15) {
       Session.set('reload', true)
-      defaults.global.defaultFontSize = baseSize*parseInt(z)/10;
       this.setState({magnify: parseInt(z)})
       Meteor.setTimeout(function() {
         Session.set('reload', false)
@@ -105,6 +104,7 @@ export default class MainLayout extends TrackerReact(React.Component) {
     }
   }
   render() {
+    defaults.global.defaultFontSize = 1*baseSize*parseInt(this.state.magnify)/10;
     if (this.state.language) {
       rom = true;
     } else {

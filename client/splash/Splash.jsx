@@ -27,8 +27,8 @@ export default class Splash extends TrackerReact(React.Component) {
             ? 'Vizualizeaza date de la graficele de Raft'
             : 'View metrics dashboard from the Shelf reports'}/>
       </div>)
-    } else {
-        if (!Session.get('reload')){
+    } else if(!Session.get('reload')){
+
           return (<div style={{
               fontSize: "1.6em",
               color: "white",
@@ -48,7 +48,10 @@ export default class Splash extends TrackerReact(React.Component) {
                 }}>{rom? "aici" : "here"}</span>
               {rom? "pentru a vă loga" : "to sign in"}</div>
           </div>)
-      }
+
+    }
+    else {
+      return false
     }
   }
 }

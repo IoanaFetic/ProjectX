@@ -105,7 +105,6 @@ var initialise = function() {
       'report_month',
       'upload_id',
       'user',
-      'report_year',
       'product'
     ],
     Shelf: [
@@ -114,7 +113,6 @@ var initialise = function() {
       'report_month',
       'upload_id',
       'user',
-      'report_year',
       'city',
       'district',
       'salesman',

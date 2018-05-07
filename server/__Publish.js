@@ -103,7 +103,6 @@ var initialise = function() {
       'brand',
       'client_name',
       'report_month',
-      'upload_id',
       'user',
       'product'
     ],
@@ -111,7 +110,6 @@ var initialise = function() {
       'brand',
       'client_name',
       'report_month',
-      'upload_id',
       'user',
       'city',
       'district',

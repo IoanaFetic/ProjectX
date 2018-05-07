@@ -43,8 +43,9 @@ export default class Splash extends TrackerReact(React.Component) {
             <div> {rom? "Apăsați" : "Click"}
               <span onClick={this.signIn} style={{
                   fontWeight: "bold",
-                  cursor: "pointer"
-                }}>{rom? " aici " : " here "}</span>
+                  cursor: "pointer",
+                  margin: "0 0.3em"
+                }}>{rom? "aici" : "here"}</span>
               {rom? "pentru a vă loga" : "to sign in"}</div>
           </div>)
       }

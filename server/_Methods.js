@@ -2,9 +2,11 @@ var nodemailer = require('nodemailer');
 
 Meteor.methods({
   batchInsert(documents, dbName) {
-    if (documents.length > 0) {
-      DB[dbName].batchInsert(documents) // mikowals/batch-insert for performance boost. 1 sheet at a time instead of 1 document.
-    }
+    Meteor.setTimeout(function(documents, dbName){
+      if (documents.length > 0) {
+        DB[dbName].batchInsert(documents) // mikowals/batch-insert for performance boost. 1 sheet at a time instead of 1 document.
+      }
+    }.bind(this, documents, dbName), 2000)
   },
   fileInsert(file) {
     DB.Uploads.insert(file)

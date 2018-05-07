@@ -3,7 +3,7 @@ Accounts.onCreateUser(function(options, user) {
     id: "keyValues"
   })
   var years = keyValues.value.Price.report_year
-  user.selectedYear = years.sort()[years.length - 1]
+  user.selectedYear = 2016 //years.sort()[years.length - 1]
   user.chartSettings = {}
   return user
 })

@@ -100,7 +100,12 @@ export default class ChartWrapper extends TrackerReact(React.Component) {
           var data = {}
         }
       }
-      var sum = userSettings && userSettings.sum || settings && settings.sum
+      var sum = false
+      if(userSettings && userSettings.sum!=undefined){
+        sum = userSettings.sum
+      } else if(settings && settings.sum!=undefined) {
+        sum = settings.sum
+      }
       var margin = .5
       var style = {
         wrapper: {

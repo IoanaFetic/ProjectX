@@ -23,6 +23,7 @@ DB = {
 
 Meteor.publish('global',function(){
   return DB.Global.find()
+
 })
 
 Meteor.publish('uploads',function(){
@@ -31,9 +32,11 @@ Meteor.publish('uploads',function(){
 
 Meteor.publish('user', function(){
   return Meteor.users.find({_id: this.userId})
+
 })
 
 Meteor.publish('data',function(dbName){
+    console.log('published to ', (Meteor.user()? Meteor.user().username: 'guest'))
   if(Meteor.user()){
 
     var userChartSettings = Meteor.user().chartSettings? Meteor.user().chartSettings: {} // user chart settings, if they exist

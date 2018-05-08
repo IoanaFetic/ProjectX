@@ -166,4 +166,4 @@ var initialise = function() {
 
 
 Meteor.startup(initialise);
-Meteor.setInterval(initialise, 1000*60*60)
+//Meteor.setInterval(initialise, 1000*60*60)
